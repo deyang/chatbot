@@ -1,22 +1,23 @@
 __author__ = 'Deyang'
 from chatterbot import ChatBot
+from wit import message
+import re
+
+wit_token = 'QUCDCX7MQX4FLYGONBEYLGDHKSTIUFTQ'
 
 
-chatterbot = ChatBot(
-    "Buddy",
-    logic_adapters=[
-        "chatterbot.adapters.logic.ClosestMatchAdapter",
-        "chatterbot.adapters.logic.ClosestMeaningAdapter"
-    ],
-    io_adapters=[
-        "chatterbot.adapters.io.NoOutputAdapter"
-    ]
-)
-
-chatterbot.train(
-    "chatterbot.corpus.english.greetings",
-)
-
+def get_new_bot(name):
+    return ChatBot(
+        name,
+        logic_adapters=[
+            "chatterbot.adapters.logic.ClosestMatchAdapter",
+            "chatterbot.adapters.logic.ClosestMeaningAdapter"
+        ],
+        io_adapters=[
+            "chatterbot.adapters.io.NoOutputAdapter"
+        ],
+        database=name + "_database.db"
+    )
 
 identity_data = [
     [
@@ -29,6 +30,14 @@ identity_data = [
     ],
     [
         "What can you do?",
+        "I can answer your questions. Try to ask me about Buddy AI."
+    ],
+    [
+        "What can you do for me?",
+        "I can answer your questions. Try to ask me about Buddy AI."
+    ],
+    [
+        "How can you help me?",
         "I can answer your questions. Try to ask me about Buddy AI."
     ],
     [
@@ -66,14 +75,17 @@ identity_data = [
     [
         "Is there a human behind you?",
         "No, I'm a fully automated chatbot. However, I can escalate to a team member when necessary."
+    ],
+    [
+        "How do you learn?",
+        "I learn from conversations and literally any text data"
     ]
 ]
 
 identity_intent = [conversation[0] for conversation in identity_data]
 
-print identity_intent
 
-company_data = [
+ask_company_data = [
     [
         "What is Buddy AI?",
         "Buddy AI is a startup building AI technologies for modernized customer communication."
@@ -95,6 +107,13 @@ company_data = [
         "I can provide 24/7 real-time customer self-service and also assist a human customer support agent. There's almost zero effort to set me up. Just feed me whatever data you have."
     ],
     [
+        "How can Buddy AI help me?",
+        "I can provide 24/7 real-time customer self-service and also assist a human customer support agent. There's almost zero effort to set me up. Just feed me whatever data you have."
+    ],
+]
+
+ask_customer_data = [
+    [
         "Who are your customers?",
         "We are opening a beta program at present and we work very closely with these companies.  I can't release them over a chat, but if you could give me some more details I'd be happy to get some further information over to you."
     ],
@@ -102,22 +121,35 @@ company_data = [
         "Who is using Buddy now?",
         "We are opening a beta program at present and we work very closely with these companies.  I can't release them over a chat, but if you could give me some more details I'd be happy to get some further information over to you."
     ],
+]
+
+ask_doc_data = [
     [
         "Can you show me some documentations?",
-        "Sure. You can more at everbuddy.io"
+        "Sure. You can learn more at everbuddy.io"
     ],
     [
         "Do you have an API?",
         "We have a full REST API. If you are interested in learning more, just respond and I'll get one of the team"
-    ],
+    ]
+]
+
+ask_price_data = [
     [
         "How does it charge?",
         "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
     ],
     [
-        "What is the price model?",
+        "How much is it?",
         "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
     ],
+    [
+        "What is the price model?",
+        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
+    ]
+]
+
+ask_product_data = [
     [
         "What are the technologies used here?",
         "I'm using Natural Language Processing to understand your questions and machine learning to find the best answer"
@@ -128,15 +160,75 @@ company_data = [
     ],
 ]
 
-ask_company_intent = [conversation[0] for conversation in company_data[0:5]]
-ask_customer_intent = [conversation[0] for conversation in company_data[5:7]]
-ask_doc_intent = [conversation[0] for conversation in company_data[7:9]]
-ask_price_intent = [conversation[0] for conversation in company_data[9:11]]
-ask_product_intent = [conversation[0] for conversation in company_data[11:13]]
+ask_story_data = [
+    [
+        'Could you give me some examples?',
+        'Sure. For example, I can learn from FAQs and then I will be able to answer customer questions 24/7 online.'
+    ],
+    [
+        "Could you tell me an example of how you work?",
+        "Sure. I can serve as a customer service chatbot, meaning I will answer customer questions 24/7 online. Or I can provide suggested answer to a human agent."
+    ],
+    [
+        "What are the successful stories?",
+        "We're working closely with our beta customers. We're making progress to improve their overall customer satisfaction and reduce the response time"
+    ],
+    [
+        "Tell me a success story",
+        "We're working closely with our beta customers. We're making progress to improve their overall customer satisfaction and reduce the response time"
+    ]
+]
+
+
+ask_company_intent = [conversation[0] for conversation in ask_company_data]
+ask_customer_intent = [conversation[0] for conversation in ask_customer_data]
+ask_doc_intent = [conversation[0] for conversation in ask_doc_data]
+ask_price_intent = [conversation[0] for conversation in ask_price_data]
+ask_product_intent = [conversation[0] for conversation in ask_product_data]
+ask_story_intent = [conversation[0] for conversation in ask_story_data]
+
+general_bot = get_new_bot('general_bot')
+general_bot.train(
+    "chatterbot.corpus.english",
+)
+
+greeting_bot = get_new_bot('greeting_bot')
+greeting_bot.train(
+    "chatterbot.corpus.english.greetings",
+)
+
+identity_bot = get_new_bot('identity_bot')
+for conversation in identity_data:
+    identity_bot.train(conversation)
+
+company_bot = get_new_bot('company_bot')
+all_data = ask_company_data + ask_customer_data + ask_price_data + ask_doc_data + ask_story_data + ask_product_data
+
+for conversation in all_data:
+    company_bot.train(conversation)
+
+
+GREETING_INTENT = 'greetings'
+IDENTITY_INTENT = 'identity'
+ASK_INTENT_PATTERN = re.compile('ask.*')
+
+
+def select_bot(in_msg):
+    resp = message(wit_token, in_msg)
+    print resp['outcomes'][0]['intent']
+    if resp['outcomes'][0]['intent'] == GREETING_INTENT:
+        return greeting_bot
+    elif resp['outcomes'][0]['intent'] == IDENTITY_INTENT:
+        return identity_bot
+    elif ASK_INTENT_PATTERN.match(resp['outcomes'][0]['intent']):
+        return company_bot
+    else:
+        return general_bot
 
 
 if __name__ == '__main__':
     while True:
         in_msg = raw_input()
-        out_msg = chatterbot.get_response(in_msg)
-        print out_msg
+        bot = select_bot(in_msg)
+        out_msg = bot.get_response(in_msg)
+        print "Buddy bot :> %s" % out_msg

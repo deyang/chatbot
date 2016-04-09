@@ -15,6 +15,8 @@ python-twitter==3.0rc1
 requests==2.9.1
 requests-oauthlib==0.6.1
 responses==0.5.1
+simplejson==3.8.2
 six==1.10.0
 textblob==0.11.1
 wheel==0.24.0
+wit==2.0
