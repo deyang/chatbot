@@ -95,6 +95,14 @@ ask_company_data = [
         "Sure. Buddy AI is a startup building AI technologies for modernized customer communication."
     ],
     [
+        "Tell me more about your company",
+        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication."
+    ],
+    [
+        "What does your company do?",
+        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication."
+    ],
+    [
         "How can I start?",
         "Leave me an email and I will ping our team. We'll get back to you within one hour."
     ],
@@ -226,9 +234,12 @@ def select_bot(in_msg):
         return general_bot
 
 
+def chat(question):
+    bot = select_bot(question)
+    return bot.get_response(question)
+
 if __name__ == '__main__':
     while True:
         in_msg = raw_input()
-        bot = select_bot(in_msg)
-        out_msg = bot.get_response(in_msg)
+        out_msg = chat(in_msg)
         print "Buddy bot :> %s" % out_msg

@@ -13,7 +13,7 @@ stdout
 local
 log
 .idea
-.db
+*.db
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
