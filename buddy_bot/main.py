@@ -204,6 +204,12 @@ greeting_bot = get_new_bot('greeting_bot')
 greeting_bot.train(
     "chatterbot.corpus.english.greetings",
 )
+greeting_bot.train(
+    [
+        "Yo",
+        "Yo. How can I help?"
+    ]
+)
 
 identity_bot = get_new_bot('identity_bot')
 for conversation in identity_data:
@@ -223,12 +229,17 @@ ASK_INTENT_PATTERN = re.compile('ask.*')
 
 def select_bot(in_msg):
     resp = message(wit_token, in_msg)
-    print resp['outcomes'][0]['intent']
-    if resp['outcomes'][0]['intent'] == GREETING_INTENT:
+    intent = resp['outcomes'][0]['intent']
+    print intent
+    confidence = resp['outcomes'][0]['confidence']
+    print confidence
+    if confidence < 0.2:
+        return general_bot
+    if intent == GREETING_INTENT:
         return greeting_bot
-    elif resp['outcomes'][0]['intent'] == IDENTITY_INTENT:
+    elif intent == IDENTITY_INTENT:
         return identity_bot
-    elif ASK_INTENT_PATTERN.match(resp['outcomes'][0]['intent']):
+    elif ASK_INTENT_PATTERN.match(intent):
         return company_bot
     else:
         return general_bot
