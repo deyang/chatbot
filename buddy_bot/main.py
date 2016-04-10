@@ -273,7 +273,9 @@ class Bots(object):
 
     def chat(self, question):
         bot = self.select_bot(question)
-        return bot.get_response(question)
+        answer = bot.get_response(question)
+        print "in: %s and out: %s" % (question, answer)
+        return answer
 
 if __name__ == '__main__':
     bots = Bots()
