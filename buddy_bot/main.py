@@ -6,24 +6,7 @@ import re
 wit_token = 'QUCDCX7MQX4FLYGONBEYLGDHKSTIUFTQ'
 
 
-def get_new_bot(name):
-    return ChatBot(
-        name,
-        logic_adapters=[
-            "chatterbot.adapters.logic.ClosestMatchAdapter",
-            "chatterbot.adapters.logic.ClosestMeaningAdapter"
-        ],
-        io_adapters=[
-            "chatterbot.adapters.io.NoOutputAdapter"
-        ],
-        database=name + "_database.db"
-    )
-
-
-def set_readonly(bot):
-    for adapter in bot.storage_adapters:
-        adapter.read_only = True
-
+############################ DATA ###########
 
 identity_data = [
     [
@@ -217,66 +200,84 @@ ask_price_intent = [conversation[0] for conversation in ask_price_data]
 ask_product_intent = [conversation[0] for conversation in ask_product_data]
 ask_story_intent = [conversation[0] for conversation in ask_story_data]
 
-general_bot = get_new_bot('general_bot')
-general_bot.train(
-    "chatterbot.corpus.english",
-)
-
-greeting_bot = get_new_bot('greeting_bot')
-greeting_bot.train(
-    "chatterbot.corpus.english.greetings",
-)
-greeting_bot.train(
-    [
-        "Yo",
-        "Yo. How can I help?"
-    ]
-)
-
-identity_bot = get_new_bot('identity_bot')
-for conversation in identity_data:
-    identity_bot.train(conversation)
-set_readonly(identity_bot)
-
-company_bot = get_new_bot('company_bot')
-all_data = ask_company_data + ask_customer_data + ask_price_data + ask_doc_data + ask_story_data + ask_product_data
-
-for conversation in all_data:
-    company_bot.train(conversation)
-
-set_readonly(company_bot)
 
 GREETING_INTENT = 'greetings'
 IDENTITY_INTENT = 'identity'
 ASK_INTENT_PATTERN = re.compile('ask.*')
 
 
-def select_bot(in_msg):
-    resp = message(wit_token, in_msg)
-    intent = resp['outcomes'][0]['intent']
-    print intent
-    confidence = resp['outcomes'][0]['confidence']
-    print confidence
-    if confidence < 0.2:
-        return general_bot
-    if intent == GREETING_INTENT:
-        return greeting_bot
-    elif intent == IDENTITY_INTENT:
-        return identity_bot
-    elif ASK_INTENT_PATTERN.match(intent):
-        return company_bot
-    else:
-        return general_bot
+class Bots(object):
+    def __init__(self):
+        self.general_bot = self.get_new_bot('general_bot')
+        self.general_bot.train(
+            "chatterbot.corpus.english",
+        )
+    
+        self.greeting_bot = self.get_new_bot('greeting_bot')
+        self.greeting_bot.train("chatterbot.corpus.english.greetings")
+        self.greeting_bot.train(
+            [
+                "Yo",
+                "Yo. How can I help?"
+            ]
+        )
 
+        self.identity_bot = self.get_new_bot('identity_bot')
+        for conversation in identity_data:
+            self.identity_bot.train(conversation)
+        self.set_readonly(self.identity_bot)
 
-def chat(question):
-    bot = select_bot(question)
-    return bot.get_response(question)
+        self.company_bot = self.get_new_bot('self.company_bot')
+        all_data = ask_company_data + ask_customer_data + ask_price_data + ask_doc_data + ask_story_data + ask_product_data
 
+        for conversation in all_data:
+            self.company_bot.train(conversation)
+
+        self.set_readonly(self.company_bot)
+
+    @staticmethod
+    def get_new_bot(name):
+        return ChatBot(
+            name,
+            logic_adapters=[
+                "chatterbot.adapters.logic.ClosestMatchAdapter",
+                "chatterbot.adapters.logic.ClosestMeaningAdapter"
+            ],
+            io_adapters=[
+                "chatterbot.adapters.io.NoOutputAdapter"
+            ],
+            database=name + "_database.db"
+        )
+
+    @staticmethod
+    def set_readonly(bot):
+        for adapter in bot.storage_adapters:
+            adapter.read_only = True
+
+    def select_bot(self, in_msg):
+        resp = message(wit_token, in_msg)
+        intent = resp['outcomes'][0]['intent']
+        print intent
+        confidence = resp['outcomes'][0]['confidence']
+        print confidence
+        if confidence < 0.2:
+            return self.general_bot
+        if intent == GREETING_INTENT:
+            return self.greeting_bot
+        elif intent == IDENTITY_INTENT:
+            return self.identity_bot
+        elif ASK_INTENT_PATTERN.match(intent):
+            return self.company_bot
+        else:
+            return self.general_bot
+
+    def chat(self, question):
+        bot = self.select_bot(question)
+        return bot.get_response(question)
 
 if __name__ == '__main__':
-
+    bots = Bots()
     while True:
         in_msg = raw_input()
-        out_msg = chat(in_msg)
+        out_msg = bots.chat(in_msg)
         print "Buddy bot :> %s" % out_msg
