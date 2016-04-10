@@ -88,19 +88,19 @@ identity_intent = [conversation[0] for conversation in identity_data]
 ask_company_data = [
     [
         "What is Buddy AI?",
-        "Buddy AI is a startup building AI technologies for modernized customer communication."
+        "Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
     ],
     [
         "Tell me more about Buddy",
-        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication."
+        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
     ],
     [
         "Tell me more about your company",
-        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication."
+        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
     ],
     [
         "What does your company do?",
-        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication."
+        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
     ],
     [
         "How can I start?",
@@ -154,7 +154,11 @@ ask_price_data = [
     [
         "What is the price model?",
         "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
-    ]
+    ],
+    [
+        "How much is the service?",
+        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
+    ],
 ]
 
 ask_product_data = [
