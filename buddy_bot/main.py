@@ -19,6 +19,12 @@ def get_new_bot(name):
         database=name + "_database.db"
     )
 
+
+def set_readonly(bot):
+    for adapter in bot.storage_adapters:
+        adapter.read_only = True
+
+
 identity_data = [
     [
         "What's your name?",
@@ -79,6 +85,10 @@ identity_data = [
     [
         "How do you learn?",
         "I learn from conversations and literally any text data"
+    ],
+    [
+        "What kind of questions can I ask?",
+        "With my current knowledge, I can answer quesitions about Buddy AI. If fed with more data, I can be an expert in any domain!"
     ]
 ]
 
@@ -117,6 +127,10 @@ ask_company_data = [
     [
         "How can Buddy AI help me?",
         "I can provide 24/7 real-time customer self-service and also assist a human customer support agent. There's almost zero effort to set me up. Just feed me whatever data you have."
+    ],
+    [
+        "What is Buddy bot?",
+        "I'm the Buddy bot. An AI-based chatbot developed by Buddy AI. I can learn from any text data and conversations."
     ],
 ]
 
@@ -170,6 +184,10 @@ ask_product_data = [
         "What are the features?",
         "Buddy AI takes any ubiquitous data (forum, customer emails, dev docs, FAQs, internal knowledge base, etc), and then I will learn from the data and provide fully-automated or suggested answers to customer questions."
     ],
+    [
+        "What technologies are you using?",
+        "I'm using Natural Language Processing to understand your questions and machine learning to find the best answer"
+    ]
 ]
 
 ask_story_data = [
@@ -218,6 +236,7 @@ greeting_bot.train(
 identity_bot = get_new_bot('identity_bot')
 for conversation in identity_data:
     identity_bot.train(conversation)
+set_readonly(identity_bot)
 
 company_bot = get_new_bot('company_bot')
 all_data = ask_company_data + ask_customer_data + ask_price_data + ask_doc_data + ask_story_data + ask_product_data
@@ -225,6 +244,7 @@ all_data = ask_company_data + ask_customer_data + ask_price_data + ask_doc_data 
 for conversation in all_data:
     company_bot.train(conversation)
 
+set_readonly(company_bot)
 
 GREETING_INTENT = 'greetings'
 IDENTITY_INTENT = 'identity'
@@ -253,7 +273,9 @@ def chat(question):
     bot = select_bot(question)
     return bot.get_response(question)
 
+
 if __name__ == '__main__':
+
     while True:
         in_msg = raw_input()
         out_msg = chat(in_msg)
