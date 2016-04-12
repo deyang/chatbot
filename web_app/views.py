@@ -15,3 +15,11 @@ def chat_api():
     in_msg = request.form.get("msg", "")
     out_msg = bots.chat(in_msg)
     return make_response(jsonify(response=out_msg), 201)
+
+
+@app.route('/intercomm_webhook', methods=['POST', 'PUT'])
+def intercomm_webhook():
+    print "inside intercomm webhook"
+    print request.json
+    return make_response(201)
+
