@@ -17,9 +17,16 @@ def chat_api():
     return make_response(jsonify(response=out_msg), 201)
 
 
-@app.route('/intercomm_webhook', methods=['POST', 'PUT'])
+@app.route('/intercomm_webhook', methods=['POST'])
 def intercomm_webhook():
     print "inside intercomm webhook"
     print request.json
-    return make_response(201)
+    return make_response(jsonify(status=0), 201)
+
+
+@app.route('/smooch_webhook', methods=['POST'])
+def smooch_webhook():
+    print "inside smooch webhook"
+    print request.json
+    return make_response(jsonify(status=0), 201)
 
