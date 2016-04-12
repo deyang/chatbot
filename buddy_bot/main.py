@@ -1,213 +1,58 @@
-__author__ = 'Deyang'
 from chatterbot import ChatBot
 from wit import message
 import re
+import os
+import json
+
+__author__ = 'Deyang'
 
 wit_token = 'QUCDCX7MQX4FLYGONBEYLGDHKSTIUFTQ'
 
 
-############################ DATA ###########
-
-identity_data = [
-    [
-        "What's your name?",
-        "My name is Buddy Bot."
-    ],
-    [
-        "Who are you?",
-        "I'm Buddy AI bot."
-    ],
-    [
-        "What can you do?",
-        "I can answer your questions. Try to ask me about Buddy AI."
-    ],
-    [
-        "What can you do for me?",
-        "I can answer your questions. Try to ask me about Buddy AI."
-    ],
-    [
-        "How can you help me?",
-        "I can answer your questions. Try to ask me about Buddy AI."
-    ],
-    [
-        "Are you a human?",
-        "No, I'm a chatbot."
-    ],
-    [
-        "Are you a chatbot?",
-        "Yes, you are right."
-    ],
-    [
-        "Are you a male?",
-        "I guess not. I am a chatbot"
-    ],
-    [
-        "Are you a female?",
-        "I guess not. I am a chatbot"
-    ],
-    [
-        "How do you work?",
-        "I can learn from conversations. The more I talk, the more intelligent I am"
-    ],
-    [
-        "What else can you do?",
-        "My primary job is to answer customer questions. I can chat with people :)"
-    ],
-    [
-        "Who created you?",
-        "I'm developed by Buddy AI"
-    ],
-    [
-        "Who developed you?",
-        "I was developed by Buddy AI"
-    ],
-    [
-        "Is there a human behind you?",
-        "No, I'm a fully automated chatbot. However, I can escalate to a team member when necessary."
-    ],
-    [
-        "How do you learn?",
-        "I learn from conversations and literally any text data"
-    ],
-    [
-        "What kind of questions can I ask?",
-        "With my current knowledge, I can answer quesitions about Buddy AI. If fed with more data, I can be an expert in any domain!"
-    ]
-]
-
-identity_intent = [conversation[0] for conversation in identity_data]
-
-
-ask_company_data = [
-    [
-        "What is Buddy AI?",
-        "Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
-    ],
-    [
-        "Tell me more about Buddy",
-        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
-    ],
-    [
-        "Tell me more about your company",
-        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
-    ],
-    [
-        "What does your company do?",
-        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
-    ],
-    [
-        "How can I start?",
-        "Leave me an email and I will ping our team. We'll get back to you within one hour."
-    ],
-    [
-        "How does Buddy work?",
-        "Buddy AI takes any ubiquitous data (forum, customer emails, dev docs, FAQs, internal knowledge base, etc), and then I will learn from the data and provide fully-automated or suggested answers to customer questions."
-    ],
-    [
-        "Why do I need Buddy?",
-        "I can provide 24/7 real-time customer self-service and also assist a human customer support agent. There's almost zero effort to set me up. Just feed me whatever data you have."
-    ],
-    [
-        "How can Buddy AI help me?",
-        "I can provide 24/7 real-time customer self-service and also assist a human customer support agent. There's almost zero effort to set me up. Just feed me whatever data you have."
-    ],
-    [
-        "What is Buddy bot?",
-        "I'm the Buddy bot. An AI-based chatbot developed by Buddy AI. I can learn from any text data and conversations."
-    ],
-]
-
-ask_customer_data = [
-    [
-        "Who are your customers?",
-        "We are opening a beta program at present and we work very closely with these companies.  I can't release them over a chat, but if you could give me some more details I'd be happy to get some further information over to you."
-    ],
-    [
-        "Who is using Buddy now?",
-        "We are opening a beta program at present and we work very closely with these companies.  I can't release them over a chat, but if you could give me some more details I'd be happy to get some further information over to you."
-    ],
-]
-
-ask_doc_data = [
-    [
-        "Can you show me some documentations?",
-        "Sure. You can learn more at everbuddy.io"
-    ],
-    [
-        "Do you have an API?",
-        "We have a full REST API. If you are interested in learning more, just respond and I'll get one of the team"
-    ]
-]
-
-ask_price_data = [
-    [
-        "How does it charge?",
-        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
-    ],
-    [
-        "How much is it?",
-        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
-    ],
-    [
-        "What is the price model?",
-        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
-    ],
-    [
-        "How much is the service?",
-        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
-    ],
-]
-
-ask_product_data = [
-    [
-        "What are the technologies used here?",
-        "I'm using Natural Language Processing to understand your questions and machine learning to find the best answer"
-    ],
-    [
-        "What are the features?",
-        "Buddy AI takes any ubiquitous data (forum, customer emails, dev docs, FAQs, internal knowledge base, etc), and then I will learn from the data and provide fully-automated or suggested answers to customer questions."
-    ],
-    [
-        "What technologies are you using?",
-        "I'm using Natural Language Processing to understand your questions and machine learning to find the best answer"
-    ]
-]
-
-ask_story_data = [
-    [
-        'Could you give me some examples?',
-        'Sure. For example, I can learn from FAQs and then I will be able to answer customer questions 24/7 online.'
-    ],
-    [
-        "Could you tell me an example of how you work?",
-        "Sure. I can serve as a customer service chatbot, meaning I will answer customer questions 24/7 online. Or I can provide suggested answer to a human agent."
-    ],
-    [
-        "What are the successful stories?",
-        "We're working closely with our beta customers. We're making progress to improve their overall customer satisfaction and reduce the response time"
-    ],
-    [
-        "Tell me a success story",
-        "We're working closely with our beta customers. We're making progress to improve their overall customer satisfaction and reduce the response time"
-    ]
-]
-
-
-ask_company_intent = [conversation[0] for conversation in ask_company_data]
-ask_customer_intent = [conversation[0] for conversation in ask_customer_data]
-ask_doc_intent = [conversation[0] for conversation in ask_doc_data]
-ask_price_intent = [conversation[0] for conversation in ask_price_data]
-ask_product_intent = [conversation[0] for conversation in ask_product_data]
-ask_story_intent = [conversation[0] for conversation in ask_story_data]
+# identity_intent = [conversation[0] for conversation in identity_data]
+# ask_company_intent = [conversation[0] for conversation in ask_company_data]
+# ask_customer_intent = [conversation[0] for conversation in ask_customer_data]
+# ask_doc_intent = [conversation[0] for conversation in ask_doc_data]
+# ask_price_intent = [conversation[0] for conversation in ask_price_data]
+# ask_product_intent = [conversation[0] for conversation in ask_product_data]
+# ask_story_intent = [conversation[0] for conversation in ask_story_data]
 
 
 GREETING_INTENT = 'greetings'
 IDENTITY_INTENT = 'identity'
+TRY_INTENT = 'try'
+EMAIL_INTENT = 'email'
 ASK_INTENT_PATTERN = re.compile('ask.*')
+
+
+def load_data(file_name):
+    dirpath = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.join(dirpath, '..', 'data', file_name)
+    fd = open(filepath, 'r')
+    lines = fd.readlines()
+    skipped_lines = [l for l in lines if not l.startswith('#')]
+    content = ''.join(skipped_lines)
+    return json.loads(content)
+
+
+class DummyEmailBot(object):
+    def get_response(self, input):
+        return "Thanks! Please sit tight. I've notified a member of the team"
 
 
 class Bots(object):
     def __init__(self):
+        # load data
+        identity_data = load_data('identity.qa')
+        ask_company_data = load_data('company.qa')
+        ask_customer_data = load_data('customer.qa')
+        ask_doc_data = load_data('doc.qa')
+        ask_price_data = load_data('price.qa')
+        ask_product_data = load_data('product.qa')
+        ask_story_data = load_data('story.qa')
+        additional_greeting = load_data('greeting.qa')
+        try_data = load_data('try.qa')
+
         self.general_bot = self.get_new_bot('general_bot')
         self.general_bot.train(
             "chatterbot.corpus.english",
@@ -215,12 +60,8 @@ class Bots(object):
     
         self.greeting_bot = self.get_new_bot('greeting_bot')
         self.greeting_bot.train("chatterbot.corpus.english.greetings")
-        self.greeting_bot.train(
-            [
-                "Yo",
-                "Yo. How can I help?"
-            ]
-        )
+        for conversation in additional_greeting:
+            self.greeting_bot.train(conversation)
 
         self.identity_bot = self.get_new_bot('identity_bot')
         for conversation in identity_data:
@@ -234,6 +75,13 @@ class Bots(object):
             self.company_bot.train(conversation)
 
         self.set_readonly(self.company_bot)
+
+        self.try_bot = self.get_new_bot('try_bot')
+        for conversation in try_data:
+            self.try_bot.train(conversation)
+        self.set_readonly(self.try_bot)
+
+        self.email_bot = DummyEmailBot()
 
     @staticmethod
     def get_new_bot(name):
@@ -266,6 +114,10 @@ class Bots(object):
             return self.greeting_bot
         elif intent == IDENTITY_INTENT:
             return self.identity_bot
+        elif intent == EMAIL_INTENT:
+            return self.email_bot
+        elif intent == TRY_INTENT:
+            return self.try_bot
         elif ASK_INTENT_PATTERN.match(intent):
             return self.company_bot
         else:
@@ -274,7 +126,7 @@ class Bots(object):
     def chat(self, question):
         bot = self.select_bot(question)
         answer = bot.get_response(question)
-        print "in: %s and out: %s" % (question, answer)
+        print "in: <%s> and out: <%s>" % (question, answer)
         return answer
 
 if __name__ == '__main__':

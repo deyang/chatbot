@@ -1,0 +1,12 @@
+# This file defines question and answer pairs about Buddy's customers.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "Who are your customers?",
+        "We are opening a beta program at present and we work very closely with these companies.  I can't release them over a chat, but if you could give me some more details I'd be happy to get some further information over to you."
+    ],
+    [
+        "Who is using Buddy now?",
+        "We are opening a beta program at present and we work very closely with these companies.  I can't release them over a chat, but if you could give me some more details I'd be happy to get some further information over to you."
+    ]
+]

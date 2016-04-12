@@ -1,0 +1,14 @@
+# This file defines additional question and answer pairs about greeting
+# Existing data is here:
+# https://github.com/gunthercox/ChatterBot/blob/master/chatterbot/corpus/data/english/greetings.json
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "Yo",
+        "Yo. How can I help?"
+    ],
+    [
+        "Cool",
+        "Yeah that's right. What else can I help you?"
+    ]
+]

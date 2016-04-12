@@ -1,0 +1,20 @@
+# This file defines question and answer pairs about intent to try Buddy.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "How can I start?",
+        "Glad you asked. Signup our beta program or just leave me an email and I will ping our team. We'll get back to you ASAP."
+    ],
+    [
+        "I want to try this",
+        "Awesome! Signup our beta program or just leave me an email and I will ping our team. We'll get back to you ASAP."
+    ],
+    [
+        "Help me get started",
+        "My pleasure! Signup our beta program or just leave me an email and I will ping our team. We'll get back to you ASAP."
+    ],
+    [
+        "git",
+        "Awesome! Signup our beta program or just leave me an email and I will ping our team. We'll get back to you ASAP."
+    ]
+]

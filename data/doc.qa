@@ -1,0 +1,24 @@
+# This file defines question and answer pairs about documentations.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "Can you show me some documentations?",
+        "Sure. You can learn more at everbuddy.io"
+    ],
+    [
+        "Do you have an API?",
+        "We have a full REST API. If you are interested in learning more, just respond and I'll get one of the team"
+    ],
+    [
+        "Where are the API references?",
+        "We have a full REST API. If you are interested in learning more, just respond and I'll get one of the team"
+    ],
+    [
+        "Show me the API references",
+        "We have a full REST API. If you are interested in learning more, just respond and I'll get one of the team"
+    ],
+    [
+        "Where is the documentation?",
+        "We have a full REST API. If you are interested in learning more, just respond and I'll get one of the team"
+    ]
+]

@@ -1,0 +1,20 @@
+# This file defines question and answer pairs about success stories and examples.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "Could you give me some examples?",
+        "Sure. For example, I can learn from FAQs and then I will be able to answer customer questions 24/7 online."
+    ],
+    [
+        "Could you tell me an example of how you work?",
+        "Sure. I can serve as a customer service chatbot, meaning I will answer customer questions 24/7 online. Or I can provide suggested answer to a human agent."
+    ],
+    [
+        "What are the successful stories?",
+        "We're working closely with our beta customers. We're making progress to improve their overall customer satisfaction and reduce the response time"
+    ],
+    [
+        "Tell me a success story",
+        "We're working closely with our beta customers. We're making progress to improve their overall customer satisfaction and reduce the response time"
+    ]
+]

@@ -1,0 +1,38 @@
+# This file defines question and answer pairs about Buddy AI company.
+# Questions are about Buddy, Buddy AI.
+# For example, what is buddy.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "What is Buddy AI?",
+        "Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
+    ],
+    [
+        "Tell me more about Buddy",
+        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
+    ],
+    [
+        "Tell me more about your company",
+        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
+    ],
+    [
+        "What does your company do?",
+        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
+    ],
+    [
+        "How does Buddy work?",
+        "Buddy AI takes any ubiquitous data (forum, customer emails, dev docs, FAQs, internal knowledge base, etc), and then I will learn from the data and provide fully-automated or suggested answers to customer questions."
+    ],
+    [
+        "Why do I need Buddy?",
+        "I can provide 24/7 real-time customer self-service and also assist a human customer support agent. There's almost zero effort to set me up. Just feed me whatever data you have."
+    ],
+    [
+        "How can Buddy AI help me?",
+        "I can provide 24/7 real-time customer self-service and also assist a human customer support agent. There's almost zero effort to set me up. Just feed me whatever data you have."
+    ],
+    [
+        "What is Buddy bot?",
+        "I'm the Buddy bot. An AI-based chatbot developed by Buddy AI. I can learn from any text data and conversations."
+    ]
+]

@@ -1,0 +1,20 @@
+# This file defines question and answer pairs about price.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "How does it charge?",
+        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
+    ],
+    [
+        "How much is it?",
+        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
+    ],
+    [
+        "What is the price model?",
+        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
+    ],
+    [
+        "How much is the service?",
+        "Buddy AI is currently in private beta and pricing is dependent on multiple variables. To learn more about our beta program, drop us an e-mail to info@everbuddy.io"
+    ]
+]

@@ -1,0 +1,16 @@
+# This file defines question and answer pairs about product and technologies.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "What are the technologies used here?",
+        "I'm using Natural Language Processing to understand your questions and machine learning to find the best answer"
+    ],
+    [
+        "What are the features?",
+        "Buddy AI takes any ubiquitous data (forum, customer emails, dev docs, FAQs, internal knowledge base, etc), and then I will learn from the data and provide fully-automated or suggested answers to customer questions."
+    ],
+    [
+        "What technologies are you using?",
+        "I'm using Natural Language Processing to understand your questions and machine learning to find the best answer"
+    ]
+]
