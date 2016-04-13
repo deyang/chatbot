@@ -23,6 +23,7 @@ def intercomm_webhook():
     print "inside intercomm webhook"
     notification = request.json
     conversation_id, in_msg = parse_notification_and_should_reply(notification)
+
     if conversation_id:
         out_msg = bots.chat(in_msg)
         reply_to_user(conversation_id, out_msg)

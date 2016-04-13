@@ -6,8 +6,8 @@ __author__ = 'Deyang'
 Intercom.app_id = os.environ.get('INTERCOM_APP_ID')
 Intercom.app_api_key = os.environ.get('INTERCOM_APP_API_KEY')
 
-ADMIN_DEREK_ID = 426663
-ADMIN_BOT_ID = 426928
+ADMIN_DEREK_ID = '426663'
+ADMIN_BOT_ID = '426928'
 
 SUBSCRIBED_TOPIC = 'conversation.user.replied'
 
@@ -26,13 +26,13 @@ def parse_notification_and_should_reply(notification):
         assignee = notification['data']['item']['assignee']
         topic = notification['topic']
         if topic != SUBSCRIBED_TOPIC:
-            return None
+            return None, None
         elif assignee['type'] != 'nobody_admin':
             if assignee['type'] == 'admin':
                 if assignee['id'] != ADMIN_BOT_ID:
-                    return None
+                    return None, None
             else:
-                return None
+                return None, None
 
         msg = notification['data']['item']['conversation_parts']['conversation_parts'][0]['body']
         if msg.startswith('<p>'):
