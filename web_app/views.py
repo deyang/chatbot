@@ -20,7 +20,7 @@ def chat_api():
 
 @app.route('/intercomm_webhook', methods=['POST'])
 def intercomm_webhook():
-    print "inside intercomm webhook"
+    app.logger.info("Intercomm webhook triggered")
     notification = request.json
     conversation_id, in_msg = parse_notification_and_should_reply(notification)
 

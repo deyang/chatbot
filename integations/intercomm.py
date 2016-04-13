@@ -45,7 +45,7 @@ def parse_notification_and_should_reply(notification):
         if msg is None or len(msg) == 0:
             return None, None
         msg = html2text.html2text(msg).strip()
-        intercomm_logger.debug("Msg from notification" % msg)
+        intercomm_logger.debug("Msg from notification: %s" % msg)
         return conversation_id, msg
     except Exception as e:
         intercomm_logger.error("Parsing notification exception: %s" % e)
