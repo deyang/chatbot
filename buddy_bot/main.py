@@ -64,18 +64,17 @@ class Bots(object):
         self.greeting_bot.train("chatterbot.corpus.english.greetings")
         for conversation in additional_greeting:
             self.greeting_bot.train(conversation)
+        self.set_readonly(self.greeting_bot)
 
         self.identity_bot = self.get_new_bot('identity_bot')
         for conversation in identity_data:
             self.identity_bot.train(conversation)
         self.set_readonly(self.identity_bot)
 
-        self.company_bot = self.get_new_bot('self.company_bot')
+        self.company_bot = self.get_new_bot('company_bot')
         all_data = ask_company_data + ask_customer_data + ask_price_data + ask_doc_data + ask_story_data + ask_product_data
-
         for conversation in all_data:
             self.company_bot.train(conversation)
-
         self.set_readonly(self.company_bot)
 
         self.try_bot = self.get_new_bot('try_bot')
@@ -120,7 +119,7 @@ class Bots(object):
 
         bot_logger.info("Predicting intent: %s" % intent)
         bot_logger.info("Predicting confidence: %s" % confidence)
-        if confidence < 0.2:
+        if confidence < 0.25:
             return self.general_bot
         if intent == GREETING_INTENT:
             return self.greeting_bot
