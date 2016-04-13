@@ -5,34 +5,50 @@
 [
     [
         "What is Buddy AI?",
-        "Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
+        "Buddy AI is a startup building artificial intelligence based solutions for modernized customer communication. It provides an AI based chatbot that enables 24/7 customer support via a machine+human hybrid approach."
     ],
     [
         "Tell me more about Buddy",
-        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
+        "Buddy AI is a startup building artificial intelligence based solutions for modernized customer communication. It provides an AI based chatbot that enables 24/7 customer support via a machine+human hybrid approach."
     ],
     [
         "Tell me more about your company",
-        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
+        "Buddy AI is a startup building artificial intelligence based solutions for modernized customer communication. It provides an AI based chatbot that enables 24/7 customer support via a machine+human hybrid approach."
     ],
     [
         "What does your company do?",
-        "Sure. Buddy AI is a startup building AI technologies for modernized customer communication. It provides chatbot APIs/service to business who needs to better communicate with its customers."
+        "Buddy AI is a startup building artificial intelligence based solutions for modernized customer communication. It provides an AI based chatbot that enables 24/7 customer support via a machine+human hybrid approach."
+    ],
+    [
+        "What does Buddy do?",
+        "Buddy AI is a startup building artificial intelligence based solutions for modernized customer communication. It provides an AI based chatbot that enables 24/7 customer support via a machine+human hybrid approach."
+    ],
+    [
+        "What does Buddy AI do?",
+        "Buddy AI is a startup building artificial intelligence based solutions for modernized customer communication. It provides an AI based chatbot that enables 24/7 customer support via a machine+human hybrid approach."
     ],
     [
         "How does Buddy work?",
-        "Buddy AI takes any ubiquitous data (forum, customer emails, dev docs, FAQs, internal knowledge base, etc), and then I will learn from the data and provide fully-automated or suggested answers to customer questions."
+        "Buddy chatbot can learn from any format of customer support data data (forum discussions, customer emails, dev docs, FAQs, internal knowledge base, etc). Then it can either answer customer questions automatically or assist a human agent by providing insights and suggested answers. The chatbot can be integrated with many chat channels and customer communication software."
+    ],
+    [
+        "How does the chatbot work?",
+        "Buddy chatbot can learn from any format of customer support data data (forum discussions, customer emails, dev docs, FAQs, internal knowledge base, etc). Then it can either answer customer questions automatically or assist a human agent by providing insights and suggested answers. The chatbot can be integrated with many chat channels and customer communication software."
+    ],
+    [
+        "How does it work?",
+        "Buddy chatbot can learn from any format of customer support data data (forum discussions, customer emails, dev docs, FAQs, internal knowledge base, etc). Then it can either answer customer questions automatically or assist a human agent by providing insights and suggested answers. The chatbot can be integrated with many chat channels and customer communication software."
     ],
     [
         "Why do I need Buddy?",
-        "I can provide 24/7 real-time customer self-service and also assist a human customer support agent. There's almost zero effort to set me up. Just feed me whatever data you have."
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer question, reduce the response time and increase the number of concurrent users your system can support. You can support more customers with fewer human agents, if not zero."
     ],
     [
         "How can Buddy AI help me?",
-        "I can provide 24/7 real-time customer self-service and also assist a human customer support agent. There's almost zero effort to set me up. Just feed me whatever data you have."
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer question, reduce the response time and increase the number of concurrent users your system can support. You can support more customers with fewer human agents, if not zero."
     ],
     [
         "What is Buddy bot?",
-        "I'm the Buddy bot. An AI-based chatbot developed by Buddy AI. I can learn from any text data and conversations."
+        "I'm Buddy bot. An AI-based chatbot developed by Buddy AI for the new era of customer communication."
     ]
 ]

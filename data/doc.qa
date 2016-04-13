@@ -20,5 +20,9 @@
     [
         "Where is the documentation?",
         "We have a full REST API. If you are interested in learning more, just respond and I'll get one of the team"
+    ],
+    [
+        "What APIs do you have?",
+        "We have a full REST API. If you are interested in learning more, just respond and I'll get one of the team"
     ]
 ]
