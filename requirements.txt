@@ -5,6 +5,7 @@ Flask==0.10.1
 funcsigs==1.0.0
 future==0.15.2
 fuzzywuzzy==0.10.0
+html2text==2016.4.2
 inflection==0.3.1
 itsdangerous==0.24
 Jinja2==2.8

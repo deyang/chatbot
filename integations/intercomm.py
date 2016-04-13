@@ -1,5 +1,6 @@
 from intercom import Intercom, Conversation
 import os
+import html2text
 
 __author__ = 'Deyang'
 
@@ -38,10 +39,7 @@ def parse_notification_and_should_reply(notification):
             msg = notification['data']['item']['conversation_parts']['conversation_parts'][0]['body']
         else:
             msg = notification['data']['item']['conversation_message']['body']
-        if msg.startswith('<p>'):
-            msg = msg[3:]
-        if msg.endswith('</p>'):
-            msg = msg[:-4]
+        msg = html2text.html2text(msg).strip()
         return conversation_id, msg
     except Exception as e:
         print e
