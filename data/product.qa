@@ -14,7 +14,11 @@
         "I'm using Natural Language Processing to understand your questions and machine learning to find the best answer"
     ],
     [
-        "Are you a chatbot?",
-        "Yes, you are right."
+        "What services do you have?",
+        "We provide a chatbot."
+    ],
+    [
+        "What services do you provide?",
+        "We provide a chatbot."
     ]
 ]
