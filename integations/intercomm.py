@@ -34,8 +34,10 @@ def parse_notification_and_should_reply(notification):
                     return None, None
             else:
                 return None, None
-
-        msg = notification['data']['item']['conversation_parts']['conversation_parts'][0]['body']
+        if topic == SUBSCRIBED_REPLY_TOPIC:
+            msg = notification['data']['item']['conversation_parts']['conversation_parts'][0]['body']
+        else:
+            msg = notification['data']['item']['conversation_message']['body']
         if msg.startswith('<p>'):
             msg = msg[3:]
         if msg.endswith('</p>'):
