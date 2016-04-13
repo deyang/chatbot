@@ -109,8 +109,13 @@ class Bots(object):
             confidence = 1.0
         else:
             resp = message(wit_token, in_msg)
-            intent = resp['outcomes'][0]['intent']
-            confidence = resp['outcomes'][0]['confidence']
+            try:
+                intent = resp['outcomes'][0]['intent']
+                confidence = resp['outcomes'][0]['confidence']
+            except Exception as e:
+                print e
+                print resp
+
         print intent
         print confidence
         if confidence < 0.2:

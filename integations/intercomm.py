@@ -39,6 +39,8 @@ def parse_notification_and_should_reply(notification):
             msg = notification['data']['item']['conversation_parts']['conversation_parts'][0]['body']
         else:
             msg = notification['data']['item']['conversation_message']['body']
+        if msg is None or len(msg) == 0:
+            return None, None
         msg = html2text.html2text(msg).strip()
         return conversation_id, msg
     except Exception as e:
