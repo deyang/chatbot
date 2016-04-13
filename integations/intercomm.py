@@ -1,8 +1,11 @@
 from intercom import Intercom, Conversation
 import os
 import html2text
+from util.util import get_logger
 
 __author__ = 'Deyang'
+
+intercomm_logger = get_logger('intercomm')
 
 Intercom.app_id = os.environ.get('INTERCOM_APP_ID')
 Intercom.app_api_key = os.environ.get('INTERCOM_APP_API_KEY')
@@ -22,7 +25,7 @@ def reply_to_user(conversation_id, reply_msg):
 
 
 def parse_notification_and_should_reply(notification):
-    print "Raw notification: %s" % notification
+    intercomm_logger.debug("Raw notification: %s" % notification)
     try:
         conversation_id = notification['data']['item']['id']
         assignee = notification['data']['item']['assignee']
@@ -42,7 +45,8 @@ def parse_notification_and_should_reply(notification):
         if msg is None or len(msg) == 0:
             return None, None
         msg = html2text.html2text(msg).strip()
+        intercomm_logger.debug("Msg from notification" % msg)
         return conversation_id, msg
     except Exception as e:
-        print e
+        intercomm_logger.error("Parsing notification exception: %s" % e)
         return None, None

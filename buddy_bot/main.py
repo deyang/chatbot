@@ -3,9 +3,11 @@ from wit import message
 import re
 import os
 import json
+from util.util import get_logger
 
 __author__ = 'Deyang'
 
+bot_logger = get_logger('bot')
 wit_token = 'QUCDCX7MQX4FLYGONBEYLGDHKSTIUFTQ'
 
 
@@ -113,11 +115,11 @@ class Bots(object):
                 intent = resp['outcomes'][0]['intent']
                 confidence = resp['outcomes'][0]['confidence']
             except Exception as e:
-                print e
-                print resp
+                bot_logger.error("Wit exception: %s" % e)
+                bot_logger.error("Wit reps: %s" % resp)
 
-        print intent
-        print confidence
+        bot_logger.info("Predicting intent: %s" % intent)
+        bot_logger.info("Predicting confidence: %s" % confidence)
         if confidence < 0.2:
             return self.general_bot
         if intent == GREETING_INTENT:
@@ -136,7 +138,7 @@ class Bots(object):
     def chat(self, question):
         bot = self.select_bot(question)
         answer = bot.get_response(question)
-        print "in: <%s> and out: <%s>" % (question, answer)
+        bot_logger.info("In msg: <%s> and out msg: <%s>" % (question, answer))
         return answer
 
 if __name__ == '__main__':
