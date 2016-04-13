@@ -103,10 +103,15 @@ class Bots(object):
             adapter.read_only = True
 
     def select_bot(self, in_msg):
-        resp = message(wit_token, in_msg)
-        intent = resp['outcomes'][0]['intent']
+        # hack based on html. No need to query wit.ai
+        if 'mailto:' in in_msg:
+            intent = EMAIL_INTENT
+            confidence = 1.0
+        else:
+            resp = message(wit_token, in_msg)
+            intent = resp['outcomes'][0]['intent']
+            confidence = resp['outcomes'][0]['confidence']
         print intent
-        confidence = resp['outcomes'][0]['confidence']
         print confidence
         if confidence < 0.2:
             return self.general_bot
