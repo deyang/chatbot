@@ -2,6 +2,7 @@ __author__ = 'Deyang'
 from flask import render_template, request, make_response, redirect, session, flash, jsonify
 from web_app import app
 from buddy_bot.main import Bots
+from integations.intercomm import parse_notification_and_should_reply, reply_to_user
 
 bots = Bots()
 
@@ -20,7 +21,11 @@ def chat_api():
 @app.route('/intercomm_webhook', methods=['POST'])
 def intercomm_webhook():
     print "inside intercomm webhook"
-    print request.json
+    notification = request.json
+    conversation_id, in_msg = parse_notification_and_should_reply(notification)
+    if conversation_id:
+        out_msg = bots.chat(in_msg)
+        reply_to_user(conversation_id, out_msg)
     return make_response(jsonify(status=0), 201)
 
 
