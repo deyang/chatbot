@@ -20,6 +20,7 @@ def reply_to_user(conversation_id, reply_msg):
 
 
 def parse_notification_and_should_reply(notification):
+    print "Raw notification: %s" % notification
     try:
         conversation_id = notification['data']['item']['id']
         assignee = notification['data']['item']['assignee']
@@ -33,7 +34,7 @@ def parse_notification_and_should_reply(notification):
             else:
                 return None
 
-        msg = notification['data']['item']['conversation_message']['body']
+        msg = notification['data']['item']['conversation_parts']['conversation_parts'][0]['body']
         if msg.startswith('<p>'):
             msg = msg[3:]
         if msg.endswith('</p>'):
