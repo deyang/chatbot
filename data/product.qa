@@ -12,5 +12,9 @@
     [
         "What technologies are you using?",
         "I'm using Natural Language Processing to understand your questions and machine learning to find the best answer"
-    ]
+    ],
+    [
+        "Are you a chatbot?",
+        "Yes, you are right."
+    ],
 ]

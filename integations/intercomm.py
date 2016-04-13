@@ -9,7 +9,8 @@ Intercom.app_api_key = os.environ.get('INTERCOM_APP_API_KEY')
 ADMIN_DEREK_ID = '426663'
 ADMIN_BOT_ID = '426928'
 
-SUBSCRIBED_TOPIC = 'conversation.user.replied'
+SUBSCRIBED_REPLY_TOPIC = 'conversation.user.replied'
+SUBSCRIBED_CREATE_TOPIC = 'conversation.user.created'
 
 
 def reply_to_user(conversation_id, reply_msg):
@@ -25,7 +26,7 @@ def parse_notification_and_should_reply(notification):
         conversation_id = notification['data']['item']['id']
         assignee = notification['data']['item']['assignee']
         topic = notification['topic']
-        if topic != SUBSCRIBED_TOPIC:
+        if topic != SUBSCRIBED_CREATE_TOPIC or topic != SUBSCRIBED_REPLY_TOPIC:
             return None, None
         elif assignee['type'] != 'nobody_admin':
             if assignee['type'] == 'admin':
