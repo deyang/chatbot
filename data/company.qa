@@ -49,6 +49,10 @@
     ],
     [
         "What is Buddy bot?",
-        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
+        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication."
+    ],
+    [
+        "What is chatbot as a service?",
+        "You don't need to build the bot on your own. To get started, you just need to provide your existing customer support data as training input. Then the chatbot will be ready to support your customers. You can either access the chatbot via our APIs or you can just launch it on the platform where your customers are."
     ]
 ]
