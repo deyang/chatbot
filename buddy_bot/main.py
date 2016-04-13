@@ -52,6 +52,9 @@ class Bots(object):
         ask_price_data = load_data('price.qa')
         ask_product_data = load_data('product.qa')
         ask_story_data = load_data('story.qa')
+        ask_beta_data = load_data('beta.qa')
+        ask_integration_data = load_data('integration.qa')
+        ask_team_data = load_data('team.qa')
         additional_greeting = load_data('greeting.qa')
         try_data = load_data('try.qa')
 
@@ -72,7 +75,8 @@ class Bots(object):
         self.set_readonly(self.identity_bot)
 
         self.company_bot = self.get_new_bot('company_bot')
-        all_data = ask_company_data + ask_customer_data + ask_price_data + ask_doc_data + ask_story_data + ask_product_data
+        all_data = ask_company_data + ask_customer_data + ask_price_data + ask_doc_data + ask_story_data + \
+            ask_product_data + ask_beta_data + ask_integration_data + ask_team_data
         for conversation in all_data:
             self.company_bot.train(conversation)
         self.set_readonly(self.company_bot)

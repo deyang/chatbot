@@ -1,0 +1,12 @@
+# This file defines question and answer pairs about team.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "Who are your team members?",
+        "Our founding team has a strong background on AI technologies, both in academia (two of them are intent recognition experts from CMU robotics) and industry (an ex-Googler who led the voice search team)."
+    ],
+    [
+        "Who is the founder",
+        "Our founding team has a strong background on AI technologies, both in academia (two of them are intent recognition experts from CMU robotics) and industry (an ex-Googler who led the voice search team)."
+    ]
+]

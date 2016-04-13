@@ -1,0 +1,16 @@
+# This file defines question and answer pairs about integrations.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "What is the setup process?",
+        "The setup process is extremely simple. Just dump in whatever data you have and after a few hours of learning, you can access your chatbot via our APIs or we can set it up on the platform where your customers are."
+    ],
+    [
+        "What are the integrations supported?",
+        "We currently support integrations with Kik, Telegram, Twitter DM, InterComm, Smooch, Slack, HipChat, Twilio, Zendesk and Desk.com. Facebook messenger and many more are coming!"
+    ],
+    [
+        "What the fully list of platforms supported?",
+        "We currently support integrations with Kik, Telegram, Twitter DM, InterComm, Smooch, Slack, HipChat, Twilio, Zendesk and Desk.com. Facebook messenger and many more are coming!"
+    ]
+]

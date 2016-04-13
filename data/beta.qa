@@ -1,0 +1,16 @@
+# This file defines question and answer pairs about beta program.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "What is the beta program?",
+        "Our beta program is a very selective program where we will work closely with the companies in the program to build highly customized solutions. Please leave us an email and my team will reach out to you."
+    ],
+    [
+        "What is the closed beta?",
+        "Our beta program is a very selective program where we will work closely with the companies in the program to build highly customized solutions. Please leave us an email and my team will reach out to you."
+    ],
+    [
+        "How does the closed beta work?",
+        "We will choose a few companies that fit our mission for the beta and we will provide highly customized solutions to these companies. Please leave us an email and my team will reach out to you."
+    ]
+]
