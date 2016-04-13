@@ -26,7 +26,7 @@ def parse_notification_and_should_reply(notification):
         conversation_id = notification['data']['item']['id']
         assignee = notification['data']['item']['assignee']
         topic = notification['topic']
-        if topic != SUBSCRIBED_CREATE_TOPIC or topic != SUBSCRIBED_REPLY_TOPIC:
+        if topic != SUBSCRIBED_CREATE_TOPIC and topic != SUBSCRIBED_REPLY_TOPIC:
             return None, None
         elif assignee['type'] != 'nobody_admin':
             if assignee['type'] == 'admin':
