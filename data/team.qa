@@ -1,12 +1,76 @@
 # This file defines question and answer pairs about team.
-# All the questions in this file comprise the examples for one intent defined in Wit.
+# NOTE: Please group together questions with the same suggested answer by starting with a comment line
 [
+
+	# All questions to respond with "who are the founders and what's our background"
     [
         "Who are your team members?",
-        "Our founding team has a strong background on AI technologies, both in academia (two of them are intent recognition experts from CMU robotics) and industry (an ex-Googler who led the voice search team)."
+        "Buddy AI is founded by three bro-grammers who love technology, robots and not-having-to-work-for-big-company. Our founding team has a strong background in AI technologies, both in academia (CMU robotics experts) and industry (ex-Googler who led the voice search team)"
     ],
     [
-        "Who is the founder",
-        "Our founding team has a strong background on AI technologies, both in academia (two of them are intent recognition experts from CMU robotics) and industry (an ex-Googler who led the voice search team)."
+        "Who is the founder?",
+        "Buddy AI is founded by three bro-grammers who love technology, robots and not-having-to-work-for-big-company. Our founding team has a strong background in AI technologies, both in academia (CMU robotics experts) and industry (ex-Googler who led the voice search team)"
+    ],
+    [
+        "Who founded Buddy AI?",
+        "Buddy AI is founded by three bro-grammers who love technology, robots and not-having-to-work-for-big-company. Our founding team has a strong background in AI technologies, both in academia (CMU robotics experts) and industry (ex-Googler who led the voice search team)"
+    ], 
+    [
+        "Who founded your company?",
+        "Buddy AI is founded by three bro-grammers who love technology, robots and not-having-to-work-for-big-company. Our founding team has a strong background in AI technologies, both in academia (CMU robotics experts) and industry (ex-Googler who led the voice search team)"
+    ], 
+    [
+        "Who are the founders of Buddy AI?",
+        "Buddy AI is founded by three bro-grammers who love technology, robots and not-having-to-work-for-big-company. Our founding team has a strong background in AI technologies, both in academia (CMU robotics experts) and industry (ex-Googler who led the voice search team)"
+    ], 
+    [
+        "Who are the founders of your company?",
+        "Buddy AI is founded by three bro-grammers who love technology, robots and not-having-to-work-for-big-company. Our founding team has a strong background in AI technologies, both in academia (CMU robotics experts) and industry (ex-Googler who led the voice search team)"
+    ], 
+    [
+        "Tell me about the founders",
+        "Buddy AI is founded by three bro-grammers who love technology, robots and not-having-to-work-for-big-company. Our founding team has a strong background in AI technologies, both in academia (CMU robotics experts) and industry (ex-Googler who led the voice search team)"
+    ], 
+    [
+        "Tell me about the team",
+        "Buddy AI is founded by three bro-grammers who love technology, robots and not-having-to-work-for-big-company. Our founding team has a strong background in AI technologies, both in academia (CMU robotics experts) and industry (ex-Googler who led the voice search team)"
+    ], 
+    [
+        "Who created this?",
+        "Buddy AI is founded by three bro-grammers who love technology, robots and not-having-to-work-for-big-company. Our founding team has a strong background in AI technologies, both in academia (CMU robotics experts) and industry (ex-Googler who led the voice search team)"
+    ],
+
+    # Follow up questions on CMU robotics
+    [
+        "Tell me more about the founders from CMU",
+        "They used to work as research assitants in CMU Robotics Institute. Their research focus was on computer vision and human intent and activity recognition."
+    ],
+    [
+        "Tell me more about the robotics experts",
+        "They used to work as research assitants in CMU Robotics Institute. Their research focus was on computer vision and human intent and activity recognition."
+    ],
+
+    # Follow up questions on ex-Googler
+    [
+        "Tell me more about the founder from Google",
+        "He worked on a couple of high-impact projects in Google, including Google Glass and Android voice search. Sadly I'm not allowed to tell you anything more about his projects."
+    ],
+    [
+        "Tell me more about the ex-Googler",
+        "He worked on a couple of high-impact projects in Google, including Google Glass and Android voice search. Sadly I'm not allowed to tell you anything more about his projects."
+    ],
+
+    # Follow up questions on contact information
+    [
+        "What's the contact information?",
+        "Feel free to drop us an email at info@everbuddy.io (Reminder: we have stupid human answering questions over them)"
+    ], 
+    [
+        "How do I contact your company?",
+        "Feel free to drop us an email at info@everbuddy.io (Reminder: we have stupid human answering questions over them)"
+    ],
+    [
+        "I want to learn more about your company",
+        "Feel free to drop us an email at info@everbuddy.io (Reminder: we have stupid human answering questions over them)"
     ]
 ]

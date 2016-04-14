@@ -1,8 +1,8 @@
 # This file defines question and answer pairs about Buddy AI company.
-# Questions are about Buddy, Buddy AI.
-# For example, what is buddy.
-# All the questions in this file comprise the examples for one intent defined in Wit.
+# NOTE: Please group together questions with the same suggested answer by starting with a comment line
 [
+    
+    # All questions to respond with "who we are as a company"
     [
         "What is Buddy AI?",
         "Buddy AI is a startup company building AI-based solutions for modernized customer communication. It provides AI chatbot as a service for businesses of all sizes to respond to customer questions 24/7."
@@ -27,6 +27,93 @@
         "What does Buddy AI do?",
         "Buddy AI is a startup company building AI-based solutions for modernized customer communication. It provides AI chatbot as a service for businesses of all sizes to respond to customer questions 24/7."
     ],
+
+    # Follow up questions about "who we are as a company"
+    # When 
+    [
+        "When was Buddy AI founded?",
+        "Upon a dark time long long ago. Well, in the middle of 2015 to be precise."
+    ],
+    [
+        "When was your company founded?",
+        "Upon a dark time long long ago. Well, in the middle of 2015 to be precise."
+    ],
+    [
+        "When did you come up with the idea?",
+        "Upon a dark time long long ago. Well, in the middle of 2015 to be precise."
+    ],
+    # Reverse
+    [
+        "What happend in the middle of 2015?",
+        "Buddy AI was founded in the middel of 2015."
+    ], 
+    # Where
+    [
+        "Where is Buddy AI based?",
+        "Mountain View, California"
+    ], 
+    [
+        "Where is Buddy AI located?",
+        "Mountain View, California"
+    ], 
+    [
+        "Where is your company located?",
+        "Mountain View, California"
+    ], 
+    [
+        "Where is Buddy AI located?",
+        "Mountain View, California"
+    ],
+    [
+        "Where do you live?",
+        "Mountain View, California"
+    ],
+    # Reverse
+    [
+        "What's in Mountain View?",
+        "Buddy AI, the company who created me."
+    ], 
+    [
+        "Who are in Mountain View?",
+        "Buddy AI, the company who created me."
+    ], 
+    # Who (merged to team.qa)
+    # Why
+    [
+        "What is the mission of Buddy AI?",
+        "To evolve the way businesses communicate with customers, and of course to make the world a better place."
+    ], 
+    [
+        "What is the mission of your company?",
+        "To evolve the way businesses communicate with customers, and of course to make the world a better place."
+    ], 
+    [
+        "Why do you build this?",
+        "To evolve the way businesses communicate with customers, and of course to make the world a better place."
+    ], 
+    [
+        "Why do you build Buddy AI?",
+        "To evolve the way businesses communicate with customers, and of course to make the world a better place."
+    ], 
+
+    # Follow up on the name of the company
+    [
+        "Why do you call it Buddy AI?"
+        "Since my creators are not good at coming up with names."
+    ], 
+
+    # Follow up on chatbot as a service
+    [
+        "What is chatbot as a service?"
+        "It's just fancy name for we-build-chatbots-for-you-so-that-you-can-work-on-more-important-things. We use technology to enpower everyone to get involved in the conversational commerce, opening more opportunites for businesses to communicate with their customers."
+    ], 
+    [
+        "What do you mean by chatbot as a service?"
+        "It's just fancy name for we-build-chatbots-for-you-so-that-you-can-work-on-more-important-things. We use technology to enpower everyone to get involved in the conversational commerce, opening more opportunites for businesses to communicate with their customers."
+    ], 
+
+    # All questions to respond with "how does our solution work"
+    # 
     [
         "How does Buddy work?",
         "Buddy chatbot can learn from any format of customer support data (forum discussions, customer emails, dev docs, FAQs, internal knowledge base, etc). Then it can either answer customer questions automatically or assist a human agent by providing insights and suggested answers. The chatbot can be integrated with multiple messaging channels and CRM softwares."
@@ -48,11 +135,51 @@
         "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
     ],
     [
-        "What is Buddy bot?",
-        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication."
+        "What can Buddy AI do?",
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
     ],
     [
-        "What is chatbot as a service?",
-        "You don't need to build the bot on your own. To get started, you just need to provide your existing customer support data as training input. Then the chatbot will be ready to support your customers. You can either access the chatbot via our APIs or you can just launch it on the platform where your customers are."
-    ]
+        "What can you do?",
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
+    ],
+    [
+        "Tell me about the features",
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
+    ],
+    [
+        "Tell me about the solution",
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
+    ],
+    [
+        "Tell me about the product",
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
+    ],
+
+    # All questions to respond with "who I am as a bot"
+
+    [
+        "Who are you?",
+        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
+    ],
+    [
+        "Introduce yourself",
+        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
+    ],
+    [
+        "Who am I speaking with?",
+        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
+    ],
+    [
+        "Who is Buddy bot?",
+        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
+    ],
+    [
+        "Are you a real person?",
+        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
+    ],
+    [
+        "What is Buddy bot?",
+        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
+    ],
+
 ]
