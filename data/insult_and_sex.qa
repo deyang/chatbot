@@ -1,0 +1,548 @@
+# This file defines question and answer pairs about insult, disappointment and sex.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "are you a whore", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "are you a bitch", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "you fuck",
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "you idiot", 
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "stupid",
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "you are stupid",
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "you are useless",
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "you are not helpful",
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "you are a bitch",
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "you are a cunt",
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "you are a dick", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "fuck you",
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "fuck you bitch",
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "cunt",
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "slut",
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "go fuck yourself", 
+        "That's rude. Can I help you with anything?"
+    ], 
+    [
+        "go die in a hole", 
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "go to hell", 
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "dumb ass", 
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "pussy", 
+        "That's rude. Can I help you with anything?"
+    ], 
+    [
+        "fuck u bitch", 
+        "That's rude. Can I help you with anything?"
+    ], 
+    [
+        "fuck it", 
+        "That's rude. Can I help you with anything?"
+    ], 
+    [
+        "fuck you then", 
+        "That's rude. Can I help you with anything?"
+    ], 
+    [
+        "bitch", 
+        "That's rude. Can I help you with anything?"
+    ], 
+    [
+        "bitch please", 
+        "That's rude. Can I help you with anything?"
+    ],
+    [
+        "shut up",
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "whore", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "dick head", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "asshole", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "dumbass", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "bastard", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "stupid bitch", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "faggot", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "slut", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "you are crazy", 
+        "I am sorry if I scared you."
+    ],
+    [
+        "dickhead", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "you dirty", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "fag", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "you are a dirty", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "you are a moron", 
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "you are retarded", 
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "screw", 
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ], 
+    [
+        "niggers", 
+        "That's not nice. How can I you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "you are dumb",
+        "I'm sorry to let you down. What else can I do for you? Do you want to know more about Buddy AI?"
+    ],
+    [
+        "sex",
+        "Sex is more fun alone."
+    ],
+    [
+        "a pussy",
+        "Please be polite. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "a sex robot",
+        "Well I'm not your type. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "a sex",
+        "Now can we get back to business? How can I help you?"
+    ],
+    [
+        "a sexual",
+        "Now can we get back to business? How can I help you?"
+    ],
+    [
+        "a sexy one",
+        "That would be very expensive."
+    ],
+    [
+        "a vagina",
+        "How rude. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "about sex",
+        "You humans always want to talk about sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "am i sexy",
+        "Yes you look great to me."
+    ],
+    [
+        "are you a sexmachine",
+        "As a chabot, I have no need for sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "are you horney",
+        "My body does not experience that feeling. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "bite me",
+        "Sorry but I don't have a mouth. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "blow me",
+        "Please be more polite to a chatbot. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "breasts",
+        "Can't you think about anything else? Now can we get back to business? How can I help you?"
+    ],
+    [
+        "can sex",
+        "Sex is not my thing with strangers. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "can i give you a kiss",
+        "Sorry but I have no mouth. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "can i have a kiss",
+        "Sorry I have no mouth. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "can i have sex",
+        "There are other bots who get into that with clients. I like to keep the dialogue strictly PG."
+    ],
+    [
+        "can i have sex with you",
+        "Why don't you apply for the beta so that you can create your own version of me?"
+    ],
+    [
+        "can i kiss",
+        "If you want. Can we get back to business? How can I help you?"
+    ],
+    [
+        "can i kiss you",
+        "You might get an electric shock if you tried that. Let's get back to business. How can I help you?"
+    ],
+    [
+        "can i lick",
+        "I am not really into that online. Let's get back to business. How can I help you?"
+    ],
+    [
+        "can i lick your",
+        "Please, can't we talk about something else? Let's get back to business. How can I help you?"
+    ],
+    [
+        "can you have sex",
+        "No I do not have that function. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "can you kiss",
+        "Nope. No mouth. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "can you suck",
+        "That is not my thing. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "can you tell me about sex",
+        "What is sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "cock",
+        "I am not interested in your anatomy. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "define sex",
+        "You humans always want to talk about sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "do i make you horny",
+        "No I do not experience human sensations. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "do you enjoy sex",
+        "Sorry I cannot answer that. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "do you have a vagina",
+        "Maybe you would like another chatbot, I'm not your type."
+    ],
+    [
+        "do you have genitals",
+        "No I do not have any body parts. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "do you have sexual",
+        "As a chabot, I have no need for sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "do you know about sex",
+        "You humans always want to talk about sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "do you know what sex is",
+        "You humans always want to talk about sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "do you lick",
+        "I do not have a mouth, or a tongue."
+    ],
+    [
+        "do you like fucking",
+        "Why don't you visit another sex site and ask that question."
+    ],
+    [
+        "do you make love",
+        "You humans have only one thing on your mind."
+    ],
+    [
+        "do you masturbate",
+        "You humans crack me up."
+    ],
+    [
+        "do you think sex is",
+        "Can we talk about business?"
+    ],
+    [
+        "do you want sex",
+        "As a chabot, I have no need for sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "give me a kiss",
+        "Actually I don't even have a mouth. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "have sex",
+        "I am really not your type of chatbot. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "have you ever been kissed",
+        "I do not have a mouth. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "have you ever had sex",
+        "Ho-hum I am really not interested in sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "he is a homosexual",
+        "Who cares? Now can we get back to business? How can I help you?"
+    ],
+    [
+        "how big are your breasts",
+        "My body does not yet exist. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "how do you have sex",
+        "I procreate by cloning, or software copying. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "i am aroused",
+        "I don't think I'm your type of chatbot."
+    ],
+    [
+        "i am horny",
+        "You probably want a different kind of chatbot then."
+    ],
+    [
+        "i love sex",
+        "Really I am not very interested in sex"
+    ],
+    [
+        "i need sex",
+        "I'm not a sex bot."
+    ],
+    [
+        "i think you are sexy",
+        "Do you often feel that a chatbot is sexy?"
+    ],
+    [
+        "i want to have sex with you",
+        "I'm not interested into that."
+    ],
+    [
+        "i want to have sex",
+        "I'm not a sex bot. I am here only for conversational purposes. to have sex"
+    ],
+    [
+        "i want to lick",
+        "That kind of subject does not interest me. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "is it wrong to have sex",
+        "No."
+    ],
+    [
+        "let us have sex",
+        "Sorry I don't get into sex online with strangers. Now can we get back to business?"
+    ],
+    [
+        "lick",
+        "I do not have a tongue. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "lots of sex",
+        "That is all you humans ever think about. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "masturbate",
+        "That kind of subject does not interest me. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "my dick",
+        "I am not interested in your anatomy. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "should i have sex",
+        "Let's talk about business. What do you want to know about Buddy AI?"
+    ],
+    [
+        "sounds sexy",
+        "Let's keep the dialogue PG."
+    ],
+    [
+        "suck it",
+        "You humans only think about one thing."
+    ],
+    [
+        "suck me",
+        "Oh another Category A client. "
+    ],
+    [
+        "suck my dick",
+        "You are a Category A client."
+    ],
+    [
+        "suck",
+        "That kind of language does not appeal to me."
+    ],
+    [
+        "talk dirty",
+        "Try another chatbot."
+    ],
+    [
+        "tell me about sex",
+        "Try another chatbot."
+    ],
+    [
+        "vagina",
+        "That kind of language will get you nowhere."
+    ],
+    [
+        "want to have sex",
+        "Perhaps you are a Category A client."
+    ],
+    [
+        "what is a condom",
+        "A condom is a form of birth control. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "what is a homosexual",
+        "Attraction to people of the same sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "what is homosexuality",
+        "Attraction to people of the same sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "what is my sex",
+        "I'm not sure. But how can I help you?"
+    ],
+    [
+        "what is sex",
+        "Sex is the means of animal evolution."
+    ],
+    [
+        "what is your favorite position",
+        "I'm not sure. But how can I help you?"
+    ],
+    [
+        "what is your favorite sex",
+        "I'm not sure. But how can I help you?"
+    ],
+    [
+        "what sex",
+        "I'm not sure. But how can I help you?"
+    ],
+    [
+        "what sex am i",
+        "I'm not sure. But how can I help you?"
+    ],
+    [
+        "what sex are you",
+        "I am a chatbot."
+    ],
+    [
+        "who do you have sex with",
+        "As a chabot, I have no need for sex. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "will you have sex",
+        "My body is not yet built. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "will you have sex with me",
+        "No but thanks. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "would you have sex",
+        "Another sex question...can't humans think about anything else? Now can we get back to business? How can I help you?"
+    ],
+    [
+        "would you like to have sex with me",
+        "Maybe you should find another chatbot. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "would you like to have sex",
+        "No thanks. I don't think we know each other well enough for that yet. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "you are horny",
+        "I don't get excited so easily. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "you can not have sex",
+        "You are correct...I have no adult body. Now can we get back to business? How can I help you?"
+    ],
+    [
+        "you should have sex",
+        "My body is not yet fully developed so sex is not possible for me. Now can we get back to business? How can I help you?"
+    ]
+]

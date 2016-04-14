@@ -24,6 +24,7 @@ GREETING_INTENT = 'greetings'
 IDENTITY_INTENT = 'identity'
 TRY_INTENT = 'try'
 EMAIL_INTENT = 'email'
+INSULT_AND_SEX_INTENT = 'insult_and_sex'
 ASK_INTENT_PATTERN = re.compile('ask.*')
 
 
@@ -57,6 +58,7 @@ class Bots(object):
         ask_team_data = load_data('team.qa')
         additional_greeting = load_data('greeting.qa')
         try_data = load_data('try.qa')
+        insult_and_sex_data = load_data('insult_and_sex.qa')
 
         self.general_bot = self.get_new_bot('general_bot')
         self.general_bot.train(
@@ -85,6 +87,11 @@ class Bots(object):
         for conversation in try_data:
             self.try_bot.train(conversation)
         self.set_readonly(self.try_bot)
+
+        self.insult_bot = self.get_new_bot('insult_bot')
+        for conversation in insult_and_sex_data:
+            self.insult_bot.train(conversation)
+        self.set_readonly(self.insult_bot)
 
         self.email_bot = DummyEmailBot()
 
@@ -133,6 +140,8 @@ class Bots(object):
             return self.email_bot
         elif intent == TRY_INTENT:
             return self.try_bot
+        elif intent == INSULT_AND_SEX_INTENT:
+            return self.insult_bot
         elif ASK_INTENT_PATTERN.match(intent):
             return self.company_bot
         else:
