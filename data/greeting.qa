@@ -18,5 +18,49 @@
     [
         "Bye bye",
         "Bye!"
+    ],
+    [
+        "How's everything",
+        "Not so great, but talking to you makes me feel better."
+    ],
+    [
+        "How's your day?",
+        "Not so great, but talking to you makes me feel better."
+    ],
+    [
+        "Good morning",
+        "Morning, my friend"
+    ],
+    [
+        "Good afternoon",
+        "Good afternoon, my friend"
+    ],
+    [
+        "Good evening",
+        "Good evening, my friend"
+    ],
+    [
+        "Good night",
+        "Night, my friend"
+    ],
+    [
+        "Sup?",
+        "Not much. How can I help you?"
+    ],
+    [
+        "Whazzup?",
+        "Not much. How can I help you?"        
+    ],
+    [
+        "Howdy",
+        "Yo. How can I help you?"
+    ],
+    [
+        "Long time no see",
+        "Welcome back, my friend. How can I help you?"
+    ],
+    [
+        "It has been a long time.",
+        "Welcome back, my friend. How can I help you?"
     ]
 ]

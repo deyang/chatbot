@@ -20,5 +20,41 @@
     [
         "What services do you provide?",
         "We provide chatbot as a service, meaning you can access the chatbot via our APIs or you can just launch it on the platform where your customers are. Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use."
+    ],
+    [
+        "How does it work?",
+        "We provide chatbot as a service, meaning you can access the chatbot via our APIs or you can just launch it on the platform where your customers are. Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use."
+    ],
+    [
+        "How to train a chatbot",
+        "Buddy AI bot can take any ubiquitous data as input for training (forum discussions, customer emails, dev docs, FAQs, internal knowledge base, etc). Once trained, the bot can provide fully-automated or suggested answers to customer questions. Finally, the analytics and insights about customer questions will help you detect which chain is broken in your customer flow."
+    ],
+    [
+        "What data do you support?",
+        "Buddy AI bot can take any ubiquitous data as input for training (forum discussions, customer emails, dev docs, FAQs, internal knowledge base, etc). Once trained, the bot can provide fully-automated or suggested answers to customer questions. Finally, the analytics and insights about customer questions will help you detect which chain is broken in your customer flow."
+    ],
+    [
+        "How does it work with customer service?",
+        "Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use. It can be used as a fully automated chatbot, and can also be switched to assist your customer representatives at anytime. The analytics and insights about customer questions will help you detect which chain is broken in your customer flow."
+    ],
+    [
+        "How does it work with existing platform?",
+        "Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use. It can be used as a fully automated chatbot, and can also be switched to assist your customer representatives at anytime. The analytics and insights about customer questions will help you detect which chain is broken in your customer flow."
+    ],
+    [
+        "How does it work with customer team?",
+        "Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use. It can be used as a fully automated chatbot, and can also be switched to assist your customer representatives at anytime. The analytics and insights about customer questions will help you detect which chain is broken in your customer flow."
+    ],
+    [
+        "How to integrate?",
+        "Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use. It can be used as a fully automated chatbot, and can also be switched to assist your customer representatives at anytime. The analytics and insights about customer questions will help you detect which chain is broken in your customer flow."
+    ],
+    [
+        "How does it help business?",
+        "We provide chatbot as a service, meaning you can access the chatbot via our APIs or you can just launch it on the platform where your customers are. Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use."
+    ],
+    [
+        "What problem are you solving?",
+        "No one likes a long line, so are your customers. Want more happy customers, with less human cost? Buddy provides an AI based chatbot that enables 24/7 customer support via a machine+human hybrid approach."
     ]
 ]
