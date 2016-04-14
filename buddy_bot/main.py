@@ -33,7 +33,7 @@ def load_data(file_name):
     filepath = os.path.join(dirpath, '..', 'data', file_name)
     fd = open(filepath, 'r')
     lines = fd.readlines()
-    skipped_lines = [l for l in lines if not l.startswith('#')]
+    skipped_lines = [l for l in lines if not l.strip().startswith('#')]
     content = ''.join(skipped_lines)
     return json.loads(content)
 
