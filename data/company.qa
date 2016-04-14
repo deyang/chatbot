@@ -48,8 +48,8 @@
     ],
     # Reverse
     [
-        "What happend in the middle of 2015?",
-        "Buddy AI was founded in the middel of 2015."
+        "What happened in the middle of 2015?",
+        "Buddy AI was founded in the middle of 2015."
     ], 
     # Where
     [
@@ -66,10 +66,6 @@
     ], 
     [
         "Where is Buddy AI located?",
-        "Mountain View, California"
-    ],
-    [
-        "Where do you live?",
         "Mountain View, California"
     ],
     # Reverse
@@ -104,18 +100,10 @@
         "Why do you call it Buddy AI?",
         "Since my creators are not good at coming up with names."
     ],
-    # Follow up on chatbot as a service
-    [
-        "What is chatbot as a service?",
-        "It's just fancy name for we-build-chatbots-for-you-so-that-you-can-work-on-more-important-things. We use technology to enpower everyone to get involved in the conversational commerce, opening more opportunites for businesses to communicate with their customers."
-    ], 
-    [
-        "What do you mean by chatbot as a service?",
-        "It's just fancy name for we-build-chatbots-for-you-so-that-you-can-work-on-more-important-things. We use technology to enpower everyone to get involved in the conversational commerce, opening more opportunites for businesses to communicate with their customers."
-    ], 
+    # Follow up on chatbot as a service defined in product.qa
 
     # All questions to respond with "how does our solution work"
-    # 
+    # some questions/answers are defined in the product.qa
     [
         "How does Buddy work?",
         "Buddy chatbot can learn from any format of customer support data (forum discussions, customer emails, dev docs, FAQs, internal knowledge base, etc). Then it can either answer customer questions automatically or assist a human agent by providing insights and suggested answers. The chatbot can be integrated with multiple messaging channels and CRM softwares."
@@ -140,48 +128,9 @@
         "What can Buddy AI do?",
         "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
     ],
-    [
-        "What can you do?",
-        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
-    ],
-    [
-        "Tell me about the features",
-        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
-    ],
-    [
-        "Tell me about the solution",
-        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
-    ],
-    [
-        "Tell me about the product",
-        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
-    ],
-
-    # All questions to respond with "who I am as a bot"
-
-    [
-        "Who are you?",
-        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
-    ],
-    [
-        "Introduce yourself",
-        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
-    ],
-    [
-        "Who am I speaking with?",
-        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
-    ],
-    [
-        "Who is Buddy bot?",
-        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
-    ],
-    [
-        "Are you a real person?",
-        "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
-    ],
+    # Most questions to respond with "who I am as a bot" are defined in identity.qa
     [
         "What is Buddy bot?",
         "I'm the Buddy bot. An AI-powered chatbot developed by Buddy AI for the new era of customer communication. "
     ]
-
 ]

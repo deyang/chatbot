@@ -24,5 +24,15 @@
     [
         "How to get started?",
         "I'm glad that you are interested. Leave us an email and our team members will reach out to you. Currently we work closely with a few companies to provide highly customized solution."
+    ],
+    # Follow up questions on contact information
+    # questions that show a strong intent of action are moved to try.qa
+    [
+        "How do I contact your company?",
+        "Feel free to drop us an email at info@everbuddy.io (Reminder: we have stupid human answering questions over there)"
+    ],
+    [
+        "I want to learn more about your company",
+        "Feel free to drop us an email at info@everbuddy.io (Reminder: we have stupid human answering questions over there)"
     ]
 ]

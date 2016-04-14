@@ -12,5 +12,9 @@
     [
         "What the fully list of platforms supported?",
         "We currently support integrations with Kik, Telegram, Twitter DM, InterComm, Smooch, Slack, HipChat, Twilio, Zendesk and Desk.com. Facebook messenger and many more are coming!"
+    ],
+    [
+        "How to integrate?",
+        "Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use. It can be used as a fully automated chatbot, and can also be used to assist your customer representatives at anytime. The analytics and insights about customer questions will help you detect which chain is broken in your customer flow."
     ]
 ]

@@ -1,6 +1,8 @@
 # This file defines question and answer pairs about product and technologies.
 # All the questions in this file comprise the examples for one intent defined in Wit.
+
 [
+    # questions about integration were separated to a single file: integration.qa
     [
         "What are the technologies used here?",
         "I don't know exactly how my creators built me, but I remember hearing a lot about NLP (Natural Language Processing) and machine learning."
@@ -46,15 +48,32 @@
         "Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use. It can be used as a fully automated chatbot, and can also be switched to assist your customer representatives at anytime. The analytics and insights about customer questions will help you detect which chain is broken in your customer flow."
     ],
     [
-        "How to integrate?",
-        "Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use. It can be used as a fully automated chatbot, and can also be switched to assist your customer representatives at anytime. The analytics and insights about customer questions will help you detect which chain is broken in your customer flow."
-    ],
-    [
         "How does it help business?",
         "We provide chatbot as a service, meaning you can access the chatbot via our APIs or you can just launch it on the platform where your customers are. Our dev team will work with you to feed your data as training input and integrate the chatbot with any CRM software you use."
     ],
     [
         "What problem are you solving?",
         "No one likes a long line, so are your customers. Want more happy customers, with less human cost? Buddy provides an AI based chatbot that enables 24/7 customer support via a machine+human hybrid approach."
+    ],
+    [
+        "Tell me about the features",
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
+    ],
+    [
+        "Tell me about the solution",
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
+    ],
+    [
+        "Tell me about the product",
+        "Buddy chatbot can provide 24/7 responsive and smart customer support. It can provide instant answer to customer questions, reduce response time and increase the number of concurrent users your system can handle. It enables you to support more happy customers with fewer human agents, if not zero."
+    ],
+    # Follow up on chatbot as a service
+    [
+        "What is chatbot as a service?",
+        "It's just fancy name for we-build-chatbots-for-you-so-that-you-can-work-on-more-important-things. We use technology to enpower everyone to get involved in the conversational commerce, opening more opportunites for businesses to communicate with their customers."
+    ],
+    [
+        "What do you mean by chatbot as a service?",
+        "It's just fancy name for we-build-chatbots-for-you-so-that-you-can-work-on-more-important-things. We use technology to enpower everyone to get involved in the conversational commerce, opening more opportunites for businesses to communicate with their customers."
     ]
 ]

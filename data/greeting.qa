@@ -62,5 +62,21 @@
     [
         "It has been a long time.",
         "Welcome back, my friend. How can I help you?"
+    ],
+    [
+        "I'm good",
+        "Great. Now how can I help you?"
+    ],
+    [
+        "I'm fine",
+        "Great. Now how can I help you?"
+    ],
+    [
+        "I'm doing well",
+        "Great. Now how can I help you?"
+    ],
+    [
+        "Okay",
+        "Alright then. Now how can I help you?"
     ]
 ]
