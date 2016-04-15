@@ -29,6 +29,7 @@ ASK_PRICE_INTENT = 'ask_price'
 ASK_CUSTOMER_INTENT = 'ask_customer'
 ASK_TEAM_INTENT = 'ask_team'
 ASK_LAUNCH_INTENT = 'ask_launch'
+ASK_BETA_INTENT = 'ask_beta'
 ASK_INTENT_PATTERN = re.compile('ask.*')
 
 
@@ -98,10 +99,11 @@ class Bots(object):
         self._install_bot(ASK_CUSTOMER_INTENT, ask_customer_data)
         self._install_bot(ASK_TEAM_INTENT, ask_team_data)
         self._install_bot(ASK_LAUNCH_INTENT, ask_launch_data)
+        self._install_bot(ASK_BETA_INTENT, ask_beta_data)
 
         self.company_bot = self.get_new_bot('company_bot')
         all_data = ask_company_data + ask_doc_data + ask_story_data + \
-            ask_product_data + ask_beta_data + ask_integration_data
+            ask_product_data + ask_integration_data
         for conversation in all_data:
             self.company_bot.train(conversation)
         self.set_readonly(self.company_bot)
