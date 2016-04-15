@@ -46,6 +46,12 @@ class DummyEmailBot(object):
         return "Thanks! Please sit tight. I've notified a member of the team"
 
 
+class DummyFallbackBot(object):
+    def get_response(self, input):
+        return "I'm sorry but I don't understand what you meant by that. Right now I can only answer questions about Buddy AI. Is this somthing that I can help with?"
+
+
+
 class Bots(object):
 
     def _install_bot(self, intent, data):
@@ -99,6 +105,7 @@ class Bots(object):
         self.set_readonly(self.company_bot)
 
         self.email_bot = DummyEmailBot()
+        self.fall_back_bot = DummyFallbackBot()
 
     @staticmethod
     def get_new_bot(name):
@@ -135,8 +142,8 @@ class Bots(object):
                 bot_logger.error("Wit exception: %s" % e)
                 bot_logger.error("Wit reps: %s" % resp)
 
-        if confidence < 0.3:
-            return self.general_bot
+        if confidence < 0.5:
+            return self.fall_back_bot
         if intent in self.intent_to_bot_dict:
             return self.intent_to_bot_dict[intent]
 
