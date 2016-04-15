@@ -28,6 +28,7 @@ INSULT_AND_SEX_INTENT = 'insult_and_sex'
 ASK_PRICE_INTENT = 'ask_price'
 ASK_CUSTOMER_INTENT = 'ask_customer'
 ASK_TEAM_INTENT = 'ask_team'
+ASK_LAUNCH_INTENT = 'ask_launch'
 ASK_INTENT_PATTERN = re.compile('ask.*')
 
 
@@ -49,7 +50,6 @@ class DummyEmailBot(object):
 class DummyFallbackBot(object):
     def get_response(self, input):
         return "I'm sorry but I don't understand what you meant by that. Right now I can only answer questions about Buddy AI. Is this somthing that I can help with?"
-
 
 
 class Bots(object):
@@ -74,6 +74,7 @@ class Bots(object):
         ask_beta_data = load_data('beta.qa')
         ask_integration_data = load_data('integration.qa')
         ask_team_data = load_data('team.qa')
+        ask_launch_data = load_data('launch.qa')
         additional_greeting = load_data('greeting.qa')
         try_data = load_data('try.qa')
         insult_and_sex_data = load_data('insult_and_sex.qa')
@@ -96,6 +97,7 @@ class Bots(object):
         self._install_bot(ASK_PRICE_INTENT, ask_price_data)
         self._install_bot(ASK_CUSTOMER_INTENT, ask_customer_data)
         self._install_bot(ASK_TEAM_INTENT, ask_team_data)
+        self._install_bot(ASK_LAUNCH_INTENT, ask_launch_data)
 
         self.company_bot = self.get_new_bot('company_bot')
         all_data = ask_company_data + ask_doc_data + ask_story_data + \

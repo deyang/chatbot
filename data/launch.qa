@@ -1,0 +1,68 @@
+# This file defines question and answer pairs about launch time.
+# All the questions in this file comprise the examples for one intent defined in Wit.
+[
+    [
+        "When are you going to launch?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When are you launching?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "What is the timeline of a launch?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "What is the schedule of a launch?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "What is your schedule of launch?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "What is the launch date?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When is the launch date?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When is the launch day?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "What is the day of launch?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When will this be ready for launch?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When can I try it?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When can I use it?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When will you be public?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When will this be public?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When are you going to be public?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ],
+    [
+        "When is this going to be the public?",
+        "Our timeline for a public beta launch would be around early Q3 this year. Before that, we will work closely with a few companies for our closed beta program. Leave us an email and my team will get in touch with you shortly."
+    ]
+]
