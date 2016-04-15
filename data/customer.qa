@@ -3,10 +3,14 @@
 [
     [
         "Who are your customers?",
-        "We are opening a beta program at present and we work very closely with our beta customers.  I can't disclose their names for now, but if you could give me some more details I'd be happy to get some further information for you."
+        "We are opening a beta program at present and we work very closely with our beta customers. I can't disclose their names for now. Drop me an e-mail at info@everbuddy.io and I'd be happy to get some further information for you."
     ],
     [
         "Who is using Buddy now?",
-        "We are opening a beta program at present and we work very closely with our beta customers.  I can't disclose their names for now, but if you could give me some more details I'd be happy to get some further information for you."
+        "We are opening a beta program at present and we work very closely with our beta customers. I can't disclose their names for now. Drop me an e-mail at info@everbuddy.io and I'd be happy to get some further information for you."
+    ],
+    [
+        "Who is using your service?",
+        "We are opening a beta program at present and we work very closely with our beta customers. I can't disclose their names for now. Drop me an e-mail at info@everbuddy.io and I'd be happy to get some further information for you."
     ]
 ]
