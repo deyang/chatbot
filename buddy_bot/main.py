@@ -25,6 +25,9 @@ IDENTITY_INTENT = 'identity'
 TRY_INTENT = 'try'
 EMAIL_INTENT = 'email'
 INSULT_AND_SEX_INTENT = 'insult_and_sex'
+ASK_PRICE_INTENT = 'ask_price'
+ASK_CUSTOMER_INTENT = 'ask_customer'
+ASK_TEAM_INTENT = 'ask_team'
 ASK_INTENT_PATTERN = re.compile('ask.*')
 
 
@@ -44,7 +47,16 @@ class DummyEmailBot(object):
 
 
 class Bots(object):
+
+    def _install_bot(self, intent, data):
+        new_bot = self.get_new_bot("%s_bot" % intent)
+        for conversation in data:
+            new_bot.train(conversation)
+        self.set_readonly(new_bot)
+        self.intent_to_bot_dict[intent] = new_bot
+
     def __init__(self):
+        self.intent_to_bot_dict = dict()
         # load data
         identity_data = load_data('identity.qa')
         ask_company_data = load_data('company.qa')
@@ -65,33 +77,26 @@ class Bots(object):
             "chatterbot.corpus.english",
         )
     
-        self.greeting_bot = self.get_new_bot('greeting_bot')
-        self.greeting_bot.train("chatterbot.corpus.english.greetings")
+        greeting_bot = self.get_new_bot('greeting_bot')
+        greeting_bot.train("chatterbot.corpus.english.greetings")
         for conversation in additional_greeting:
-            self.greeting_bot.train(conversation)
-        self.set_readonly(self.greeting_bot)
+            greeting_bot.train(conversation)
+        self.set_readonly(greeting_bot)
+        self.intent_to_bot_dict[GREETING_INTENT] = greeting_bot
 
-        self.identity_bot = self.get_new_bot('identity_bot')
-        for conversation in identity_data:
-            self.identity_bot.train(conversation)
-        self.set_readonly(self.identity_bot)
+        self._install_bot(IDENTITY_INTENT, identity_data)
+        self._install_bot(TRY_INTENT, try_data)
+        self._install_bot(INSULT_AND_SEX_INTENT, insult_and_sex_data)
+        self._install_bot(ASK_PRICE_INTENT, ask_price_data)
+        self._install_bot(ASK_CUSTOMER_INTENT, ask_customer_data)
+        self._install_bot(ASK_TEAM_INTENT, ask_team_data)
 
         self.company_bot = self.get_new_bot('company_bot')
-        all_data = ask_company_data + ask_customer_data + ask_price_data + ask_doc_data + ask_story_data + \
-            ask_product_data + ask_beta_data + ask_integration_data + ask_team_data
+        all_data = ask_company_data + ask_doc_data + ask_story_data + \
+            ask_product_data + ask_beta_data + ask_integration_data
         for conversation in all_data:
             self.company_bot.train(conversation)
         self.set_readonly(self.company_bot)
-
-        self.try_bot = self.get_new_bot('try_bot')
-        for conversation in try_data:
-            self.try_bot.train(conversation)
-        self.set_readonly(self.try_bot)
-
-        self.insult_bot = self.get_new_bot('insult_bot')
-        for conversation in insult_and_sex_data:
-            self.insult_bot.train(conversation)
-        self.set_readonly(self.insult_bot)
 
         self.email_bot = DummyEmailBot()
 
@@ -114,7 +119,7 @@ class Bots(object):
         for adapter in bot.storage_adapters:
             adapter.read_only = True
 
-    def select_bot(self, in_msg):
+    def _select_bot(self, in_msg):
         # hack based on html. No need to query wit.ai
         if 'mailto:' in in_msg:
             intent = EMAIL_INTENT
@@ -124,31 +129,24 @@ class Bots(object):
             try:
                 intent = resp['outcomes'][0]['intent']
                 confidence = resp['outcomes'][0]['confidence']
+                bot_logger.info("Predicting intent: %s" % intent)
+                bot_logger.info("Predicting confidence: %s" % confidence)
             except Exception as e:
                 bot_logger.error("Wit exception: %s" % e)
                 bot_logger.error("Wit reps: %s" % resp)
 
-        bot_logger.info("Predicting intent: %s" % intent)
-        bot_logger.info("Predicting confidence: %s" % confidence)
-        if confidence < 0.25:
+        if confidence < 0.3:
             return self.general_bot
-        if intent == GREETING_INTENT:
-            return self.greeting_bot
-        elif intent == IDENTITY_INTENT:
-            return self.identity_bot
-        elif intent == EMAIL_INTENT:
-            return self.email_bot
-        elif intent == TRY_INTENT:
-            return self.try_bot
-        elif intent == INSULT_AND_SEX_INTENT:
-            return self.insult_bot
-        elif ASK_INTENT_PATTERN.match(intent):
+        if intent in self.intent_to_bot_dict:
+            return self.intent_to_bot_dict[intent]
+
+        if ASK_INTENT_PATTERN.match(intent):
             return self.company_bot
         else:
             return self.general_bot
 
     def chat(self, question):
-        bot = self.select_bot(question)
+        bot = self._select_bot(question)
         answer = bot.get_response(question)
         bot_logger.info("In msg: <%s> and out msg: <%s>" % (question, answer))
         return answer
