@@ -30,6 +30,8 @@ ASK_CUSTOMER_INTENT = 'ask_customer'
 ASK_TEAM_INTENT = 'ask_team'
 ASK_LAUNCH_INTENT = 'ask_launch'
 ASK_BETA_INTENT = 'ask_beta'
+ASK_WORK_CASE_INTENT = 'ask_work_case'
+ASK_INTEGRATION_INTENT = 'ask_integration'
 ASK_INTENT_PATTERN = re.compile('ask.*')
 
 
@@ -51,6 +53,25 @@ class DummyEmailBot(object):
 class DummyFallbackBot(object):
     def get_response(self, input):
         return "I'm sorry but I don't understand what you meant by that. Right now I can only answer questions about Buddy AI. Is this somthing that I can help with?"
+
+
+class EntityBot(object):
+    def get_response(self, entity):
+        raise NotImplementedError
+
+
+class WorkCaseBot(EntityBot):
+    def get_response(self, business):
+        return "Yes, buddy works perfectly for %s. There is a template bot for each vertical, trained with the related domain knowledge." \
+               " After training using your specific customer support data, the bot can be an expert of your business." \
+               " I'm very confident of my peer bots!" % business
+
+
+class IntegratePlatformBot(EntityBot):
+    def get_response(self, platform):
+        return "Yes, buddy bot can be integrated with %s. " \
+               "We currently support integrations with Kik, Telegram, Twitter DM, " \
+               "InterComm, Smooch, Slack, HipChat, Twilio, Zendesk and Desk.com. Facebook messenger and many more are coming!" % platform
 
 
 class Bots(object):
@@ -110,6 +131,8 @@ class Bots(object):
 
         self.email_bot = DummyEmailBot()
         self.fall_back_bot = DummyFallbackBot()
+        self.work_case_bot = WorkCaseBot()
+        self.integrate_platform_bot = IntegratePlatformBot()
 
     @staticmethod
     def get_new_bot(name):
@@ -130,7 +153,8 @@ class Bots(object):
         for adapter in bot.storage_adapters:
             adapter.read_only = True
 
-    def _select_bot(self, in_msg):
+    def chat(self, in_msg):
+        entity = None
         # hack based on html. No need to query wit.ai
         if 'mailto:' in in_msg:
             intent = EMAIL_INTENT
@@ -147,19 +171,26 @@ class Bots(object):
                 bot_logger.error("Wit reps: %s" % resp)
 
         if confidence < 0.5:
-            return self.fall_back_bot
-        if intent in self.intent_to_bot_dict:
-            return self.intent_to_bot_dict[intent]
-
-        if ASK_INTENT_PATTERN.match(intent):
-            return self.company_bot
+            bot = self.fall_back_bot
+        # handle entity intent first
+        elif intent == ASK_WORK_CASE_INTENT and len(resp['outcomes'][0]['entities']) > 0:
+            entity = resp['outcomes'][0]['entities']['business'][0]['value']
+            bot = self.work_case_bot
+        elif intent == ASK_INTEGRATION_INTENT and len(resp['outcomes'][0]['entities']) > 0:
+            entity = resp['outcomes'][0]['entities']['platform'][0]['value']
+            bot = self.integrate_platform_bot
+        elif intent in self.intent_to_bot_dict:
+            bot = self.intent_to_bot_dict[intent]
+        elif ASK_INTENT_PATTERN.match(intent):
+            bot = self.company_bot
         else:
-            return self.general_bot
+            bot = self.general_bot
 
-    def chat(self, question):
-        bot = self._select_bot(question)
-        answer = bot.get_response(question)
-        bot_logger.info("In msg: <%s> and out msg: <%s>" % (question, answer))
+        if entity:
+            answer = bot.get_response(entity)
+        else:
+            answer = bot.get_response(in_msg)
+        bot_logger.info("In msg: <%s> and out msg: <%s>" % (in_msg, answer))
         return answer
 
 if __name__ == '__main__':
