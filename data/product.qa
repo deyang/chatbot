@@ -75,5 +75,10 @@
     [
         "What do you mean by chatbot as a service?",
         "It's just fancy name for we-build-chatbots-for-you-so-that-you-can-work-on-more-important-things. We use technology to enpower everyone to get involved in the conversational commerce, opening more opportunites for businesses to communicate with their customers."
+    ],
+    [
+        "How does this tool handle complex customer support trouble shooting steps?",
+        "For complex case, I need to be trained by at least one example. The more examples I have, the more I can generalize the process."
     ]
+
 ]
