@@ -3,4 +3,4 @@ python:
   - "2.7"
 # command to install dependencies
 # command to run tests
-script: python util/validate_all_script.py
+script: python buddy_bot/util/validate_all_script.py

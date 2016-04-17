@@ -1,9 +1,10 @@
+import json
+
 from chatterbot import ChatBot
 from wit import message
 import re
 import os
-import json
-from util.util import get_logger
+from utils.util import get_logger
 
 __author__ = 'Deyang'
 
@@ -37,7 +38,7 @@ ASK_INTENT_PATTERN = re.compile('ask.*')
 
 def load_data(file_name):
     dirpath = os.path.dirname(os.path.abspath(__file__))
-    filepath = os.path.join(dirpath, '..', 'data', file_name)
+    filepath = os.path.join(dirpath, 'data', file_name)
     fd = open(filepath, 'r')
     lines = fd.readlines()
     skipped_lines = [l for l in lines if not l.strip().startswith('#')]

@@ -1,6 +1,6 @@
 __author__ = 'Deyang'
 from flask import Flask
-from util.util import get_file_handler
+from utils.util import get_file_handler
 
 app = Flask(__name__)
 app.secret_key = '/\xf4sH\xaa\xe2\xb9\xb3'

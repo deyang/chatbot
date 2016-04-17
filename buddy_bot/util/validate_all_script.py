@@ -6,7 +6,7 @@ __author__ = 'Deyang'
 
 if __name__ == '__main__':
     ret = True
-    for file in glob.glob("data/*.qa"):
+    for file in glob.glob("buddy_bot/data/*.qa"):
         ret &= validate_qa_file(file)
     if ret:
         sys.exit(0)

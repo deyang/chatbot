@@ -1,7 +1,7 @@
 from intercom import Intercom, Conversation
 import os
 import html2text
-from util.util import get_logger
+from utils.util import get_logger
 
 __author__ = 'Deyang'
 
