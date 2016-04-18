@@ -2,6 +2,10 @@ import nltk
 
 __author__ = 'Deyang'
 
+
+nltk.download('maxent_ne_chunker')
+nltk.download('tagsets')
+
 # part of speech
 doc_ex = """
 Ten year's working. The first Republican to serve as governor of the state, he became known as the father of the Republican Party in Kentucky.
@@ -19,8 +23,15 @@ tokenized_sentences = [nltk.word_tokenize(sentence) for sentence in sentences]
 
 tagged_sentences = [nltk.pos_tag(sentence) for sentence in tokenized_sentences]
 print tagged_sentences
-# nltk.help.upenn_tagset('RB')
-# nltk.help.upenn_tagset()
+
+
+tagdict = nltk.data.load("help/tagsets/upenn_tagset.pickle")
+POS_TAG_LABELS = dict()
+for i, tag in enumerate(sorted(tagdict.keys())):
+    POS_TAG_LABELS[tag] = i
+
+print POS_TAG_LABELS
+
 
 
 chunked_sentences = nltk.ne_chunk_sents(tagged_sentences, binary=True)
