@@ -33,3 +33,30 @@ idf_vec = vector = [(termid, tfidf.idfs.get(termid))
 
 
 # learn LR model
+
+# Logistic Regression
+
+from sklearn import metrics
+from sklearn.linear_model import LogisticRegression
+
+data = [
+    [0.1, 0.2, 0.3, 0.4],
+    [0.9, 0.8, 0.4, 0.5],
+    [0.4, 0.2, 0.1, 0.0],
+    [-0.3, -2.1, -3.2, -3.4],
+]
+label = [1, 1, 0, 0]
+# fit a logistic regression model to the data
+model = LogisticRegression()
+model.fit(data, label)
+
+# # make predictions
+test = [0.15, 0.25, 0.35, 0.5]
+expected = 1
+predicted = model.predict(test)
+print predicted
+# # summarize the fit of the model
+print(metrics.classification_report([expected], predicted))
+print(metrics.confusion_matrix([expected], predicted))
+
+
