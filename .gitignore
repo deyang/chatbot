@@ -14,6 +14,8 @@ local
 log
 .idea
 *.db
+GoogleNews-vectors-negative300.bin
+vectors.bin
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
