@@ -1,0 +1,5 @@
+Things to evaluate:
+1. Whether or not to put word2vec as retrieval level match feature
+2. tf-ifd caculation: stop words removal and low freq words removal
+3. Which pre-trained word2vec to use.
+4. Number of latent states in LDA
