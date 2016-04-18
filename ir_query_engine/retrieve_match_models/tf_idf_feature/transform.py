@@ -19,7 +19,8 @@ doc_e = "Health professionals say that brocolli is good for your health."
 # compile sample documents into a list
 doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
 
-def pre_process_doc(raw_doc):
+
+def pre_process_doc_tf_idf(raw_doc):
     """
     Pre-processing fortf-idf does not
     1) rm stop words
@@ -35,14 +36,14 @@ def pre_process_doc(raw_doc):
     return stemmed_tokens
 
 
-def docs_to_corpus(doc_set):
+def docs_to_corpus_tf_idf(doc_set):
     # list for tokenized documents in loop
     texts = []
 
     # loop through document list
     for i in doc_set:
         # add tokens to list
-        texts.append(pre_process_doc(i))
+        texts.append(pre_process_doc_tf_idf(i))
 
     # turn our tokenized documents into a id <-> term dictionary
     dictionary = corpora.Dictionary(texts)
@@ -51,8 +52,7 @@ def docs_to_corpus(doc_set):
     return dictionary, corpus
 
 
-
-dictionary, corpus = docs_to_corpus(doc_set)
+dictionary, corpus = docs_to_corpus_tf_idf(doc_set)
 print dictionary
 print corpus
 tfidf = models.TfidfModel(corpus)
@@ -62,7 +62,7 @@ tfidf = models.TfidfModel(corpus)
 # query part
 doc_f = "brocolli is good for healthy."
 
-vec = tfidf[dictionary.doc2bow(pre_process_doc(doc_f))]
+vec = tfidf[dictionary.doc2bow(pre_process_doc_tf_idf(doc_f))]
 
 index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=47)
 

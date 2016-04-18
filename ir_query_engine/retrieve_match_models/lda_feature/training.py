@@ -25,7 +25,7 @@ doc_e = "Health professionals say that brocolli is good for your health."
 doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
 
 
-def pre_process_doc(raw_doc):
+def pre_process_doc_lda(raw_doc):
     # clean and tokenize document string
     tokens = tokenizer.tokenize(raw_doc.lower())
 
@@ -49,14 +49,14 @@ def get_dictionary_file_path():
     return os.path.join(dirpath, filename)
 
 
-def docs_to_corpus(doc_set):
+def docs_to_corpus_lda(doc_set):
     # list for tokenized documents in loop
     texts = []
 
     # loop through document list
     for i in doc_set:
         # add tokens to list
-        texts.append(pre_process_doc(i))
+        texts.append(pre_process_doc_lda(i))
 
     # turn our tokenized documents into a id <-> term dictionary
     dictionary = corpora.Dictionary(texts)
@@ -67,14 +67,14 @@ def docs_to_corpus(doc_set):
 
 
 
-dictionary, corpus = docs_to_corpus(doc_set)
+dictionary, corpus = docs_to_corpus_lda(doc_set)
 
 # generate LDA model
 ldamodel = models.ldamodel.LdaModel(corpus, num_topics=3, id2word=dictionary, passes=20)
 
 
 
-predict = ldamodel[dictionary.doc2bow(pre_process_doc(doc_a))]
+predict = ldamodel[dictionary.doc2bow(pre_process_doc_lda(doc_a))]
 print predict
 
 
@@ -90,7 +90,7 @@ dictionary.save_as_text(get_dictionary_file_path())
 new_dict = corpora.Dictionary.load_from_text(get_dictionary_file_path())
 new_model = models.ldamodel.LdaModel.load(get_model_file_path())
 
-predict = new_model[new_dict.doc2bow(pre_process_doc(doc_a))]
+predict = new_model[new_dict.doc2bow(pre_process_doc_lda(doc_a))]
 print predict
 
 
