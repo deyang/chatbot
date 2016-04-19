@@ -1,9 +1,20 @@
 from gensim import corpora, models, similarities
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.porter import PorterStemmer
+import os
 
 __author__ = 'Deyang'
 
+def get_model_file_path():
+    filename = 'lda.md'
+    dirpath = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(dirpath, filename)
+
+
+def get_dictionary_file_path():
+    filename = 'lda.dict'
+    dirpath = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(dirpath, filename)
 
 
 tokenizer = RegexpTokenizer(r'\w+')
@@ -51,6 +62,9 @@ def docs_to_corpus_tf_idf(doc_set):
     corpus = [dictionary.doc2bow(text) for text in texts]
     return dictionary, corpus
 
+
+def get_model(data_store=None, reload=False):
+    pass
 
 dictionary, corpus = docs_to_corpus_tf_idf(doc_set)
 print dictionary
