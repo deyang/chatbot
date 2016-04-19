@@ -2,33 +2,29 @@ from gensim import corpora, models, similarities
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.porter import PorterStemmer
 import os
+from ir_query_engine import engine_logger
 
 __author__ = 'Deyang'
 
-def get_model_file_path():
-    filename = 'lda.md'
-    dirpath = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(dirpath, filename)
+DIR_PATH = os.path.dirname(os.path.abspath(__file__))
+MODEL_FILE_PATH = os.path.join(DIR_PATH, 'tfidf.md')
+DICT_FILE_PATH = os.path.join(DIR_PATH, 'tfidf.dict')
+SIMMX_FILE_PATH = os.path.join(DIR_PATH, 'tfidf.simmx')
 
 
-def get_dictionary_file_path():
-    filename = 'lda.dict'
-    dirpath = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(dirpath, filename)
+def get_md_path():
+    return MODEL_FILE_PATH
 
+
+def get_dict_path():
+    return DICT_FILE_PATH
+
+
+def get_simmx_path():
+    return SIMMX_FILE_PATH
 
 tokenizer = RegexpTokenizer(r'\w+')
 p_stemmer = PorterStemmer()
-
-# create sample documents
-doc_a = "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother."
-doc_b = "My mother spends a lot of time driving my brother around to baseball practice."
-doc_c = "Some health experts suggest that driving may cause increased tension and blood pressure."
-doc_d = "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better."
-doc_e = "Health professionals say that brocolli is good for your health."
-
-# compile sample documents into a list
-doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
 
 
 def pre_process_doc_tf_idf(raw_doc):
@@ -63,23 +59,47 @@ def docs_to_corpus_tf_idf(doc_set):
     return dictionary, corpus
 
 
-def get_model(data_store=None, reload=False):
-    pass
+class TfIdfModelStruct(object):
 
-dictionary, corpus = docs_to_corpus_tf_idf(doc_set)
-print dictionary
-print corpus
-tfidf = models.TfidfModel(corpus)
+    def __init__(self, model=None, dictionary=None, sim_matrix=None):
+        self.model = model
+        self.dictionary = dictionary
+        self.sim_matrix = sim_matrix
+
+    def get_tfidf_vec(self, raw_doc):
+        return self.model[self.dictionary.doc2bow(pre_process_doc_tf_idf(raw_doc))]
+
+    def query(self, tfidf_vec=None, raw_doc=None, limit=10):
+        if raw_doc:
+            tfidf_vec = self.get_tfidf_vec(raw_doc)
+        sims = self.sim_matrix[tfidf_vec]
+        results = list(enumerate(sims))
+        results.sort(key=lambda t: t[1], reverse=True)
+        return results[:limit]
 
 
+def get_model(data_store=None, regen=False):
+    md_file_path = get_md_path()
+    dict_file_path = get_dict_path()
+    simmx_file_path = get_simmx_path()
+    if not os.path.isfile(md_file_path) or not \
+            os.path.isfile(dict_file_path) or not \
+            os.path.isfile(simmx_file_path) or regen:
+        engine_logger.info("Generating TF_IDF models.")
 
-# query part
-doc_f = "brocolli is good for healthy."
+        dictionary, corpus = docs_to_corpus_tf_idf(data_store.doc_set)
+        model = models.TfidfModel(corpus)
+        sim_matrix = similarities.SparseMatrixSimilarity(model[corpus], num_features=len(dictionary))
 
-vec = tfidf[dictionary.doc2bow(pre_process_doc_tf_idf(doc_f))]
+        # saving
+        dictionary.save_as_text(dict_file_path)
+        model.save(md_file_path)
+        sim_matrix.save(simmx_file_path)
+    else:
+        engine_logger.info("Loading existing TF_IDF models.")
 
-index = similarities.SparseMatrixSimilarity(tfidf[corpus], num_features=47)
+        dictionary = corpora.Dictionary.load_from_text(dict_file_path)
+        model = models.TfidfModel.load(md_file_path)
+        sim_matrix = similarities.SparseMatrixSimilarity.load(simmx_file_path)
 
-
-sims = index[vec]
-print(list(enumerate(sims)))
+    return TfIdfModelStruct(model=model, dictionary=dictionary, sim_matrix=sim_matrix)
