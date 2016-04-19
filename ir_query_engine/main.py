@@ -3,6 +3,7 @@ from optparse import OptionParser
 from common import load_data
 import retrieve_match_models.tf_idf_feature.transform as tf_idf_transform
 import retrieve_match_models.lda_feature.training as lda_train
+import rank_match_models.topic_word_feature.training as topic_train
 
 __author__ = 'Deyang'
 
@@ -35,9 +36,12 @@ if __name__ == '__main__':
 
     if options.data_file:
         data_store = load_data(options.data_file)
+        print data_store
+
+        topic_train.TopicWordModelStruct.get_model(None, data_store=data_store, regen=True)
 
     if options.load_tf_idf:
-        tf_idf_model_struct = tf_idf_transform.get_model(data_store=data_store, regen=options.regen)
+        tf_idf_model_struct = tf_idf_transform.TfIdfModelStruct.get_model(data_store=data_store, regen=options.regen)
         results = tf_idf_model_struct.query(raw_doc="Mark Zuckerberg established Facebook")
         print results
         print data_store.doc_set[results[0][0]]
@@ -45,7 +49,7 @@ if __name__ == '__main__':
 
     if options.train_lda:
         lda_model_struct = \
-            lda_train.get_model(data_store=data_store, regen=options.regen, num_topics=int(options.num_topics))
+            lda_train.LdaModelStruct.get_model(data_store=data_store, regen=options.regen, num_topics=int(options.num_topics))
         results = lda_model_struct.query(raw_doc="Mark Zuckerberg is a great founder")
         print results
         print data_store.doc_set[results[0][0]]

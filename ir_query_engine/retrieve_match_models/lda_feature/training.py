@@ -39,64 +39,6 @@ en_stop = get_stop_words('en')
 # Create p_stemmer of class PorterStemmer
 p_stemmer = PorterStemmer()
 
-# create sample documents
-doc_a = "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother."
-doc_b = "My mother spends a lot of time driving my brother around to baseball practice."
-doc_c = "Some health experts suggest that driving may cause increased tension and blood pressure."
-doc_d = "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better."
-doc_e = "Health professionals say that brocolli is good for your health."
-
-# compile sample documents into a list
-doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
-
-
-def pre_process_doc_lda(raw_doc):
-    # clean and tokenize document string
-    tokens = tokenizer.tokenize(raw_doc.lower())
-
-    # remove stop words from tokens
-    stopped_tokens = [t for t in tokens if t not in en_stop]
-
-    # stem tokens
-    stemmed_tokens = [p_stemmer.stem(t) for t in stopped_tokens]
-    return stemmed_tokens
-
-
-def docs_to_corpus_lda(doc_set):
-    # list for tokenized documents in loop
-    texts = []
-
-    # loop through document list
-    for i in doc_set:
-        # add tokens to list
-        texts.append(pre_process_doc_lda(i))
-
-    # turn our tokenized documents into a id <-> term dictionary
-    dictionary = corpora.Dictionary(texts)
-    # convert tokenized documents into a document-term matrix
-    corpus = [dictionary.doc2bow(text) for text in texts]
-    return dictionary, corpus
-
-
-class LdaModelStruct(object):
-
-    def __init__(self, model=None, dictionary=None, sim_matrix=None, num_topics=None):
-        self.model = model
-        self.dictionary = dictionary
-        self.sim_matrix = sim_matrix
-        self.num_topics = num_topics
-
-    def get_topic_predict(self, raw_doc):
-        return self.model[self.dictionary.doc2bow(pre_process_doc_lda(raw_doc))]
-
-    def query(self, topic_predict=None, raw_doc=None, limit=10):
-        if raw_doc:
-            topic_predict = self.get_topic_predict(raw_doc)
-        sims = self.sim_matrix[topic_predict]
-        results = list(enumerate(sims))
-        results.sort(key=lambda t: t[1], reverse=True)
-        return results[:limit]
-
 
 def write_num_topics(filepath, num_topics):
     with open(filepath, 'w') as f:
@@ -109,33 +51,83 @@ def read_num_topics(filepath):
         return int(c)
 
 
-def get_model(data_store=None, regen=False, num_topics=None):
-    md_file_path = get_md_path()
-    dict_file_path = get_dict_path()
-    simmx_file_path = get_simmx_path()
-    num_topics_file_path = get_num_topic_path()
+class LdaModelStruct(object):
 
-    if not os.path.isfile(md_file_path) or not \
-            os.path.isfile(dict_file_path) or not \
-            os.path.isfile(simmx_file_path) or not \
-            os.path.isfile(num_topics_file_path) or regen:
-        engine_logger.info("Generating LDA models.")
+    def __init__(self, model=None, dictionary=None, sim_matrix=None, num_topics=None):
+        self.model = model
+        self.dictionary = dictionary
+        self.sim_matrix = sim_matrix
+        self.num_topics = num_topics
 
-        dictionary, corpus = docs_to_corpus_lda(data_store.doc_set)
-        # generate LDA model
-        model = models.ldamodel.LdaModel(corpus, num_topics=num_topics, id2word=dictionary)
-        sim_matrix = similarities.MatrixSimilarity(model[corpus], num_features=len(dictionary))
+    @staticmethod
+    def pre_process_doc_lda(raw_doc):
+        # clean and tokenize document string
+        tokens = tokenizer.tokenize(raw_doc.lower())
 
-        # saving
-        dictionary.save_as_text(dict_file_path)
-        model.save(md_file_path)
-        sim_matrix.save(simmx_file_path)
-        write_num_topics(num_topics_file_path, num_topics)
-    else:
-        engine_logger.info("Loading existing LDA models.")
-        dictionary = corpora.Dictionary.load_from_text(dict_file_path)
-        model = models.TfidfModel.load(md_file_path)
-        sim_matrix = similarities.SparseMatrixSimilarity.load(simmx_file_path)
-        num_topics = read_num_topics(num_topics_file_path)
+        # remove stop words from tokens
+        stopped_tokens = [t for t in tokens if t not in en_stop]
 
-    return LdaModelStruct(model=model, dictionary=dictionary, sim_matrix=sim_matrix, num_topics=num_topics)
+        # stem tokens
+        stemmed_tokens = [p_stemmer.stem(t) for t in stopped_tokens]
+        return stemmed_tokens
+
+    @classmethod
+    def docs_to_corpus_lda(cls, doc_set):
+        # list for tokenized documents in loop
+        texts = []
+
+        # loop through document list
+        for i in doc_set:
+            # add tokens to list
+            texts.append(cls.pre_process_doc_lda(i))
+
+        # turn our tokenized documents into a id <-> term dictionary
+        dictionary = corpora.Dictionary(texts)
+        # convert tokenized documents into a document-term matrix
+        corpus = [dictionary.doc2bow(text) for text in texts]
+        return dictionary, corpus
+
+    def get_topic_predict(self, raw_doc):
+        return self.model[self.dictionary.doc2bow(self.pre_process_doc_lda(raw_doc))]
+
+    def query(self, topic_predict=None, raw_doc=None, limit=10):
+        if raw_doc:
+            topic_predict = self.get_topic_predict(raw_doc)
+        sims = self.sim_matrix[topic_predict]
+        results = list(enumerate(sims))
+        results.sort(key=lambda t: t[1], reverse=True)
+        return results[:limit]
+
+    @classmethod
+    def get_model(cls, data_store=None, regen=False, num_topics=None):
+        md_file_path = get_md_path()
+        dict_file_path = get_dict_path()
+        simmx_file_path = get_simmx_path()
+        num_topics_file_path = get_num_topic_path()
+
+        if not os.path.isfile(md_file_path) or not \
+                os.path.isfile(dict_file_path) or not \
+                os.path.isfile(simmx_file_path) or not \
+                os.path.isfile(num_topics_file_path) or regen:
+            engine_logger.info("Generating LDA models.")
+
+            dictionary, corpus = cls.docs_to_corpus_lda(data_store.doc_set)
+            # generate LDA model
+            model = models.ldamodel.LdaModel(corpus, num_topics=num_topics, id2word=dictionary)
+            sim_matrix = similarities.MatrixSimilarity(model[corpus], num_features=len(dictionary))
+
+            # saving
+            dictionary.save_as_text(dict_file_path)
+            model.save(md_file_path)
+            sim_matrix.save(simmx_file_path)
+            write_num_topics(num_topics_file_path, num_topics)
+        else:
+            engine_logger.info("Loading existing LDA models.")
+            dictionary = corpora.Dictionary.load_from_text(dict_file_path)
+            model = models.TfidfModel.load(md_file_path)
+            sim_matrix = similarities.SparseMatrixSimilarity.load(simmx_file_path)
+            num_topics = read_num_topics(num_topics_file_path)
+
+        return LdaModelStruct(model=model, dictionary=dictionary, sim_matrix=sim_matrix, num_topics=num_topics)
+
+

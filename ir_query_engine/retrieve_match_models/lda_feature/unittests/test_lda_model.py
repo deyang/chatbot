@@ -3,7 +3,7 @@ import os
 
 from mock import patch
 from ir_query_engine.common import DataStore
-from ir_query_engine.retrieve_match_models.lda_feature.training import get_model
+from ir_query_engine.retrieve_match_models.lda_feature.training import LdaModelStruct
 __author__ = 'Deyang'
 
 
@@ -46,14 +46,14 @@ class LdaModelTestCase(unittest.TestCase):
         mock_simmx_file_path.return_value = self.test_simmx_file_path
         mock_num_topics_path.return_value = self.test_num_topcis_file_path
 
-        new_model_struct = get_model(data_store=self.data_store, num_topics=2)
+        new_model_struct = LdaModelStruct.get_model(data_store=self.data_store, num_topics=2)
         # assert file saves
         self.assertTrue(os.path.isfile(self.test_md_file_path))
         self.assertTrue(os.path.isfile(self.test_dict_file_path))
         self.assertTrue(os.path.isfile(self.test_simmx_file_path))
         self.assertTrue(os.path.isfile(self.test_num_topcis_file_path))
 
-        loaded_model_struct = get_model()
+        loaded_model_struct = LdaModelStruct.get_model()
         self.assertEqual(loaded_model_struct.num_topics, 2)
         self.assertEqual(new_model_struct.dictionary,
                          loaded_model_struct.dictionary)
@@ -71,7 +71,7 @@ class LdaModelTestCase(unittest.TestCase):
 
         # regen
         self.data_store.doc_set.pop()
-        regen_model_struct = get_model(data_store=self.data_store, regen=True, num_topics=2)
+        regen_model_struct = LdaModelStruct.get_model(data_store=self.data_store, regen=True, num_topics=2)
         self.assertNotEqual(new_model_struct.dictionary,
                             regen_model_struct.dictionary)
 
@@ -85,7 +85,7 @@ class LdaModelTestCase(unittest.TestCase):
         mock_simmx_file_path.return_value = self.test_simmx_file_path
         mock_num_topics_path.return_value = self.test_num_topcis_file_path
 
-        model_struct = get_model(data_store=self.data_store, num_topics=2)
+        model_struct = LdaModelStruct.get_model(data_store=self.data_store, num_topics=2)
 
         query_doc = "Eat well. Be Heathy. Brocolli"
         results = model_struct.query(raw_doc=query_doc)
