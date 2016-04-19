@@ -2,6 +2,7 @@ from optparse import OptionParser
 
 from common import load_data
 import retrieve_match_models.tf_idf_feature.transform as tf_idf_transform
+import retrieve_match_models.lda_feature.training as lda_train
 
 __author__ = 'Deyang'
 
@@ -17,6 +18,14 @@ if __name__ == '__main__':
                       action='store_true',
                       default=False,
                       help='Load TF-IDF model only')
+    parser.add_option('', '--train_lda', dest='train_lda',
+                      action='store_true',
+                      default=False,
+                      help='Train LDA model only')
+    parser.add_option('', '--num_topics', dest='num_topics',
+                      action='store',
+                      default=None,
+                      help='Number of topics in LDA model.')
     parser.add_option('-r', '--regen', dest='regen',
                       action='store_true',
                       default=False,
@@ -33,3 +42,12 @@ if __name__ == '__main__':
         print results
         print data_store.doc_set[results[0][0]]
         print data_store.doc_set[results[1][0]]
+
+    if options.train_lda:
+        lda_model_struct = \
+            lda_train.get_model(data_store=data_store, regen=options.regen, num_topics=int(options.num_topics))
+        results = lda_model_struct.query(raw_doc="Mark Zuckerberg is a great founder")
+        print results
+        print data_store.doc_set[results[0][0]]
+        print data_store.doc_set[results[1][0]]
+        print data_store.doc_set[results[2][0]]

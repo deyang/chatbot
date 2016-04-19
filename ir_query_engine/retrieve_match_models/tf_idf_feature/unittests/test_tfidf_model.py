@@ -22,9 +22,9 @@ class TfIdfModelTestCase(unittest.TestCase):
         self.data_store.doc_set = doc_set
 
         dir_path = os.path.dirname(os.path.abspath(__file__))
-        self.test_md_file_path = os.path.join(dir_path, 'test_tfdf.md')
-        self.test_dict_file_path = os.path.join(dir_path, 'test_tfdf.dict')
-        self.test_simmx_file_path = os.path.join(dir_path, 'test_tfdf.simmx')
+        self.test_md_file_path = os.path.join(dir_path, 'test_tfidf.md')
+        self.test_dict_file_path = os.path.join(dir_path, 'test_tfidf.dict')
+        self.test_simmx_file_path = os.path.join(dir_path, 'test_tfidf.simmx')
 
     def tearDown(self):
         # cleanup
