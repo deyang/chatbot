@@ -43,10 +43,16 @@ if __name__ == '__main__':
 
     if options.load_tf_idf:
         tf_idf_model_struct = tf_idf_transform.TfIdfModelStruct.get_model(data_store=data_store, regen=options.regen)
-        results = tf_idf_model_struct.query(raw_doc="Mark Zuckerberg established Facebook")
+        raw_doc = "Mark Zuckerberg established Facebook"
+        results = tf_idf_model_struct.query_questions(raw_doc=raw_doc)
+        results = data_store.translate_question_query_results(results)
         print results
         print data_store.doc_set[results[0][0]]
-        print data_store.doc_set[results[1][0]]
+
+        results = tf_idf_model_struct.query_answers(raw_doc=raw_doc)
+        results = data_store.translate_answer_query_results(results)
+        print results
+        print data_store.doc_set[results[0][0]]
 
     if options.train_lda:
         lda_model_struct = \

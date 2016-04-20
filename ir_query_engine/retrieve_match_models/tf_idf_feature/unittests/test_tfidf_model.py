@@ -9,43 +9,66 @@ __author__ = 'Deyang'
 
 
 class TfIdfModelTestCase(unittest.TestCase):
-    def setUp(self):
-        # create sample documents
-        doc_a = "My mother spends a lot of time driving my brother around to baseball practice."
-        doc_b = "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother."
-        doc_c = "Some health experts suggest that driving may cause increased tension and blood pressure."
-        doc_d = "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better."
-        doc_e = "Health professionals say that brocolli is good for your health."
 
-        # compile sample documents into a list
-        doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
-        self.data_store = DataStore({})
-        self.data_store.doc_set = doc_set
+    def setUp(self):
+        self.data = [
+            {
+                "question": "What do you like to eat?",
+                "answer": "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother.",
+                "ranked_answers": []
+            },
+            {
+                "question": "Tell me about your mother.",
+                "answer": "My mother spends a lot of time driving my brother around to baseball practice.",
+                "ranked_answers": []
+            },
+            {
+                "question": "Is driving safe?",
+                "answer": "Some health experts suggest that driving may cause increased tension and blood pressure.",
+                "ranked_answers": []
+            },
+            {
+                "question": "Does your mother love you?",
+                "answer": "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better.",
+                "ranked_answers": []
+            },
+            {
+                "question": "Want some brocolli?",
+                "answer": "Health professionals say that brocolli is good for your health.",
+                "ranked_answers": []
+            }
+        ]
+        self.data_store = DataStore(self.data)
 
         dir_path = os.path.dirname(os.path.abspath(__file__))
         self.test_md_file_path = os.path.join(dir_path, 'test_tfidf.md')
         self.test_dict_file_path = os.path.join(dir_path, 'test_tfidf.dict')
-        self.test_simmx_file_path = os.path.join(dir_path, 'test_tfidf.simmx')
+        self.test_q_simmx_file_path = os.path.join(dir_path, 'test_tfidf_q.simmx')
+        self.test_a_simmx_file_path = os.path.join(dir_path, 'test_tfidf_a.simmx')
 
     def tearDown(self):
         # cleanup
         os.remove(self.test_dict_file_path)
         os.remove(self.test_md_file_path)
-        os.remove(self.test_simmx_file_path)
+        os.remove(self.test_q_simmx_file_path)
+        os.remove(self.test_a_simmx_file_path)
 
     @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_md_path')
     @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_dict_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_simmx_path')
-    def test_get_model(self, mock_simmx_file_path, mock_dict_file_path, mock_md_file_path):
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_a_simmx_path')
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_q_simmx_path')
+    def test_get_model(self, mock_q_simmx_file_path, mock_a_simmx_file_path, mock_dict_file_path, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path
-        mock_simmx_file_path.return_value = self.test_simmx_file_path
+        mock_q_simmx_file_path.return_value = self.test_q_simmx_file_path
+        mock_a_simmx_file_path.return_value = self.test_a_simmx_file_path
 
         new_model_struct = TfIdfModelStruct.get_model(data_store=self.data_store)
         # assert file saves
         self.assertTrue(os.path.isfile(self.test_md_file_path))
         self.assertTrue(os.path.isfile(self.test_dict_file_path))
-        self.assertTrue(os.path.isfile(self.test_simmx_file_path))
+        self.assertTrue(os.path.isfile(self.test_q_simmx_file_path))
+        self.assertTrue(os.path.isfile(self.test_a_simmx_file_path))
 
         loaded_model_struct = TfIdfModelStruct.get_model()
         # assert models loaded identity
@@ -56,37 +79,54 @@ class TfIdfModelTestCase(unittest.TestCase):
         self.assertEqual(new_model_struct.model[bow],
                          loaded_model_struct.model[bow])
         vec = new_model_struct.model[bow]
-        self.assertEqual(new_model_struct.sim_matrix[vec][0],
-                         loaded_model_struct.sim_matrix[vec][0])
+        self.assertEqual(new_model_struct.answer_sim_matrix[vec][0],
+                         loaded_model_struct.answer_sim_matrix[vec][0])
+        self.assertEqual(new_model_struct.question_sim_matrix[vec][0],
+                         loaded_model_struct.question_sim_matrix[vec][0])
 
         # regen
-        self.data_store.doc_set = self.data_store.doc_set[1:]
+        self.data_store.doc_set[0] = "Yo man"
         regen_model_struct = TfIdfModelStruct.get_model(data_store=self.data_store, regen=True)
         self.assertNotEqual(new_model_struct.dictionary,
                             regen_model_struct.dictionary)
 
     @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_md_path')
     @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_dict_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_simmx_path')
-    def test_query(self, mock_simmx_file_path, mock_dict_file_path, mock_md_file_path):
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_a_simmx_path')
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_q_simmx_path')
+    def test_query(self, mock_q_simmx_file_path, mock_a_simmx_file_path, mock_dict_file_path, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path
-        mock_simmx_file_path.return_value = self.test_simmx_file_path
+        mock_q_simmx_file_path.return_value = self.test_q_simmx_file_path
+        mock_a_simmx_file_path.return_value = self.test_a_simmx_file_path
 
         model_struct = TfIdfModelStruct.get_model(data_store=self.data_store)
 
         query_doc = "Is brocolli tasty to eat?"
-        results = model_struct.query(raw_doc=query_doc)
-        # the most similar one is the first doc
+        results = model_struct.query_answers(raw_doc=query_doc)
+        # The ids in the results tuple are the positions in the answer corpus,
+        # i.e. the index in the answer_set, translate back to doc_id
+        results = self.data_store.translate_answer_query_results(results)
+
+        # the most similar one is the first answer
         self.assertEqual(results[0][0], 1)
+
+        results = model_struct.query_questions(raw_doc=query_doc)
+        # The ids in the results tuple are the positions in the answer corpus,
+        # i.e. the index in the answer_set, translate back to doc_id
+        results = self.data_store.translate_question_query_results(results)
+
+        self.assertEqual(results[0][0], 0)
 
     @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_md_path')
     @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_dict_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_simmx_path')
-    def test_td_idf(self, mock_simmx_file_path, mock_dict_file_path, mock_md_file_path):
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_a_simmx_path')
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_q_simmx_path')
+    def test_td_idf(self, mock_q_simmx_file_path, mock_a_simmx_file_path, mock_dict_file_path, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path
-        mock_simmx_file_path.return_value = self.test_simmx_file_path
+        mock_q_simmx_file_path.return_value = self.test_q_simmx_file_path
+        mock_a_simmx_file_path.return_value = self.test_a_simmx_file_path
 
         model_struct = TfIdfModelStruct.get_model(data_store=self.data_store)
 
@@ -105,12 +145,12 @@ class TfIdfModelTestCase(unittest.TestCase):
             for doc in self.data_store.doc_set:
                 if term in doc.lower():
                     df += 1
-            self.assertAlmostEqual(df2idf(df, 5),
+            self.assertAlmostEqual(df2idf(df, len(self.data_store.doc_set)),
                                    idf)
 
         tf, idf = model_struct.get_tf_and_idf(query_doc, 'to')
         self.assertEqual(tf, 1)
-        self.assertAlmostEqual(idf, df2idf(3, 5))
+        self.assertAlmostEqual(idf, df2idf(4, len(self.data_store.doc_set)))
 
         tf, idf = model_struct.get_tf_and_idf(query_doc, 'AAA')
         self.assertEqual(tf, 0)

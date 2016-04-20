@@ -9,7 +9,8 @@ __author__ = 'Deyang'
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
 MODEL_FILE_PATH = os.path.join(DIR_PATH, 'tfidf.md')
 DICT_FILE_PATH = os.path.join(DIR_PATH, 'tfidf.dict')
-SIMMX_FILE_PATH = os.path.join(DIR_PATH, 'tfidf.simmx')
+Q_SIMMX_FILE_PATH = os.path.join(DIR_PATH, 'tfidf_q.simmx')
+A_SIMMX_FILE_PATH = os.path.join(DIR_PATH, 'tfidf_a.simmx')
 
 
 def get_md_path():
@@ -20,8 +21,13 @@ def get_dict_path():
     return DICT_FILE_PATH
 
 
-def get_simmx_path():
-    return SIMMX_FILE_PATH
+def get_q_simmx_path():
+    return Q_SIMMX_FILE_PATH
+
+
+def get_a_simmx_path():
+    return A_SIMMX_FILE_PATH
+
 
 tokenizer = RegexpTokenizer(r'\w+')
 p_stemmer = PorterStemmer()
@@ -29,10 +35,11 @@ p_stemmer = PorterStemmer()
 
 class TfIdfModelStruct(object):
 
-    def __init__(self, model=None, dictionary=None, sim_matrix=None):
+    def __init__(self, model=None, dictionary=None, question_sim_matrix=None, answer_sim_matrix=None):
         self.model = model
         self.dictionary = dictionary
-        self.sim_matrix = sim_matrix
+        self.question_sim_matrix = question_sim_matrix
+        self.answer_sim_matrix = answer_sim_matrix
 
     @staticmethod
     def pre_process_doc_tf_idf(raw_doc):
@@ -100,11 +107,20 @@ class TfIdfModelStruct(object):
                     idf = t_idf
         return tf, idf
 
-    def query(self, tfidf_vec=None, raw_doc=None, limit=10):
+    def query_questions(self, tfidf_vec=None, raw_doc=None, limit=10):
         if raw_doc:
             tfidf_vec = self.get_tfidf_vec(raw_doc)
 
-        sims = self.sim_matrix[tfidf_vec]
+        sims = self.question_sim_matrix[tfidf_vec]
+        results = list(enumerate(sims))
+        results.sort(key=lambda t: t[1], reverse=True)
+        return results[:limit]
+
+    def query_answers(self, tfidf_vec=None, raw_doc=None, limit=10):
+        if raw_doc:
+            tfidf_vec = self.get_tfidf_vec(raw_doc)
+
+        sims = self.answer_sim_matrix[tfidf_vec]
         results = list(enumerate(sims))
         results.sort(key=lambda t: t[1], reverse=True)
         return results[:limit]
@@ -113,26 +129,42 @@ class TfIdfModelStruct(object):
     def get_model(cls, data_store=None, regen=False, save=True):
         md_file_path = get_md_path()
         dict_file_path = get_dict_path()
-        simmx_file_path = get_simmx_path()
+        q_simmx_file_path = get_q_simmx_path()
+        a_simmx_file_path = get_a_simmx_path()
         if not os.path.isfile(md_file_path) or not \
                 os.path.isfile(dict_file_path) or not \
-                os.path.isfile(simmx_file_path) or regen:
+                os.path.isfile(q_simmx_file_path) or not \
+                os.path.isfile(a_simmx_file_path) or regen:
             engine_logger.info("Generating TF_IDF models.")
 
             dictionary, corpus = cls.docs_to_corpus_tf_idf(data_store.doc_set)
+
+            # vocabulary and tf-idf are computed on the whole space
             model = models.TfidfModel(corpus)
-            sim_matrix = similarities.SparseMatrixSimilarity(model[corpus], num_features=len(dictionary))
+            # while query similarities are executed on several space, i.e. question space and answer separately
+            # extract answer corpus
+            question_corpus = [corpus[qid] for qid in data_store.question_set]
+            question_sim_matrix = similarities.SparseMatrixSimilarity(model[question_corpus],
+                                                                      num_features=len(dictionary))
+            # extract answer corpus
+            answer_corpus = [corpus[aid] for aid in data_store.answer_set]
+            answer_sim_matrix = similarities.SparseMatrixSimilarity(model[answer_corpus], num_features=len(dictionary))
 
             if save:
                 # saving
                 dictionary.save_as_text(dict_file_path)
                 model.save(md_file_path)
-                sim_matrix.save(simmx_file_path)
+                question_sim_matrix.save(q_simmx_file_path)
+                answer_sim_matrix.save(a_simmx_file_path)
         else:
             engine_logger.info("Loading existing TF_IDF models.")
 
             dictionary = corpora.Dictionary.load_from_text(dict_file_path)
             model = models.TfidfModel.load(md_file_path)
-            sim_matrix = similarities.SparseMatrixSimilarity.load(simmx_file_path)
+            question_sim_matrix = similarities.SparseMatrixSimilarity.load(q_simmx_file_path)
+            answer_sim_matrix = similarities.SparseMatrixSimilarity.load(a_simmx_file_path)
 
-        return TfIdfModelStruct(model=model, dictionary=dictionary, sim_matrix=sim_matrix)
+        return TfIdfModelStruct(model=model,
+                                dictionary=dictionary,
+                                question_sim_matrix=question_sim_matrix,
+                                answer_sim_matrix=answer_sim_matrix)

@@ -65,8 +65,10 @@ class DataStore(object):
             self.aid_to_qa_pairs[aid].append((qid, aid))
 
             # store data for topic words
-            self.topic_word_docs.append((question, segment['question_topic_words']))
-            self.topic_word_docs.append((answer, segment['answer_topic_words']))
+            if 'question_topic_words' in segment:
+                self.topic_word_docs.append((question, segment['question_topic_words']))
+            if 'answer_topic_words' in segment:
+                self.topic_word_docs.append((answer, segment['answer_topic_words']))
 
         # loop for the ranked answer, add them at last, since not all of them correspond to an question
         for segment in raw_json_object:
@@ -74,6 +76,24 @@ class DataStore(object):
                 for ranked_answer in segment['ranked_answers'][1:]:
                     # SKIP the first, which is the same with the best answer
                     self._add_doc(ranked_answer['answer'])
+
+    def get_all_questions(self):
+        return [self.doc_set[qid] for qid in self.question_set]
+
+    def get_all_answers(self):
+        return [self.doc_set[aid] for aid in self.answer_set]
+
+    def get_doc_id_from_answer_pos(self, pos):
+        return self.answer_set[pos]
+
+    def get_doc_id_from_question_pos(self, pos):
+        return self.question_set[pos]
+
+    def translate_answer_query_results(self, results):
+        return [(self.get_doc_id_from_answer_pos(idx), sim) for idx, sim in results]
+
+    def translate_question_query_results(self, results):
+        return [(self.get_doc_id_from_question_pos(idx), sim) for idx, sim in results]
 
     def __repr__(self):
         return "doc sets:\n%s\ntopics words:\n%s" % \

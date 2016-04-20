@@ -115,6 +115,16 @@ class DataStoreTestCase(unittest.TestCase):
         ]
         self.assertEqual(d.topic_word_docs, expected_topic_word_docs)
 
+    def test_getters(self):
+        d = DataStore(self.data)
+        self.assertEqual(d.get_all_questions(),
+                         ["tell me about a16z", "who is the founder of a16z"])
+        self.assertEqual(d.get_all_answers(),
+                         ["a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
+                          "Marc Andreessen and Ben Horowitz co-founded a16z."])
+        self.assertEqual(d.get_doc_id_from_question_pos(0), 0)
+        self.assertEqual(d.get_doc_id_from_answer_pos(0), 1)
+
 
 if __name__ == '__main__':
     unittest.main()
