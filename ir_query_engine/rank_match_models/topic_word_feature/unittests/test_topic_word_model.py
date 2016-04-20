@@ -65,13 +65,14 @@ class TopicWordModelTestCase(unittest.TestCase):
 
         query_doc = "Who are the managers of a16z?"
         compare_docs = [pair[0] for pair in self.data_store.topic_word_docs]
-
         results = model_struct.get_similarities(query_doc, compare_docs)
+        results.sort(key=lambda p: p[1], reverse=True)
+
         ranked_docs = [t[0] for t in results]
         self.assertEqual(ranked_docs, [2, 0, 3, 1, 5, 4])
 
     @patch('ir_query_engine.rank_match_models.topic_word_feature.topic_word_model.get_md_path')
-    def test_get_similarities(self, mock_md_file_path):
+    def test_get_model(self, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
 
         new_model_struct = TopicWordModelStruct.get_model(data_store=self.data_store)

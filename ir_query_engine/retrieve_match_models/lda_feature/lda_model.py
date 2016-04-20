@@ -90,9 +90,17 @@ class LdaModelStruct(object):
     def get_topic_predict(self, raw_doc):
         return self.model[self.dictionary.doc2bow(self.pre_process_doc_lda(raw_doc))]
 
+    def get_similarities(self, query_doc, compare_docs):
+        query_topic_predict = self.get_topic_predict(query_doc)
+        compare_topic_predicts = [self.get_topic_predict(doc) for doc in compare_docs]
+        sim_mx = similarities.MatrixSimilarity(compare_topic_predicts, num_features=self.num_topics)
+        sims = sim_mx[query_topic_predict]
+        return list(enumerate(sims))
+
     def query(self, topic_predict=None, raw_doc=None, limit=10):
         if raw_doc:
             topic_predict = self.get_topic_predict(raw_doc)
+
         sims = self.sim_matrix[topic_predict]
         results = list(enumerate(sims))
         results.sort(key=lambda t: t[1], reverse=True)
@@ -115,7 +123,7 @@ class LdaModelStruct(object):
             # generate LDA model
             # LDA model is trained on all the docs
             model = models.ldamodel.LdaModel(corpus, num_topics=num_topics, id2word=dictionary)
-            sim_matrix = similarities.MatrixSimilarity(model[corpus], num_features=len(dictionary))
+            sim_matrix = similarities.MatrixSimilarity(model[corpus])
 
             # saving
             dictionary.save_as_text(dict_file_path)

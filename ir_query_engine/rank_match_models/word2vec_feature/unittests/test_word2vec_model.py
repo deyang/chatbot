@@ -19,6 +19,7 @@ class Word2VecModelTestCase(unittest.TestCase):
         m = Word2VecModel()
 
         results = m.get_similarities(q, doc_set)
+        results.sort(key=lambda t: t[1], reverse=True)
         self.assertEqual(results[0][0], 0)
 
 

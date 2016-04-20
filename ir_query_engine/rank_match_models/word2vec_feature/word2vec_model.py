@@ -37,6 +37,4 @@ class Word2VecModel(object):
         sims = []
         for vec in compare_vecs:
             sims.append(1 - cosine(query_vec, vec))
-        results = list(enumerate(sims))
-        results.sort(key=lambda t: t[1], reverse=True)
-        return results
+        return list(enumerate(sims))

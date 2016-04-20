@@ -106,6 +106,9 @@ class LdaModelTestCase(unittest.TestCase):
         results = model_struct.query(raw_doc=query_doc)
         self.assertNotEqual(results[0][0], 3)
 
+        results = model_struct.get_similarities(query_doc, [query_doc, self.data_store.doc_set[0]])
+        self.assertAlmostEqual(results[0][1], 1.0, delta=0.001)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,6 +1,5 @@
 import os
 from sklearn.externals import joblib
-from gensim.matutils import Scipy2Corpus, Sparse2Corpus, scipy2sparse, cossim
 from gensim import similarities
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct, p_stemmer
 
@@ -162,10 +161,7 @@ class TopicWordModelStruct(object):
         compare_prob_vecs = [self._predict_doc_as_vec(doc) for doc in compare_docs]
         sim_mx = similarities.SparseMatrixSimilarity(compare_prob_vecs, num_features=len(self.tfidf_model_struct.dictionary))
         sims = sim_mx[query_prob_vec]
-        results = list(enumerate(sims))
-        results.sort(key=lambda t: t[1], reverse=True)
-
-        return results
+        return list(enumerate(sims))
 
     def predict_one_word(self, feature_vec):
         # mainly for testing

@@ -1,6 +1,8 @@
 from ir_query_engine import engine_logger
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
+from ir_query_engine.rank_match_models.topic_word_feature.topic_word_model import TopicWordModelStruct
+from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
 
 
 __author__ = 'Deyang'
@@ -18,8 +20,10 @@ class QueryEngine(object):
     def __init__(self, data_store, num_topics):
         self.data_store = data_store
         self.num_topics = num_topics
-        self.tfidf_model_struct = TfIdfModelStruct.get_model(data_store=self.data_store)
-        self.lda_model_struct = LdaModelStruct.get_model(data_store=self.data_store, num_topics=self.num_topics)
+        self.tfidf_model_struct = TfIdfModelStruct.get_model()
+        self.lda_model_struct = LdaModelStruct.get_model(num_topics=self.num_topics)
+        self.topic_word_model_struct = TopicWordModelStruct.get_model(tfidf_model_struct=self.tfidf_model_struct)
+        self.word2vec_model = Word2VecModel()
 
     def execute_query(self, raw_query):
         query_state = QueryState(raw_query)
@@ -53,6 +57,10 @@ class QueryEngine(object):
         engine_logger.info("Candidates after lda matching: %s" % qa_pairs)
 
         query_state.candidate_pairs = list(qa_pairs)
+
+    def _match_candidates(self, query_state):
+        # apply all the match models to all the candidates
+        pass
 
 
 

@@ -5,6 +5,8 @@ from mock import patch
 from ir_query_engine.common import DataStore
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from gensim.models.tfidfmodel import df2idf
+from gensim.matutils import cossim
+
 __author__ = 'Deyang'
 
 
@@ -155,6 +157,31 @@ class TfIdfModelTestCase(unittest.TestCase):
         tf, idf = model_struct.get_tf_and_idf(query_doc, 'AAA')
         self.assertEqual(tf, 0)
         self.assertEqual(idf, 10.0)
+
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_md_path')
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_dict_path')
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_a_simmx_path')
+    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_q_simmx_path')
+    def test_get_similarities(self, mock_q_simmx_file_path, mock_a_simmx_file_path, mock_dict_file_path, mock_md_file_path):
+        mock_md_file_path.return_value = self.test_md_file_path
+        mock_dict_file_path.return_value = self.test_dict_file_path
+        mock_q_simmx_file_path.return_value = self.test_q_simmx_file_path
+        mock_a_simmx_file_path.return_value = self.test_a_simmx_file_path
+
+        model_struct = TfIdfModelStruct.get_model(data_store=self.data_store)
+
+        query_doc = "Is brocolli tasty to eat?"
+        compare_docs = self.data_store.doc_set
+
+        sims = model_struct.get_similarities(query_doc, compare_docs)
+
+        for idx, sim in enumerate(sims):
+            expected_sim = cossim(
+                model_struct.get_tfidf_vec(query_doc),
+                model_struct.get_tfidf_vec(compare_docs[idx])
+            )
+            self.assertAlmostEqual(sim[1], expected_sim)
+
 
 if __name__ == '__main__':
     unittest.main()

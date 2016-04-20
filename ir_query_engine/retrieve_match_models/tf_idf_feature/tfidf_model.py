@@ -107,6 +107,13 @@ class TfIdfModelStruct(object):
                     idf = t_idf
         return tf, idf
 
+    def get_similarities(self, query_doc, compare_docs):
+        query_tfidf_vec = self.get_tfidf_vec(query_doc)
+        compare_tfidf_vecs = [self.get_tfidf_vec(doc) for doc in compare_docs]
+        sim_mx = similarities.SparseMatrixSimilarity(compare_tfidf_vecs, num_features=len(self.dictionary))
+        sims = sim_mx[query_tfidf_vec]
+        return list(enumerate(sims))
+
     def query_questions(self, tfidf_vec=None, raw_doc=None, limit=10):
         if raw_doc:
             tfidf_vec = self.get_tfidf_vec(raw_doc)
