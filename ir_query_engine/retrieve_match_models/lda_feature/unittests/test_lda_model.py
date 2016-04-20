@@ -9,18 +9,34 @@ __author__ = 'Deyang'
 
 class LdaModelTestCase(unittest.TestCase):
     def setUp(self):
-        # create sample documents
-        doc_a = "My mother spends a lot of time driving my brother around to baseball practice."
-        doc_b = "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother."
-        doc_c = "Some health experts suggest that driving may cause increased tension and blood pressure."
-        doc_d = "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better."
-        doc_e = "Health professionals say that brocolli is good for your health."
-
-        # compile sample documents into a list
-        doc_set = [doc_a, doc_b, doc_c, doc_d, doc_e]
-        self.data_store = DataStore({})
-        self.data_store.doc_set = doc_set
-
+        self.data = [
+            {
+                "question": "What do you like to eat?",
+                "answer": "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother.",
+                "ranked_answers": []
+            },
+            {
+                "question": "Tell me about your mother.",
+                "answer": "My mother spends a lot of time driving my brother around to baseball practice.",
+                "ranked_answers": []
+            },
+            {
+                "question": "Is driving safe?",
+                "answer": "Some health experts suggest that driving may cause increased tension and blood pressure.",
+                "ranked_answers": []
+            },
+            {
+                "question": "Does your mother love you?",
+                "answer": "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better.",
+                "ranked_answers": []
+            },
+            {
+                "question": "Want some brocolli?",
+                "answer": "Health professionals say that brocolli is good for your health.",
+                "ranked_answers": []
+            }
+        ]
+        self.data_store = DataStore(self.data)
         dir_path = os.path.dirname(os.path.abspath(__file__))
         self.test_md_file_path = os.path.join(dir_path, 'test_lda.md')
         self.test_dict_file_path = os.path.join(dir_path, 'test_lda.dict')
@@ -84,11 +100,11 @@ class LdaModelTestCase(unittest.TestCase):
         mock_simmx_file_path.return_value = self.test_simmx_file_path
         mock_num_topics_path.return_value = self.test_num_topcis_file_path
 
-        model_struct = LdaModelStruct.get_model(data_store=self.data_store, num_topics=2)
+        model_struct = LdaModelStruct.get_model(data_store=self.data_store, num_topics=3)
 
         query_doc = "Eat well. Be Heathy. Brocolli"
         results = model_struct.query(raw_doc=query_doc)
-        self.assertIn(results[0][0], [1, 4, 2])
+        self.assertNotEqual(results[0][0], 3)
 
 
 if __name__ == '__main__':

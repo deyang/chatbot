@@ -113,6 +113,7 @@ class LdaModelStruct(object):
 
             dictionary, corpus = cls.docs_to_corpus_lda(data_store.doc_set)
             # generate LDA model
+            # LDA model is trained on all the docs
             model = models.ldamodel.LdaModel(corpus, num_topics=num_topics, id2word=dictionary)
             sim_matrix = similarities.MatrixSimilarity(model[corpus], num_features=len(dictionary))
 

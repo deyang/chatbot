@@ -110,8 +110,8 @@ class DataStoreTestCase(unittest.TestCase):
           ("tell me about a16z", ["a16z"]),
           ("a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
            ["a16z", "venture", "capital"]),
-           ("who is the founder of a16z", ["founder", "a16z"]),
-           ("Marc Andreessen and Ben Horowitz co-founded a16z.", ["co-founded", "a16z"])
+          ("who is the founder of a16z", ["founder", "a16z"]),
+          ("Marc Andreessen and Ben Horowitz co-founded a16z.", ["co-founded", "a16z"])
         ]
         self.assertEqual(d.topic_word_docs, expected_topic_word_docs)
 
