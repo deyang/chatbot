@@ -5,7 +5,8 @@ __author__ = 'Deyang'
 
 
 class Word2VecModelTestCase(unittest.TestCase):
-    def test_something(self):
+
+    def test_get_similarities(self):
         doc_a = "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother."
         doc_b = "My mother spends a lot of time driving my brother around to baseball practice."
         doc_c = "Some health experts suggest that driving may cause increased tension and blood pressure."

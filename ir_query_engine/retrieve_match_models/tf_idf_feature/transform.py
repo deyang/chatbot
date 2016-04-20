@@ -87,10 +87,11 @@ class TfIdfModelStruct(object):
         tf_vec = self.get_tf_vec(raw_doc)
         idf_vec = self.get_idf_vec(tf_vec=tf_vec)
         termid = self.dictionary.token2id.get(term, None)
-        tf = None
-        idf = None
+        # defaults to zero
+        tf = 0
+        idf = 10.0
 
-        if termid:
+        if termid is not None:
             for tid, t_tf in tf_vec:
                 if tid == termid:
                     tf = t_tf
@@ -102,6 +103,7 @@ class TfIdfModelStruct(object):
     def query(self, tfidf_vec=None, raw_doc=None, limit=10):
         if raw_doc:
             tfidf_vec = self.get_tfidf_vec(raw_doc)
+
         sims = self.sim_matrix[tfidf_vec]
         results = list(enumerate(sims))
         results.sort(key=lambda t: t[1], reverse=True)

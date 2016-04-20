@@ -23,6 +23,10 @@ if __name__ == '__main__':
                       action='store_true',
                       default=False,
                       help='Train LDA model only')
+    parser.add_option('', '--train_topic_words', dest='train_topic_words',
+                      action='store_true',
+                      default=False,
+                      help='Train topic words model')
     parser.add_option('', '--num_topics', dest='num_topics',
                       action='store',
                       default=None,
@@ -36,9 +40,7 @@ if __name__ == '__main__':
 
     if options.data_file:
         data_store = load_data(options.data_file)
-        print data_store
 
-        topic_train.TopicWordModelStruct.get_model(None, data_store=data_store, regen=True)
 
     if options.load_tf_idf:
         tf_idf_model_struct = tf_idf_transform.TfIdfModelStruct.get_model(data_store=data_store, regen=options.regen)
@@ -55,3 +57,15 @@ if __name__ == '__main__':
         print data_store.doc_set[results[0][0]]
         print data_store.doc_set[results[1][0]]
         print data_store.doc_set[results[2][0]]
+
+    if options.train_topic_words:
+        topic_word_model_struct = topic_train.TopicWordModelStruct.get_model(data_store=data_store, regen=True)
+
+        query_doc = "What is investment strategy"
+        compare_docs = data_store.doc_set
+        results = topic_word_model_struct.get_similarities(query_doc, compare_docs)
+        print compare_docs[results[0][0]]
+        print compare_docs[results[1][0]]
+        print compare_docs[results[2][0]]
+        print compare_docs[results[3][0]]
+

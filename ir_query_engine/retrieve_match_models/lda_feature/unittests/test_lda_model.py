@@ -70,7 +70,7 @@ class LdaModelTestCase(unittest.TestCase):
                                loaded_model_struct.sim_matrix[predict][0])
 
         # regen
-        self.data_store.doc_set.pop()
+        self.data_store.doc_set = self.data_store.doc_set[1:]
         regen_model_struct = LdaModelStruct.get_model(data_store=self.data_store, regen=True, num_topics=2)
         self.assertNotEqual(new_model_struct.dictionary,
                             regen_model_struct.dictionary)

@@ -60,7 +60,7 @@ class TfIdfModelTestCase(unittest.TestCase):
                          loaded_model_struct.sim_matrix[vec][0])
 
         # regen
-        self.data_store.doc_set.pop()
+        self.data_store.doc_set = self.data_store.doc_set[1:]
         regen_model_struct = TfIdfModelStruct.get_model(data_store=self.data_store, regen=True)
         self.assertNotEqual(new_model_struct.dictionary,
                             regen_model_struct.dictionary)
@@ -111,6 +111,10 @@ class TfIdfModelTestCase(unittest.TestCase):
         tf, idf = model_struct.get_tf_and_idf(query_doc, 'to')
         self.assertEqual(tf, 1)
         self.assertAlmostEqual(idf, df2idf(3, 5))
+
+        tf, idf = model_struct.get_tf_and_idf(query_doc, 'AAA')
+        self.assertEqual(tf, 0)
+        self.assertEqual(idf, 10.0)
 
 if __name__ == '__main__':
     unittest.main()
