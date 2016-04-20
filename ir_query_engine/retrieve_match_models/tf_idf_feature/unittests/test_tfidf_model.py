@@ -158,6 +158,20 @@ class TfIdfModelTestCase(unittest.TestCase):
         self.assertEqual(tf, 0)
         self.assertEqual(idf, 10.0)
 
+        # test cooccurance features
+        doc2 = self.data_store.doc_set[1]
+        coocur_size, coocur_rate, cooccur_sum_idf, cooccur_avg_idf = \
+            model_struct.get_cooccur_features(query_doc, doc2)
+
+        self.assertEqual(coocur_size, 4)
+        self.assertAlmostEqual(coocur_rate, float(4) / len(model_struct.get_tf_vec(doc2)))
+        expected_sum = 0
+        for t in model_struct.get_idf_vec(raw_doc=query_doc):
+            expected_sum += t[1]
+
+        self.assertAlmostEqual(cooccur_sum_idf, expected_sum)
+        self.assertAlmostEqual(cooccur_avg_idf, expected_sum / 4)
+
     @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_md_path')
     @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_dict_path')
     @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_a_simmx_path')

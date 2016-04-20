@@ -1,3 +1,5 @@
+import editdistance
+
 __author__ = 'Deyang'
 
 
@@ -13,3 +15,7 @@ def get_lcs_length(word_id_seq1, word_id_seq2):
             else:
                 C[i][j] = max(C[i][j-1], C[i-1][j])
     return C[-1][-1]
+
+
+def get_edit_distance(x, y):
+    return editdistance.eval(x, y)

@@ -107,6 +107,27 @@ class TfIdfModelStruct(object):
                     idf = t_idf
         return tf, idf
 
+    def get_cooccur_features(self, doc1, doc2):
+        tf_vec1 = self.get_tf_vec(doc1)
+        tf_vec2 = self.get_tf_vec(doc2)
+        terms_1 = [p[0] for p in tf_vec1]
+        terms_2 = [p[0] for p in tf_vec2]
+
+        coccur = set(terms_1) & set(terms_2)
+        coocur_size = float(len(coccur))
+        coocur_rate = coocur_size / len(tf_vec2) if len(tf_vec2) != 0 else 0.0
+
+        cooccur_sum_idf = 0
+        for cooccur_term_id in coccur:
+            cooccur_sum_idf += self.model.idfs.get(cooccur_term_id, 0.0)
+
+        if len(coccur) != 0:
+            cooccur_avg_idf = cooccur_sum_idf / len(coccur)
+        else:
+            cooccur_avg_idf = 0.0
+
+        return coocur_size, coocur_rate, cooccur_sum_idf, cooccur_avg_idf
+
     def get_similarities(self, query_doc, compare_docs):
         query_tfidf_vec = self.get_tfidf_vec(query_doc)
         compare_tfidf_vecs = [self.get_tfidf_vec(doc) for doc in compare_docs]
