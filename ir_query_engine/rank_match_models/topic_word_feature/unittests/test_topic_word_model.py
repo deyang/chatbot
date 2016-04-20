@@ -2,8 +2,8 @@ import unittest
 from mock import patch
 import os
 import glob
-from ir_query_engine.rank_match_models.topic_word_feature.training import TopicWordModelStruct, POS_TAG_LABELS
-from ir_query_engine.retrieve_match_models.tf_idf_feature.transform import TfIdfModelStruct
+from ir_query_engine.rank_match_models.topic_word_feature.topic_word_model import TopicWordModelStruct, POS_TAG_LABELS
+from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from ir_query_engine.common import DataStore
 from gensim.models.tfidfmodel import df2idf
 
@@ -31,7 +31,7 @@ class TopicWordModelTestCase(unittest.TestCase):
         for f in glob.glob(os.path.join(self.dir_path, "test_lr.*")):
             os.remove(f)
 
-    @patch('ir_query_engine.rank_match_models.topic_word_feature.training.get_md_path')
+    @patch('ir_query_engine.rank_match_models.topic_word_feature.topic_word_model.get_md_path')
     def test_extract_feature(self, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         model_struct = TopicWordModelStruct.get_model(data_store=self.data_store)
@@ -42,7 +42,7 @@ class TopicWordModelTestCase(unittest.TestCase):
         self.assertEqual(model_struct._extract_feature(("tell me about a16z", "Yo")),
                          (0, 10.0, 0, 0, 0, 0, 0, 0, 0))
 
-    @patch('ir_query_engine.rank_match_models.topic_word_feature.training.get_md_path')
+    @patch('ir_query_engine.rank_match_models.topic_word_feature.topic_word_model.get_md_path')
     def test_predict(self, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         model_struct = TopicWordModelStruct.get_model(data_store=self.data_store)
@@ -58,7 +58,7 @@ class TopicWordModelTestCase(unittest.TestCase):
             single_predicted_prob = model_struct.predict_one_word(feature_vec)
             self.assertAlmostEqual(prob, single_predicted_prob)
 
-    @patch('ir_query_engine.rank_match_models.topic_word_feature.training.get_md_path')
+    @patch('ir_query_engine.rank_match_models.topic_word_feature.topic_word_model.get_md_path')
     def test_get_similarities(self, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         model_struct = TopicWordModelStruct.get_model(data_store=self.data_store)
@@ -70,7 +70,7 @@ class TopicWordModelTestCase(unittest.TestCase):
         ranked_docs = [t[0] for t in results]
         self.assertEqual(ranked_docs, [2, 0, 3, 1, 5, 4])
 
-    @patch('ir_query_engine.rank_match_models.topic_word_feature.training.get_md_path')
+    @patch('ir_query_engine.rank_match_models.topic_word_feature.topic_word_model.get_md_path')
     def test_get_similarities(self, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
 

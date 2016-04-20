@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import word2vec
 import os
-from ir_query_engine.retrieve_match_models.tf_idf_feature.transform import TfIdfModelStruct
+from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from scipy.spatial.distance import cosine
 
 # Use this on production ec2 instance

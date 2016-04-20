@@ -2,7 +2,7 @@ import os
 from sklearn.externals import joblib
 from gensim.matutils import Scipy2Corpus, Sparse2Corpus, scipy2sparse, cossim
 from gensim import similarities
-from ir_query_engine.retrieve_match_models.tf_idf_feature.transform import TfIdfModelStruct, p_stemmer
+from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct, p_stemmer
 
 from ir_query_engine import engine_logger
 from sklearn.linear_model import LogisticRegression

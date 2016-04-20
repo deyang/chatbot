@@ -1,9 +1,9 @@
 from optparse import OptionParser
 
 from common import load_data
-import retrieve_match_models.tf_idf_feature.transform as tf_idf_transform
-import retrieve_match_models.lda_feature.training as lda_train
-import rank_match_models.topic_word_feature.training as topic_train
+import retrieve_match_models.tf_idf_feature.tfidf_model as tf_idf_transform
+import retrieve_match_models.lda_feature.lda_model as lda_train
+import rank_match_models.topic_word_feature.topic_word_model as topic_train
 
 __author__ = 'Deyang'
 

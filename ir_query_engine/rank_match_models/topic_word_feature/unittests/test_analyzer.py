@@ -1,5 +1,5 @@
 import unittest
-from ir_query_engine.rank_match_models.topic_word_feature.training import DocWordAnalyzer, POS_TAG_LABELS
+from ir_query_engine.rank_match_models.topic_word_feature.topic_word_model import DocWordAnalyzer, POS_TAG_LABELS
 
 __author__ = 'Deyang'
 
