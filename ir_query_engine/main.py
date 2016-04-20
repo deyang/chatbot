@@ -41,7 +41,6 @@ if __name__ == '__main__':
     if options.data_file:
         data_store = load_data(options.data_file)
 
-
     if options.load_tf_idf:
         tf_idf_model_struct = tf_idf_transform.TfIdfModelStruct.get_model(data_store=data_store, regen=options.regen)
         results = tf_idf_model_struct.query(raw_doc="Mark Zuckerberg established Facebook")
