@@ -36,5 +36,8 @@ class Word2VecModel(object):
 
         sims = []
         for vec in compare_vecs:
-            sims.append(1 - cosine(query_vec, vec))
+            if vec is None or query_vec is None:
+                sims.append(0.0)
+            else:
+                sims.append(1 - cosine(query_vec, vec))
         return list(enumerate(sims))

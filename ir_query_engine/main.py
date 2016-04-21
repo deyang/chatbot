@@ -6,6 +6,7 @@ import retrieve_match_models.lda_feature.lda_model as lda_train
 import rank_match_models.topic_word_feature.topic_word_model as topic_train
 from rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
 from ranker.ranking import Matcher, LinearRankModel
+from query_engine import QueryEngine
 
 __author__ = 'Deyang'
 
@@ -33,6 +34,10 @@ if __name__ == '__main__':
                       action='store_true',
                       default=False,
                       help='Train rank model')
+    parser.add_option('-q', '--query', dest='query',
+                      action='store_true',
+                      default=False,
+                      help='Start a QueryEngine')
     parser.add_option('', '--num_topics', dest='num_topics',
                       action='store',
                       default=None,
@@ -100,3 +105,11 @@ if __name__ == '__main__':
 
         rank_model = LinearRankModel(matcher=matcher, rank_data=data_store.rank_data)
         rank_model.write_training_data()
+
+    if options.query:
+        query_engine = QueryEngine(data_store, options.num_topics)
+        # out_msg = query_engine.execute_query("facebook")
+        while True:
+            in_msg = raw_input()
+            out_msg = query_engine.execute_query(in_msg)
+            print "Response> %s" % out_msg

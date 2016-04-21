@@ -218,7 +218,6 @@ class LinearRankModel(object):
             threshold = float(threshold_line.split(" ")[0])
             sv_line = contents[-1]
             splits = sv_line.split(" ")[1:-1]
-            print splits
             weight_vec = []
             for part in splits:
 
