@@ -58,6 +58,20 @@ class DefaultQAPairGenerator(object):
                                                 make_context_map(entity_instance)),
             ])
 
+        ##########################
+        #      Job.self          #
+        ##########################
+        elif isinstance(entity_instance, Job):
+            # NOTE: for a Job, we remove some of the common form of the self question
+            qa_pairs = [
+                entity_self_concept.new_qa_pair(question_text, entity_instance.get_entity_self_description(),
+                                                make_context_map(entity_instance))
+                for question_text in [
+                    'tell me more about %s' % entity_name,
+                    'I want to know about %s' % entity_name
+                ]
+            ]
+
         return qa_pairs
 
     def __generate_qa_pairs_about_entity_property(self, entity_property_concept):

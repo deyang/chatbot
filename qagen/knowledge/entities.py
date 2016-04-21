@@ -151,8 +151,11 @@ Company.relation_def_map = {
 Job.entity_concept_type = ConceptType.THING
 Job.property_def_map = {
     'title': EntityProperty('title', ConceptType.THING),
-    'function': EntityProperty('function', ConceptType.THING),
     'location': EntityProperty('location', ConceptType.THING),
+
+    # we don't really care to ask about the function, but we need this property
+    # in order to come up with class-level queries
+    'function': EntityProperty('function', ConceptType.THING, is_hidden=True),
     # it's possible that the company name cannot be associated back to a company entity
     # in this case we save the name of the company as a normal property so that it's able
     # to handle some basic question
