@@ -106,6 +106,9 @@ class DataStore(object):
     def translate_question_query_results(self, results):
         return [(self.get_doc_id_from_question_pos(idx), sim) for idx, sim in results]
 
+    def get_docs_by_pair(self, pair):
+        return map(self.doc_set.__getitem__, pair)
+
     def __repr__(self):
         return "doc sets:\n%s\ntopics words:\n%s" % \
                (json.dumps(self.doc_set, indent=4), json.dumps(self.topic_word_docs, indent=4))
