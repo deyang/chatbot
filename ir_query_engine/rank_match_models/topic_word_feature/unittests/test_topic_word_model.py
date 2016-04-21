@@ -13,17 +13,28 @@ __author__ = 'Deyang'
 class TopicWordModelTestCase(unittest.TestCase):
 
     def setUp(self):
-        topic_word_docs = [
-            ("tell me about a16z", ["a16z"]),
-            ("a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
-             ["a16z", "venture", "capital"]),
-            ("who is the founder of a16z", ["founder", "a16z"]),
-            ("Marc Andreessen and Ben Horowitz co-founded a16z.", ["co-founded", "a16z"]),
-            ("who is Steven Sinofsky", ["Steven", "Sinofsky"]),
-            ("Steven Sinofsky is a board partner at a16z.", ["Steven", "Sinofsky", "board", "partner", "a16z"]),
+        self.data = [
+            {
+                "_question": "tell me about a16z",
+                "_question_topic_words": ["a16z"],
+                "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
+                "answer_topic_words": ["a16z", "venture", "capital"],
+
+            },
+            {
+                "_question": "who is the founder of a16z",
+                "_question_topic_words": ["founder", "a16z"],
+                "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
+                "answer_topic_words": ["co-founded", "a16z"],
+            },
+            {
+                "_question": "who is Steven Sinofsky",
+                "_question_topic_words": ["Steven", "Sinofsky"],
+                "answer": "Steven Sinofsky is a board partner at a16z.",
+                "answer_topic_words": ["Steven", "Sinofsky", "board", "partner", "a16z"],
+            },
         ]
-        self.data_store = DataStore({})
-        self.data_store.topic_word_docs = topic_word_docs
+        self.data_store = DataStore(self.data)
         self.dir_path = os.path.dirname(os.path.abspath(__file__))
         self.test_md_file_path = os.path.join(self.dir_path, 'test_lr.pkl')
 

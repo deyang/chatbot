@@ -2,6 +2,7 @@ import os
 from sklearn.externals import joblib
 from gensim import similarities
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct, p_stemmer
+import re
 
 from ir_query_engine import engine_logger
 from sklearn.linear_model import LogisticRegression
@@ -60,7 +61,8 @@ class DocWordAnalyzer(object):
             # engine_logger.debug("Hit doc word analyzer cache.")
             analyze_results = self.cache[raw_doc]
         else:
-            sentences = nltk.sent_tokenize(raw_doc)
+            cleaned_doc = re.sub(r'https?:\/\/.*\s?$', 'http', raw_doc.lower())
+            sentences = nltk.sent_tokenize(cleaned_doc)
             tokenized_sentences = [nltk.word_tokenize(sentence) for sentence in sentences]
 
             sent_word_bags = []
@@ -76,7 +78,9 @@ class DocWordAnalyzer(object):
             for tagged_sent in tagged_sentences:
                 for tagged_word in tagged_sent:
                     word = self.normalize_word(tagged_word[0])
-                    tag = POS_TAG_LABELS[tagged_word[1]]
+                    tag = POS_TAG_LABELS.get(tagged_word[1], None)
+                    if tag is None:
+                        continue
                     if word not in word_to_pos_tag:
                         word_to_pos_tag[word] = dict()
                     if tag not in word_to_pos_tag[word]:
@@ -204,15 +208,12 @@ class TopicWordModelStruct(object):
         if not os.path.isfile(md_file_path) or regen:
             engine_logger.info("Generating topic word logistic regression model")
 
-            # transform topic word data to labeled training data
-            training_doc_set = []
             # Each doc is a raw doc and normed word (lowered and stemmed)
             training_doc_word_pairs = []
             training_labels = []
 
             for pair in data_store.topic_word_docs:
                 doc = pair[0]
-                training_doc_set.append(doc)
 
                 # iterate the combination of doc-word pairs and as positive and negative ex.
                 tokens = TfIdfModelStruct.pre_process_doc_tf_idf(doc)
@@ -224,12 +225,8 @@ class TopicWordModelStruct(object):
                     else:
                         training_labels.append(0)
 
-            # If training the topic model, the tf-idf need to be computed on the training doc set only
-            # Not on the whole doc set.
-            local_data_store = DataStore({})
-            local_data_store.doc_set = training_doc_set
-            # when training, create a new tfidf model but not saving, to prevent ruining the global tfidf model
-            tfidf_model_struct = TfIdfModelStruct.get_model(data_store=local_data_store, regen=True, save=False)
+            if tfidf_model_struct is None:
+                tfidf_model_struct = TfIdfModelStruct.get_model(data_store=data_store, regen=True, save=False)
 
             # un-trained model
             model = LogisticRegression()

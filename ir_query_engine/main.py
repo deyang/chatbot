@@ -75,13 +75,12 @@ if __name__ == '__main__':
         print data_store.doc_set[results[2][0]]
 
     if options.train_topic_words:
-        if not options.regen:
-            tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store)
-            topic_word_model_struct = \
-                topic_train.TopicWordModelStruct.get_model(tfidf_model_struct=tf_idf_model_struct)
-        else:
-            topic_word_model_struct = \
-                topic_train.TopicWordModelStruct.get_model(data_store=data_store, regen=True)
+        tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store)
+        topic_word_model_struct = \
+                topic_train.TopicWordModelStruct.get_model(
+                    tfidf_model_struct=tf_idf_model_struct,
+                    data_store=data_store,
+                    regen=options.regen)
 
         query_doc = "What is investment strategy"
         compare_docs = data_store.doc_set
