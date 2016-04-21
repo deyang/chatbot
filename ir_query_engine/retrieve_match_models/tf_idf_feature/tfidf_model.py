@@ -3,6 +3,7 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.stem.porter import PorterStemmer
 import os
 from ir_query_engine import engine_logger
+import re
 
 __author__ = 'Deyang'
 
@@ -52,7 +53,9 @@ class TfIdfModelStruct(object):
         :return:
         """
         # clean and tokenize document string
-        tokens = tokenizer.tokenize(raw_doc.lower())
+        # cleanup the url
+        cleaned_doc = re.sub(r'https?:\/\/.*\s?$', 'http', raw_doc.lower())
+        tokens = tokenizer.tokenize(cleaned_doc)
         # stem tokens
         stemmed_tokens = [p_stemmer.stem(t) for t in tokens]
         return stemmed_tokens

@@ -4,6 +4,7 @@ from nltk.stem.porter import PorterStemmer
 from gensim import corpora, models, similarities
 import os
 from ir_query_engine import engine_logger
+import re
 
 __author__ = 'Deyang'
 
@@ -62,7 +63,8 @@ class LdaModelStruct(object):
     @staticmethod
     def pre_process_doc_lda(raw_doc):
         # clean and tokenize document string
-        tokens = tokenizer.tokenize(raw_doc.lower())
+        cleaned_doc = re.sub(r'https?:\/\/.*\s?$', 'http', raw_doc.lower())
+        tokens = tokenizer.tokenize(cleaned_doc)
 
         # remove stop words from tokens
         stopped_tokens = [t for t in tokens if t not in en_stop]
