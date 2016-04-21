@@ -48,8 +48,8 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
 
         print 'Initializing company:A16Z...'
         a16z = A16Z({
-            'name': 'Andreesen Horowitz',
-            'founder': 'Marc Andreesen and Ben Horowitz',
+            'name': 'Andreessen Horowitz',
+            'founder': 'Marc Andreessen and Ben Horowitz',
             'location': 'Melo Park, California',
             'website': 'a16z.com',
             'type of business': 'venture capital',
