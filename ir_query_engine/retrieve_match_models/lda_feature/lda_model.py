@@ -104,13 +104,18 @@ class LdaModelStruct(object):
         return list(enumerate(sims))
 
     def query(self, topic_predict=None, raw_doc=None, limit=10):
+        # Give up the totally not matched results
         if raw_doc:
             topic_predict = self.get_topic_predict(raw_doc)
 
         sims = self.sim_matrix[topic_predict]
         results = list(enumerate(sims))
         results.sort(key=lambda t: t[1], reverse=True)
-        return results[:limit]
+        truncated_results = []
+        for docid, sim in results[:limit]:
+            if sim > 0.1:
+                truncated_results.append((docid, sim))
+        return truncated_results
 
     @classmethod
     def get_model(cls, data_store=None, regen=False, num_topics=None):

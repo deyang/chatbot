@@ -142,7 +142,8 @@ class RankModelTestCase(unittest.TestCase):
                           LdaModelStruct(),
                           TopicWordModelStruct(None, None),
                           Word2VecModel())
-        rank_model = LinearRankModel(matcher=matcher, rank_data=self.rank_data)
+        rank_data = list(self.rank_data.iteritems())
+        rank_model = LinearRankModel(matcher=matcher, rank_data=rank_data)
 
         rank_model.write_training_data()
 

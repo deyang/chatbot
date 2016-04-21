@@ -52,7 +52,7 @@ class QueryEngine(object):
                 self.rank_model.predict_score(feature)
             )
 
-        query_state.responses = zip(query_state.candidate_pairs, query_state.candidate_scores)
+        query_state.responses = zip(query_state.candidate_pairs, query_state.candidate_scores, query_state.match_features)
         engine_logger.info("State three, ranking candidates.")
         query_state.responses.sort(key=lambda pair: pair[1], reverse=True)
 
@@ -62,11 +62,13 @@ class QueryEngine(object):
                 (
                     self.data_store.doc_set[pair[0][0]],
                     self.data_store.doc_set[pair[0][1]],
-                    pair[1]
+                    pair[1],
+                    pair[2].to_vec()
                 )
             )
 
         engine_logger.info("Ranked top 5 responses: %s" % top5)
+
         query_state.response_doc = self.data_store.doc_set[query_state.responses[0][0][1]]
         return query_state.response_doc
 
@@ -83,7 +85,7 @@ class QueryEngine(object):
                                 (self.data_store.get_docs_by_pair(qa_pair), sim))
             qa_pairs_from_question_tfidf.append(qa_pair)
         qa_pairs.update(qa_pairs_from_question_tfidf)
-        engine_logger.debug("Candidates from tf-idf question matching: %s" % qa_pairs_from_question_tfidf)
+        # engine_logger.debug("Candidates from tf-idf question matching: %s" % qa_pairs_from_question_tfidf)
 
         # retrieve similar answers based on tf-idf
         results = self.tfidf_model_struct.query_answers(raw_doc=query_state.raw_query)
@@ -118,10 +120,10 @@ class QueryEngine(object):
             else:
                 engine_logger.debug("Matched non question not answer doc from lda: %s" % self.data_store.doc_set[doc_id])
         qa_pairs.update(qa_pairs_from_lda)
-        engine_logger.debug("Candidates after lda matching: %s" % qa_pairs_from_lda)
+        # engine_logger.debug("Candidates after lda matching: %s" % qa_pairs_from_lda)
 
         query_state.candidate_pairs = list(qa_pairs)
-        engine_logger.info("Candidates: %s, len: %s" % (query_state.candidate_pairs, len(query_state.candidate_pairs)))
+        # engine_logger.info("Candidates: %s, len: %s" % (query_state.candidate_pairs, len(query_state.candidate_pairs)))
 
     def _match_candidates(self, query_state):
         # apply all the match models to all the candidates
