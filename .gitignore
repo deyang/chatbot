@@ -22,3 +22,7 @@ training_*h*m.json
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# Ignore generated QA pairs
+bin/qa_pairs_labeled.json
+bin/qa_pairs_unlabeled.json
