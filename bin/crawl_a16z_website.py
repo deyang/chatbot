@@ -1,14 +1,10 @@
-import sys
 import json
+import os
 
 from qagen.data_provider.knowledge_data_providers import WebCrawlerKnowledgeDataProvider
 from qagen.knowledge.json_converter import EntityJsonConverter
 
-# if len(sys.argv) != 2:
-#     raise Exception('Insufficient or unexpected input. Example: python crawl_a16z_website.py /path/to/output/file')
-#
-# output_file_path = sys.argv[1]
-output_file_path = 'data.json'
+output_file_path = os.path.join(os.path.dirname(__file__), 'data.json')
 
 data_provider = WebCrawlerKnowledgeDataProvider()
 
