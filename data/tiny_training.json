@@ -4,23 +4,27 @@
     "question_topic_words": ["a16z"],
     "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
     "answer_topic_words": ["a16z", "venture", "capital"],
-    "ranked_answers": [
-      {
-      "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
-      "rank": 1
-      },
-      {
-      "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
-      "rank": 10
-      },
-      {
-      "answer": "a16z is located in Menlo Park",
-      "rank": 10
-      },
-      {
-      "answer": "500px headquarter in san francisco",
-      "rank": 30
-      }
+    "qa_pairs_with_matching_score": [
+        {
+        "question": "tell me about a16z",
+        "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
+        "score": 100
+        },
+        {
+          "question": "who is the founder of a16z",
+          "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
+          "score": 50
+        },
+        {
+          "question": "Where id a16z?",
+          "answer": "a16z is located in Menlo Park",
+          "score": 10
+        },
+        {
+          "question": "Where is the headquarter of 500px?",
+          "answer": "500px headquarter in san francisco",
+          "score": 0
+        }
       ]
   },
   {
@@ -28,19 +32,22 @@
     "question_topic_words": ["founder", "a16z"],
     "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
     "answer_topic_words": ["co-founded", "a16z"],
-    "ranked_answers": [
-      {
-      "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
-      "rank": 1
-      },
-      {
-      "answer": "Steven Sinofsky is a board partner at a16z.",
-      "rank": 20
-      },
-      {
-      "answer": "a16z is located in Menlo Park",
-      "rank": 20
-      }
+    "qa_pairs_with_matching_score": [
+        {
+          "question": "who is the founder of a16z",
+          "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
+          "score": 100
+        },
+        {
+          "question": "who is Steven Sinofsky",
+          "answer": "Steven Sinofsky is a board partner at a16z.",
+          "score": 40
+        },
+        {
+          "question": "Where id a16z?",
+          "answer": "a16z is located in Menlo Park",
+          "score": 5
+        }
       ]
   },
   {
@@ -48,19 +55,22 @@
     "question_topic_words": ["Steven", "Sinofsky"],
     "answer": "Steven Sinofsky is a board partner at a16z.",
     "answer_topic_words": ["Steven", "Sinofsky", "board", "partner", "a16z"],
-    "ranked_answers": [
-      {
-      "answer": "Steven Sinofsky is a board partner at a16z.",
-      "rank": 1
-      },
-      {
-      "answer": "you can find the linked profile of Steven Sinofsky at www.linkedin.com/in/sinofsky",
-      "rank": 10
-      },
-      {
-      "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
-      "rank": 20
-      }
+    "qa_pairs_with_matching_score": [
+          {
+            "question": "who is Steven Sinofsky",
+            "answer": "Steven Sinofsky is a board partner at a16z.",
+            "score": 100
+          },
+          {
+            "question": "find linkedin profile of Steven Sinofsky",
+            "answer": "you can find the linked profile of Steven Sinofsky at www.linkedin.com/in/sinofsky",
+            "score": 30
+          },
+          {
+            "question": "who is the founder of a16z",
+            "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
+            "score": 10
+          }
       ]
   },
   {
@@ -68,19 +78,22 @@
     "question_topic_words": ["linkedin", "profile", "Steven", "Sinofsky"],
     "answer": "you can find the linked profile of Steven Sinofsky at www.linkedin.com/in/sinofsky",
     "answer_topic_words": ["linkedin", "profile", "Steven", "Sinofsky"],
-    "ranked_answers": [
-      {
-      "answer": "you can find the linked profile of Steven Sinofsky at www.linkedin.com/in/sinofsky",
-      "rank": 1
-      },
-      {
-      "answer": "Steven Sinofsky is a board partner at a16z.",
-      "rank": 10
-      },
-      {
-      "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
-      "rank": 25
-      }
+    "qa_pairs_with_matching_score": [
+        {
+          "question": "find linkedin profile of Steven Sinofsky",
+          "answer": "you can find the linked profile of Steven Sinofsky at www.linkedin.com/in/sinofsky",
+          "score": 100
+        },
+        {
+          "question": "who is Steven Sinofsky",
+          "answer": "Steven Sinofsky is a board partner at a16z.",
+          "score": 20
+        },
+        {
+          "question": "who is the founder of a16z",
+          "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
+          "score": 5
+        }
       ]
   },
   {
@@ -88,19 +101,22 @@
     "question_topic_words": ["contact", "a16z"],
     "answer": "You can find contact information of a16z at a16z.com/about/contact/",
     "answer_topic_words": ["contact", "information", "a16z"],
-    "ranked_answers": [
-      {
-      "answer": "You can find contact information of a16z at a16z.com/about/contact/",
-      "rank": 1
-      },
-      {
-      "answer": "a16z is located in Menlo Park",
-      "rank": 10
-      },
-      {
-      "answer": "Steven Sinofsky is a board partner at a16z.",
-      "rank": 25
-      }
+    "qa_pairs_with_matching_score": [
+        {
+          "question": "how to contact a16z",
+          "answer": "You can find contact information of a16z at a16z.com/about/contact/",
+          "score": 100
+        },
+        {
+          "question": "Where id a16z?",
+          "answer": "a16z is located in Menlo Park",
+          "score": 40
+        },
+        {
+          "question": "who is Steven Sinofsky",
+          "answer": "Steven Sinofsky is a board partner at a16z.",
+          "score": 5
+        }
       ]
   },
   {
@@ -108,23 +124,27 @@
     "question_topic_words": ["a16z", "invest"],
     "answer": "a16z invests from seed to venture and growth. They invest in both enterprise and consumer market companies",
     "answer_topic_words": ["a16z", "invests", "seed", "venture", "companies"],
-    "ranked_answers": [
-      {
-      "answer": "a16z invests from seed to venture and growth. They invest in both enterprise and consumer market companies",
-      "rank": 1
-      },
-      {
-      "answer": "you can find a full porfolio of a16z at a16z.com/portfolio/",
-      "rank": 3
-      },
-      {
-      "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
-      "rank": 20
-      },
-      {
-      "answer": "Steven Sinofsky is a board partner at a16z.",
-      "rank": 20
-      }
+    "qa_pairs_with_matching_score": [
+        {
+          "question": "who did a16z invest in",
+          "answer": "a16z invests from seed to venture and growth. They invest in both enterprise and consumer market companies",
+          "score": 100
+        },
+        {
+          "question": "list portfolio companies of a16z",
+          "answer": "you can find a full porfolio of a16z at a16z.com/portfolio/",
+          "score": 80
+        },
+        {
+          "question": "who is the founder of a16z",
+          "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
+          "score": 20
+        },
+        {
+          "question": "who is Steven Sinofsky",
+          "answer": "Steven Sinofsky is a board partner at a16z.",
+          "score": 10
+        }
       ]
   },
   {
@@ -132,19 +152,22 @@
     "question_topic_words": ["portfolio", "a16z"],
     "answer": "you can find a full porfolio of a16z at a16z.com/portfolio/",
     "answer_topic_words": ["a16z", "porfolio"],
-    "ranked_answers": [
-      {
-      "answer": "you can find a full porfolio of a16z at a16z.com/portfolio/",
-      "rank": 1
-      },
-      {
-      "answer": "a16z invests from seed to venture and growth. They invest in both enterprise and consumer market companies",
-      "rank": 3
-      },
-      {
-      "answer": "You can find contact information of a16z at a16z.com/about/contact/",
-      "rank": 20
-      }
+    "qa_pairs_with_matching_score": [
+        {
+          "question": "list portfolio companies of a16z",
+          "answer": "you can find a full porfolio of a16z at a16z.com/portfolio/",
+          "score": 100
+        },
+        {
+          "question": "who did a16z invest in",
+          "answer": "a16z invests from seed to venture and growth. They invest in both enterprise and consumer market companies",
+          "score": 80
+        },
+        {
+          "question": "how to contact a16z",
+          "answer": "You can find contact information of a16z at a16z.com/about/contact/",
+          "score": 20
+        }
       ]
   },
   {
@@ -152,19 +175,22 @@
     "question_topic_words": ["address", "a16z"],
     "answer": "a16z's mailing address is Andreessen Horowitz, 2865 Sand Hill Road, Suite 101, Menlo Park, CA 94025",
     "answer_topic_words": ["a16z", "mailing", "address"],
-    "ranked_answers": [
-      {
-      "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
-      "rank": 1
-      },
-      {
-      "answer": "a16z is located in Menlo Park",
-      "rank": 3
-      },
-      {
-      "answer": "Steven Sinofsky is a board partner at a16z.",
-      "rank": 20
-      }
+    "qa_pairs_with_matching_score": [
+        {
+          "question": "what is the address of a16z",
+          "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
+          "score": 100
+        },
+        {
+          "question": "Where id a16z?",
+          "answer": "a16z is located in Menlo Park",
+          "score": 80
+        },
+        {
+          "question": "who is Steven Sinofsky",
+          "answer": "Steven Sinofsky is a board partner at a16z.",
+          "score": 10
+        }
       ]
   },
   {
@@ -172,19 +198,22 @@
     "question_topic_words": ["founding", "team", "facebook"],
     "answer": "Mark Zuckerberg is the founder of Facebook",
     "answer_topic_words": ["Mark", "Zuckerberg", "founder", "Facebook"],
-    "ranked_answers": [
-      {
-      "answer": "Mark Zuckerberg is the founder of Facebook",
-      "rank": 1
-      },
-      {
-      "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
-      "rank": 20
-      },
-      {
-      "answer": "Steven Sinofsky is a board partner at a16z.",
-      "rank": 30
-      }
+    "qa_pairs_with_matching_score": [
+        {
+          "question": "founding team of facebook",
+          "answer": "Mark Zuckerberg is the founder of Facebook",
+          "score": 100
+        },
+        {
+          "question": "who is the founder of a16z",
+          "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
+          "score": 5
+        },
+        {
+          "question": "who is Steven Sinofsky",
+          "answer": "Steven Sinofsky is a board partner at a16z.",
+          "score": 5
+        }
       ]
   }
 ]

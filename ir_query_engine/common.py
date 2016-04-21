@@ -43,6 +43,8 @@ class DataStore(object):
         self.qid_to_qa_pair = dict()
         # one answer can corresponds to multiple questions
         self.aid_to_qa_pairs = dict()
+        # data to train svm rank
+        self.rank_data = dict()
 
         self.topic_word_docs = []
 
@@ -72,10 +74,18 @@ class DataStore(object):
 
         # loop for the ranked answer, add them at last, since not all of them correspond to an question
         for segment in raw_json_object:
-            if len(segment['ranked_answers']) > 0:
-                for ranked_answer in segment['ranked_answers'][1:]:
-                    # SKIP the first, which is the same with the best answer
-                    self._add_doc(ranked_answer['answer'])
+            if len(segment['qa_pairs_with_matching_score']) > 0:
+                self.rank_data[segment['question']] = []
+                for pair_dict in segment['qa_pairs_with_matching_score']:
+                    self._add_doc(pair_dict['question'])
+                    self._add_doc(pair_dict['answer'])
+                    self.rank_data[segment['question']].append((
+                        (
+                            pair_dict['question'],
+                            pair_dict['answer']
+                        ),
+                        pair_dict['score'])
+                    )
 
     def get_all_questions(self):
         return [self.doc_set[qid] for qid in self.question_set]

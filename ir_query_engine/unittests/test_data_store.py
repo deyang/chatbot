@@ -13,23 +13,27 @@ class DataStoreTestCase(unittest.TestCase):
             "question_topic_words": ["a16z"],
             "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
             "answer_topic_words": ["a16z", "venture", "capital"],
-            "ranked_answers": [
-              {
-              "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
-              "rank": 1
-              },
-              {
-              "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
-              "rank": 10
-              },
-              {
-              "answer": "a16z is located in Menlo Park",
-              "rank": 10
-              },
-              {
-              "answer": "500px headquarter in san francisco",
-              "rank": 30
-              }
+            "qa_pairs_with_matching_score": [
+                {
+                    "question": "tell me about a16z",
+                    "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
+                    "score": 100
+                },
+                {
+                  "question": "who is the founder of a16z",
+                  "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
+                  "score": 50
+                },
+                {
+                  "question": "Where id a16z?",
+                  "answer": "a16z is located in Menlo Park",
+                  "score": 10
+                },
+                {
+                  "question": "Where is the headquarter of 500px?",
+                  "answer": "500px headquarter in san francisco",
+                  "score": 0
+                }
               ]
           },
           {
@@ -37,19 +41,22 @@ class DataStoreTestCase(unittest.TestCase):
             "question_topic_words": ["founder", "a16z"],
             "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
             "answer_topic_words": ["co-founded", "a16z"],
-            "ranked_answers": [
-              {
-              "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
-              "rank": 1
-              },
-              {
-              "answer": "Steven Sinofsky is a board partner at a16z.",
-              "rank": 20
-              },
-              {
-              "answer": "a16z is located in Menlo Park",
-              "rank": 20
-              }
+            "qa_pairs_with_matching_score": [
+                {
+                  "question": "who is the founder of a16z",
+                  "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
+                  "score": 100
+                },
+                {
+                  "question": "who is Steven Sinofsky",
+                  "answer": "Steven Sinofsky is a board partner at a16z.",
+                  "score": 40
+                },
+                {
+                  "question": "Where id a16z?",
+                  "answer": "a16z is located in Menlo Park",
+                  "score": 5
+                }
               ]
           }
         ]
@@ -82,8 +89,11 @@ class DataStoreTestCase(unittest.TestCase):
           "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
           "who is the founder of a16z",
           "Marc Andreessen and Ben Horowitz co-founded a16z.",
+          "Where id a16z?",
           "a16z is located in Menlo Park",
+          "Where is the headquarter of 500px?",
           "500px headquarter in san francisco",
+          "who is Steven Sinofsky",
           "Steven Sinofsky is a board partner at a16z."
         ]
         self.assertEqual(d.doc_set, expected_doc_set)
@@ -114,6 +124,49 @@ class DataStoreTestCase(unittest.TestCase):
           ("Marc Andreessen and Ben Horowitz co-founded a16z.", ["co-founded", "a16z"])
         ]
         self.assertEqual(d.topic_word_docs, expected_topic_word_docs)
+
+        expected_rank_data =  {
+            "tell me about a16z": [
+                (
+                    ("tell me about a16z",
+                     "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth."),
+                    100
+                ),
+                (
+                    ("who is the founder of a16z",
+                     "Marc Andreessen and Ben Horowitz co-founded a16z."),
+                    50
+                ),
+                (
+                    ("Where id a16z?",
+                     "a16z is located in Menlo Park"),
+                    10
+                ),
+                (
+                    ("Where is the headquarter of 500px?",
+                     "500px headquarter in san francisco"),
+                    0
+                )
+            ],
+            "who is the founder of a16z": [
+                (
+                    ("who is the founder of a16z",
+                     "Marc Andreessen and Ben Horowitz co-founded a16z."),
+                    100
+                ),
+                (
+                    ("who is Steven Sinofsky",
+                     "Steven Sinofsky is a board partner at a16z."),
+                    40
+                ),
+                (
+                    ("Where id a16z?",
+                     "a16z is located in Menlo Park"),
+                    5
+                )
+            ]
+        }
+        self.assertEqual(d.rank_data, expected_rank_data)
 
     def test_getters(self):
         d = DataStore(self.data)

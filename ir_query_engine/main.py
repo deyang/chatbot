@@ -1,9 +1,11 @@
 from optparse import OptionParser
 
 from common import load_data
-import retrieve_match_models.tf_idf_feature.tfidf_model as tf_idf_transform
+import retrieve_match_models.tf_idf_feature.tfidf_model as tfidf_model
 import retrieve_match_models.lda_feature.lda_model as lda_train
 import rank_match_models.topic_word_feature.topic_word_model as topic_train
+from rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
+from ranker.ranking import Matcher, LinearRankModel
 
 __author__ = 'Deyang'
 
@@ -27,6 +29,10 @@ if __name__ == '__main__':
                       action='store_true',
                       default=False,
                       help='Train topic words model')
+    parser.add_option('', '--train_rank_model', dest='train_rank_model',
+                      action='store_true',
+                      default=False,
+                      help='Train rank model')
     parser.add_option('', '--num_topics', dest='num_topics',
                       action='store',
                       default=None,
@@ -42,7 +48,7 @@ if __name__ == '__main__':
         data_store = load_data(options.data_file)
 
     if options.load_tf_idf:
-        tf_idf_model_struct = tf_idf_transform.TfIdfModelStruct.get_model(data_store=data_store, regen=options.regen)
+        tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store, regen=options.regen)
         raw_doc = "Mark Zuckerberg established Facebook"
         results = tf_idf_model_struct.query_questions(raw_doc=raw_doc)
         results = data_store.translate_question_query_results(results)
@@ -64,7 +70,13 @@ if __name__ == '__main__':
         print data_store.doc_set[results[2][0]]
 
     if options.train_topic_words:
-        topic_word_model_struct = topic_train.TopicWordModelStruct.get_model(data_store=data_store, regen=True)
+        if not options.regen:
+            tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store)
+            topic_word_model_struct = \
+                topic_train.TopicWordModelStruct.get_model(tfidf_model_struct=tf_idf_model_struct)
+        else:
+            topic_word_model_struct = \
+                topic_train.TopicWordModelStruct.get_model(data_store=data_store, regen=True)
 
         query_doc = "What is investment strategy"
         compare_docs = data_store.doc_set
@@ -74,3 +86,17 @@ if __name__ == '__main__':
         print compare_docs[results[2][0]]
         print compare_docs[results[3][0]]
 
+    if options.train_rank_model:
+        tfidf_model_struct = tfidf_model.TfIdfModelStruct.get_model()
+        lda_model_struct = lda_train.LdaModelStruct.get_model(num_topics=options.num_topics)
+        topic_word_model_struct = topic_train.TopicWordModelStruct.get_model(tfidf_model_struct=tfidf_model_struct)
+        word2vec_model = Word2VecModel()
+        matcher = Matcher(
+            tfidf_model_struct,
+            lda_model_struct,
+            topic_word_model_struct,
+            word2vec_model
+        )
+
+        rank_model = LinearRankModel(matcher=matcher, rank_data=data_store.rank_data)
+        rank_model.write_training_data()

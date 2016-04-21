@@ -1,5 +1,27 @@
+from ir_query_engine import engine_logger
 from ir_query_engine.rank_match_models.simple_features import get_lcs_length, get_edit_distance
+import os
+from numpy import dot
+
 __author__ = 'Deyang'
+
+DIR_PATH = os.path.dirname(os.path.abspath(__file__))
+TRAIN_DATA_FILE_PATH = os.path.join(DIR_PATH,
+                                    'svm_rank',
+                                    'data',
+                                    'train.dat')
+MD_FILE_PATH = os.path.join(DIR_PATH,
+                            'svm_rank',
+                            'data',
+                            'model')
+
+
+def get_train_data_path():
+    return TRAIN_DATA_FILE_PATH
+
+
+def get_md_path():
+    return MD_FILE_PATH
 
 
 class MatchFeatures(object):
@@ -52,6 +74,13 @@ class MatchFeatures(object):
                self.question_cooccur_rate, self.answer_cooccur_rate, self.question_cooccur_sum_idf, \
                self.answer_cooccur_sum_idf, self.question_cooccur_avg_idf, \
                self.answer_cooccur_avg_idf, self.question_edit_distance
+
+    def __repr__(self):
+        vec = self.to_vec()
+        splits = []
+        for idx, val in enumerate(vec):
+            splits.append("%s:%s" % (idx + 1, val))
+        return " ".join(splits)
 
 
 class Matcher(object):
@@ -148,3 +177,53 @@ class Matcher(object):
             match_results[idx].question_edit_distance = get_edit_distance(query_doc, question_doc)
 
         return match_results
+
+
+class LinearRankModel(object):
+
+    def __init__(self, weight_vec=None, threshold=None, matcher=None, rank_data=None):
+        self.weight_vec = weight_vec
+        self.threshold = threshold
+        self.matcher = matcher
+        self.rank_data = rank_data
+
+    def write_training_data(self):
+        query_id = 1
+        engine_logger.info("Writing training data")
+        with open(get_train_data_path(), 'w') as f:
+            for question, pairs in self.rank_data.iteritems():
+                f.write("# query %s\n" % query_id)
+                qa_pairs = [t[0] for t in pairs]
+                features = self.matcher.match(question, qa_pairs)
+                for idx, feature in enumerate(features):
+                    f.write("%s qid:%s %s\n" % (pairs[idx][1], query_id, str(feature)))
+
+                query_id += 1
+
+    def predict_score(self, features):
+        if isinstance(features, MatchFeatures):
+            features = features.to_vec()
+
+        return dot(self.weight_vec, features) + self.threshold
+
+    @classmethod
+    def read_model_from_file(cls):
+        md_file_path = get_md_path()
+        if not os.path.isfile(md_file_path):
+            raise Exception("Missing model file")
+
+        with open(md_file_path, 'r') as f:
+            contents = f.readlines()
+            threshold_line = contents[-2]
+            threshold = float(threshold_line.split(" ")[0])
+            sv_line = contents[-1]
+            splits = sv_line.split(" ")[1:-1]
+            print splits
+            weight_vec = []
+            for part in splits:
+
+                weight_vec.append(float(part.split(":")[1]))
+
+        engine_logger.info("Load SVM rank model from file")
+        return LinearRankModel(weight_vec=weight_vec,
+                               threshold=threshold)

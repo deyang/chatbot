@@ -3,6 +3,7 @@ from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfI
 from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
 from ir_query_engine.rank_match_models.topic_word_feature.topic_word_model import TopicWordModelStruct
 from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
+from ir_query_engine.ranker.ranking import Matcher
 
 
 __author__ = 'Deyang'
@@ -13,6 +14,7 @@ class QueryState(object):
     def __init__(self, raw_query):
         self.raw_query = raw_query
         self.candidate_pairs = []
+        self.match_features = []
 
 
 class QueryEngine(object):
@@ -24,11 +26,18 @@ class QueryEngine(object):
         self.lda_model_struct = LdaModelStruct.get_model(num_topics=self.num_topics)
         self.topic_word_model_struct = TopicWordModelStruct.get_model(tfidf_model_struct=self.tfidf_model_struct)
         self.word2vec_model = Word2VecModel()
+        self.matcher = Matcher(
+            self.tfidf_model_struct,
+            self.lda_model_struct,
+            self.topic_word_model_struct,
+            self.word2vec_model
+        )
 
     def execute_query(self, raw_query):
         query_state = QueryState(raw_query)
         engine_logger.info("State one, retrieving candidates.")
         self._retrieve_candidates(query_state)
+        self._match_candidates(query_state)
 
     def _retrieve_candidates(self, query_state):
         # retrieve similar questions based on tf-idf
@@ -60,7 +69,8 @@ class QueryEngine(object):
 
     def _match_candidates(self, query_state):
         # apply all the match models to all the candidates
-        pass
-
-
-
+        question_answer_pairs = [(self.data_store.doc_set[qid],
+                                  self.data_store.doc_set[aid])
+                                 for qid, aid in query_state.candidate_pairs]
+        query_state.match_features = self.matcher.match(query_state.raw_query,
+                                                        question_answer_pairs)
