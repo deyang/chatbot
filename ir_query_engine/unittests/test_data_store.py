@@ -9,51 +9,51 @@ class DataStoreTestCase(unittest.TestCase):
     def setUp(self):
         self.data = [
           {
-            "question": "tell me about a16z",
-            "question_topic_words": ["a16z"],
+            "_question": "tell me about a16z",
+            "_question_topic_words": ["a16z"],
             "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
             "answer_topic_words": ["a16z", "venture", "capital"],
             "qa_pairs_with_matching_score": [
                 {
-                    "question": "tell me about a16z",
+                    "_question": "tell me about a16z",
                     "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
                     "score": 100
                 },
                 {
-                  "question": "who is the founder of a16z",
+                  "_question": "who is the founder of a16z",
                   "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
                   "score": 50
                 },
                 {
-                  "question": "Where id a16z?",
+                  "_question": "Where id a16z?",
                   "answer": "a16z is located in Menlo Park",
                   "score": 10
                 },
                 {
-                  "question": "Where is the headquarter of 500px?",
+                  "_question": "Where is the headquarter of 500px?",
                   "answer": "500px headquarter in san francisco",
                   "score": 0
                 }
               ]
           },
           {
-            "question": "who is the founder of a16z",
-            "question_topic_words": ["founder", "a16z"],
+            "_question": "who is the founder of a16z",
+            "_question_topic_words": ["founder", "a16z"],
             "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
             "answer_topic_words": ["co-founded", "a16z"],
             "qa_pairs_with_matching_score": [
                 {
-                  "question": "who is the founder of a16z",
+                  "_question": "who is the founder of a16z",
                   "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
                   "score": 100
                 },
                 {
-                  "question": "who is Steven Sinofsky",
+                  "_question": "who is Steven Sinofsky",
                   "answer": "Steven Sinofsky is a board partner at a16z.",
                   "score": 40
                 },
                 {
-                  "question": "Where id a16z?",
+                  "_question": "Where id a16z?",
                   "answer": "a16z is located in Menlo Park",
                   "score": 5
                 }

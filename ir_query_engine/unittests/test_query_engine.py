@@ -10,29 +10,24 @@ class QueryEngineTestCase(unittest.TestCase):
     def setUp(self):
         self.data = [
             {
-                "question": "What do you like to eat?",
+                "_question": "What do you like to eat?",
                 "answer": "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother.",
-                "ranked_answers": []
             },
             {
-                "question": "Tell me about your mother.",
+                "_question": "Tell me about your mother.",
                 "answer": "My mother spends a lot of time driving my brother around to baseball practice.",
-                "ranked_answers": []
             },
             {
-                "question": "Is driving safe?",
+                "_question": "Is driving safe?",
                 "answer": "Some health experts suggest that driving may cause increased tension and blood pressure.",
-                "ranked_answers": []
             },
             {
-                "question": "Does your mother love you?",
+                "_question": "Does your mother love you?",
                 "answer": "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better.",
-                "ranked_answers": []
             },
             {
-                "question": "Want some brocolli?",
+                "_question": "Want some brocolli?",
                 "answer": "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother.",
-                "ranked_answers": []
             }
         ]
         self.data_store = DataStore(self.data)

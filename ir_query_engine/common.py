@@ -49,7 +49,7 @@ class DataStore(object):
         self.topic_word_docs = []
 
         for segment in raw_json_object:
-            question = segment['question']
+            question = segment['_question']
             qid, added = self._add_doc(question)
             if added:
                 # new question, add to question set
@@ -67,8 +67,8 @@ class DataStore(object):
             self.aid_to_qa_pairs[aid].append((qid, aid))
 
             # store data for topic words
-            if 'question_topic_words' in segment:
-                self.topic_word_docs.append((question, segment['question_topic_words']))
+            if '_question_topic_words' in segment:
+                self.topic_word_docs.append((question, segment['_question_topic_words']))
             if 'answer_topic_words' in segment:
                 self.topic_word_docs.append((answer, segment['answer_topic_words']))
 
@@ -76,13 +76,13 @@ class DataStore(object):
         for segment in raw_json_object:
             if 'qa_pairs_with_matching_score' in segment and \
                             len(segment['qa_pairs_with_matching_score']) > 0:
-                self.rank_data[segment['question']] = []
+                self.rank_data[segment['_question']] = []
                 for pair_dict in segment['qa_pairs_with_matching_score']:
-                    self._add_doc(pair_dict['question'])
+                    self._add_doc(pair_dict['_question'])
                     self._add_doc(pair_dict['answer'])
-                    self.rank_data[segment['question']].append((
+                    self.rank_data[segment['_question']].append((
                         (
-                            pair_dict['question'],
+                            pair_dict['_question'],
                             pair_dict['answer']
                         ),
                         pair_dict['score'])
