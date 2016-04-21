@@ -5,6 +5,7 @@ from gensim import corpora, models, similarities
 import os
 from ir_query_engine import engine_logger
 import re
+from utils.util import StopWatch
 
 __author__ = 'Deyang'
 
@@ -93,10 +94,13 @@ class LdaModelStruct(object):
         return self.model[self.dictionary.doc2bow(self.pre_process_doc_lda(raw_doc))]
 
     def get_similarities(self, query_doc, compare_docs):
+        # sw = StopWatch()
         query_topic_predict = self.get_topic_predict(query_doc)
         compare_topic_predicts = [self.get_topic_predict(doc) for doc in compare_docs]
+        # print "after predict lda: %s" % sw.lap()
         sim_mx = similarities.MatrixSimilarity(compare_topic_predicts, num_features=self.num_topics)
         sims = sim_mx[query_topic_predict]
+        # print "total lda sims: %s" % sw.lap()
         return list(enumerate(sims))
 
     def query(self, topic_predict=None, raw_doc=None, limit=10):

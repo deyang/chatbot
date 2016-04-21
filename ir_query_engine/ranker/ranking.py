@@ -118,12 +118,12 @@ class Matcher(object):
         for idx, sim in sims:
             match_results[idx].question_tf_idf_sim = sim
 
+
         # match answer tfidf
         sims = self.tfidf_model_struct.get_similarities(query_doc,
                                                         answer_docs)
         for idx, sim in sims:
             match_results[idx].answer_tf_idf_sim = sim
-
         # print "after tfidf: %s" % sw.lap()
         # match question lda
         sims = self.lda_model_struct.get_similarities(query_doc,
@@ -136,7 +136,6 @@ class Matcher(object):
                                                       answer_docs)
         for idx, sim in sims:
             match_results[idx].answer_lda_sim = sim
-
         # print "after lda: %s" % sw.lap()
         # # match question topic words
         # sims = self.topic_word_model_struct.get_similarities(query_doc,
@@ -210,7 +209,7 @@ class LinearRankModel(object):
         file_path = "%s.offset%s" % (get_train_data_path(), self.query_id_offset)
         with open(file_path, 'w') as f:
             for question, pairs in self.rank_data:
-                engine_logger.info("Writing for query %s" % query_id)
+                # engine_logger.info("Writing for query %s" % query_id)
                 f.write("# query %s\n" % query_id)
                 qa_pairs = [t[0] for t in pairs]
                 features = self.matcher.match(question, qa_pairs)

@@ -8,15 +8,25 @@ from rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
 from ranker.ranking import Matcher, LinearRankModel
 from query_engine import QueryEngine
 from utils.util import StopWatch
+from ir_query_engine import engine_logger
 from multiprocessing import Process
-import math
 
 __author__ = 'Deyang'
 
-
-def match_process(shared_matcher, sub_data, offset):
-    sub_rank_model = LinearRankModel(matcher=shared_matcher, rank_data=sub_data, query_id_offset=offset)
-    sub_rank_model.write_training_data()
+#
+# def match_process(sub_data, offset):
+#     tfidf_model_struct = tfidf_model.TfIdfModelStruct.get_model()
+#     lda_model_struct = lda_train.LdaModelStruct.get_model()
+#             # topic_word_model_struct = topic_train.TopicWordModelStruct.get_model(tfidf_model_struct=tfidf_model_struct)
+#     word2vec_model = Word2VecModel()
+#     dedicate_matcher = Matcher(
+#                 tfidf_model_struct,
+#                 lda_model_struct,
+#                 None,
+#                 word2vec_model
+#             )
+#     sub_rank_model = LinearRankModel(matcher=dedicate_matcher, rank_data=sub_data, query_id_offset=offset)
+#     sub_rank_model.write_training_data()
 
 if __name__ == '__main__':
 
@@ -49,6 +59,10 @@ if __name__ == '__main__':
                       action='store_true',
                       default=False,
                       help='Write sequentially')
+    parser.add_option('', '--pair', dest='pair',
+                      action='store',
+                      default=None,
+                      help='Data split pair')
     parser.add_option('', '--num_topics', dest='num_topics',
                       action='store',
                       default=None,
@@ -103,44 +117,42 @@ if __name__ == '__main__':
         print compare_docs[results[3][0]]
 
     if options.train_rank_model:
-        tfidf_model_struct = tfidf_model.TfIdfModelStruct.get_model()
-        lda_model_struct = lda_train.LdaModelStruct.get_model()
-        # topic_word_model_struct = topic_train.TopicWordModelStruct.get_model(tfidf_model_struct=tfidf_model_struct)
-        word2vec_model = Word2VecModel()
-        matcher = Matcher(
-            tfidf_model_struct,
-            lda_model_struct,
-            None,
-            word2vec_model
-        )
-
         total_num_data = len(data_store.rank_data)
         data = list(data_store.rank_data.iteritems())
         # sort by question to guarantee the order
         data.sort(key=lambda t: t[0])
         if options.seq:
+            pair = options.pair.split(",")
+            start_end = map(int, pair)
             sw = StopWatch()
+            tfidf_model_struct = tfidf_model.TfIdfModelStruct.get_model()
+            lda_model_struct = lda_train.LdaModelStruct.get_model()
+            # topic_word_model_struct = topic_train.TopicWordModelStruct.get_model(tfidf_model_struct=tfidf_model_struct)
+            word2vec_model = Word2VecModel()
+            matcher = Matcher(
+                tfidf_model_struct,
+                lda_model_struct,
+                None,
+                word2vec_model
+            )
+            data_part = data[start_end[0]:start_end[1]]
+            engine_logger.info("data pair: %s, length: %s" % (start_end, len(data_part)))
             rank_model = LinearRankModel(matcher=matcher,
-                                         rank_data=data)
+                                         rank_data=data_part,
+                                         query_id_offset=start_end[0])
             rank_model.write_training_data()
             print "total time to write rank data: %s seconds" % sw.stop()
         else:
-            NUM_SPLITS = 3
+            NUM_SPLITS = 4
             unit = total_num_data / NUM_SPLITS
-            processes = []
+            pairs = []
             for i in range(NUM_SPLITS):
                 if i == NUM_SPLITS - 1:
-                    data_split = data[i*unit:]
+                    pairs.append((i*unit, total_num_data))
                 else:
-                    data_split = data[i*unit:(i+1)*unit]
-                p = Process(target=match_process, args=(matcher, data_split, i*unit))
-                processes.append(p)
-                p.start()
+                    pairs.append((i*unit, (i+1)*unit))
+            print pairs
 
-            sw = StopWatch()
-            for p in processes:
-                p.join()
-            print "total time to write rank data: %s seconds" % sw.stop()
 
     if options.query:
         query_engine = QueryEngine(data_store, options.num_topics)
