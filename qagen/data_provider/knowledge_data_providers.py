@@ -4,7 +4,7 @@ import sys
 reload(sys)  # Reload does the trick!
 sys.setdefaultencoding('UTF8')
 from bs4 import BeautifulSoup
-from urlparse import urlparse
+from urlparse import urlparse, parse_qs
 
 from qagen.knowledge.entities import *
 from qagen.knowledge.json_converter import EntityJsonConverter, ENTITY_JSON_ID, ENTITY_JSON_RELATIONS,\
@@ -42,36 +42,41 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
     def __init__(self):
         super(WebCrawlerKnowledgeDataProvider, self).__init__()
         self.__crawl_all_entity_data()
-        self.__reconstruct_entity_relations()
+        # self.__reconstruct_entity_relations()
 
     def __crawl_all_entity_data(self):
 
-        print 'Initializing company:A16Z...'
-        a16z = A16Z({
-            'name': 'Andreessen Horowitz',
-            'founder': 'Marc Andreessen and Ben Horowitz',
-            'location': 'Melo Park, California',
-            'website': 'a16z.com',
-            'type of business': 'venture capital',
-            'business model': None,
-            'stage': None,
-            'contact info': 'http://a16z.com/about/contact/',
-        })
-        self.add_entity(a16z)
+        # print 'Initializing company:A16Z...'
+        # a16z = A16Z({
+        #     'name': 'Andreessen Horowitz',
+        #     'founder': 'Marc Andreessen and Ben Horowitz',
+        #     'location': 'Melo Park, California',
+        #     'website': 'a16z.com',
+        #     'type of business': 'venture capital',
+        #     'business model': None,
+        #     'stage': None,
+        #     'contact info': 'http://a16z.com/about/contact/',
+        # })
+        # self.add_entity(a16z)
+        #
+        # print 'Crawling http://a16z.com/portfolio/...'
+        # print 'Companies in venture/growth stage...'
+        # for div in self.__find_company_data_divs_from_url('http://a16z.com/portfolio/'):
+        #     self.add_entity(self.__parse_company_data(div))
+        # print 'Companies in seed stage...'
+        # for div in self.__find_seed_company_data_divs_from_url('http://a16z.com/portfolio/'):
+        #     self.add_entity(self.__parse_seed_company_data(div))
+        #
+        # print 'Crawling http://a16z.com/about/team/'
+        # team_member_groups = self.__collect_team_member_profile_urls('http://a16z.com/about/team/')
+        # for team_member_group_info in team_member_groups:
+        #     for investor_url in team_member_group_info['urls']:
+        #         self.add_entity(self.__parse_investor_data(investor_url, team_member_group_info['role_description']))
 
-        print 'Crawling http://a16z.com/portfolio/...'
-        print 'Companies in venture/growth stage...'
-        for div in self.__find_company_data_divs_from_url('http://a16z.com/portfolio/'):
-            self.add_entity(self.__parse_company_data(div))
-        print 'Companies in seed stage...'
-        for div in self.__find_seed_company_data_divs_from_url('http://a16z.com/portfolio/'):
-            self.add_entity(self.__parse_seed_company_data(div))
+        print 'Crawling http://portfoliojobs.a16z.com/...'
+        for job in self.__crawl_all_jobs():
+            self.add_entity(job)
 
-        print 'Crawling http://a16z.com/about/team/'
-        team_member_groups = self.__collect_team_member_profile_urls('http://a16z.com/about/team/')
-        for team_member_group_info in team_member_groups:
-            for investor_url in team_member_group_info['urls']:
-                self.add_entity(self.__parse_investor_data(investor_url, team_member_group_info['role_description']))
 
     def __reconstruct_entity_relations(self):
 
@@ -196,6 +201,109 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
             'linkedin': linkedin_url,
         })
 
+    def __crawl_all_jobs(self):
+        page = urllib2.urlopen('http://portfoliojobs.a16z.com/')
+        soup = BeautifulSoup(page, 'html.parser')
+
+        self.company_name_id_mapping = self.__parse_company_name_to_id_mapping(soup)
+        self.city_name_id_mapping = self.__parse_city_name_to_id_mapping(soup)
+        function_name_id_mapping = self.__parse_function_name_to_id_mapping(soup)
+
+        result = []
+
+        # NOTE: we are able to infer the id of a company of a location,
+        # but not on function since such data is missing in the job listing section.
+        # To handle this, we need to manually search all the possible functions and keep track
+        # of the function we are currently searching with
+        for function_name, function_id in function_name_id_mapping.iteritems():
+            result.extend(self.__crawl_all_jobs_under_function(function_name, function_id))
+
+        return result
+
+    @staticmethod
+    def __parse_company_name_to_id_mapping(soup):
+        return WebCrawlerKnowledgeDataProvider.__parse_name_to_id_mapping(
+            soup, '#jobs-filter-options select[name="Company"] option')
+
+    @staticmethod
+    def __parse_city_name_to_id_mapping(soup):
+        location_mapping = WebCrawlerKnowledgeDataProvider.__parse_name_to_id_mapping(
+            soup, '#jobs-filter-options select[name="Location"] option')
+        return {
+            location_name.split(',')[-1].strip(): location_id
+            for location_name, location_id in location_mapping.iteritems()
+        }
+
+    @staticmethod
+    def __parse_function_name_to_id_mapping(soup):
+        return WebCrawlerKnowledgeDataProvider.__parse_name_to_id_mapping(
+            soup, '#jobs-filter-options select[name="Function"] option')
+
+    @staticmethod
+    def __parse_name_to_id_mapping(soup, option_selector):
+        result = {}
+        for option in soup.select(option_selector):
+            option_name = option.get_text()
+            option_id = option['value']
+            if option_id.isdigit():
+                result[option_name] = option_id
+        return result
+
+    def __crawl_all_jobs_under_function(self, function_name, function_id):
+
+        first_page_url = construct_job_search_url(function_id=function_id, page_number=1)
+        first_page = BeautifulSoup(urllib2.urlopen(first_page_url), 'html.parser')
+
+        page_number_link = first_page.select_one('a.page-numbers')
+
+        if page_number_link:
+            # there is at least one search result
+            total_page_number = int(parse_qs(urlparse(page_number_link['href']).query)['tpages'][0])
+            print '%d pages found for function: %s...' % (total_page_number, function_name)
+
+            result = []
+            for page_number in range(1, total_page_number + 1):
+                search_url = construct_job_search_url(function_id=function_id, page_number=page_number)
+                result.extend(self.__extract_jobs_in_page(search_url, function_name, function_id))
+            return result
+        else:
+            print 'No job found for function: %s...' % function_name
+            return []
+
+    def __extract_jobs_in_page(self, url, function_name, function_id):
+
+        soup = BeautifulSoup(urllib2.urlopen(url), 'html.parser')
+
+        result = []
+        for job_div in soup.select('table.job_listings tbody tr'):
+            title = job_div.select_one('td.title-job > a').get_text()
+            job_id = job_div.select_one('td.title-job > a')['href'].split('=')[-1]
+            company_name = job_div.select_one('td.name-company > a').get_text()
+            location_name = job_div.select_one('td.location > a').get_text()
+            city_name = location_name.split(',')[0]
+
+            # company id is required
+            company_id = self.company_name_id_mapping.get(company_name)
+            if not company_id:
+                print 'Invalid job listing. Company name not found: %s' % company_name
+                continue
+            # location id is optional since some of the job descriptions use special format
+            location_id = self.city_name_id_mapping.get(city_name)
+
+            result.append(Job({
+                'job_id': job_id,
+                'title': title,
+                'company name': company_name,
+                'company_id': company_id,
+                'location': location_name,
+                'location_id': location_id,
+                'function': function_name,
+                'function_id': function_id,
+            }))
+
+        print '%d jobs found in %s' % (len(result), url)
+        return result
+
 
 class JsonFileKnowledgeDataProvider(KnowledgeDataProvider):
 
@@ -237,5 +345,13 @@ class JsonFileKnowledgeDataProvider(KnowledgeDataProvider):
                     else:
                         raise Exception('Neither %s or %s is found in the relation reference'
                                         % (ENTITY_JSON_RELATION_REF_ENTITY_ID, ENTITY_JSON_RELATION_REF_ENTITY_IDS))
+
+
+def construct_job_search_url(company_id='%', location_id='%', function_id='%', page_number=1):
+    """
+    for simplicity, all ids are str type
+    """
+    return 'http://portfoliojobs.a16z.com/careers_home.php?Company=%s&Function=%s&Location=%s&p=%d' \
+              % (company_id, function_id, location_id, page_number)
 
 

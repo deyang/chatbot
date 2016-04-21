@@ -142,13 +142,18 @@ Company.relation_def_map = {
 
 Job.entity_concept_type = ConceptType.THING
 Job.property_def_map = {
+    'title': EntityProperty('title', ConceptType.THING),
     'function': EntityProperty('function', ConceptType.THING),
     'location': EntityProperty('location', ConceptType.THING),
-    # name is only for context replacement, hence hidden
-    'name': EntityProperty('name', ConceptType.THING, is_hidden=True),
-    # function_id and location_id are only for answer generation, hence hidden
+    # it's possible that the company name cannot be associated back to a company entity
+    # in this case we save the name of the company as a normal property so that it's able
+    # to handle some basic question
+    'company name': EntityProperty('company name', ConceptType.THING, is_hidden=True),
+    # these ids are only for answer generation, hence hidden
+    'job_id': EntityProperty('job_id', ConceptType.THING, is_hidden=True),
     'function_id': EntityProperty('function_id', ConceptType.THING, is_hidden=True),
-    'location_id': EntityProperty('location_id', ConceptType.THING, is_hidden=True)
+    'location_id': EntityProperty('location_id', ConceptType.THING, is_hidden=True),
+    'company_id': EntityProperty('company_id', ConceptType.THING, is_hidden=True)
 }
 Job.relation_def_map = {
     'company': EntityRelation('company', Company, EntityRelation.ONE_TO_ONE)
