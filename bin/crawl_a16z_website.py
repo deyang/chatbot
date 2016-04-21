@@ -1,7 +1,6 @@
-import json
 import os
 
-from qagen.data_provider.knowledge_data_providers import WebCrawlerKnowledgeDataProvider
+from qagen.data_provider.knowledge_data_providers import *
 from qagen.knowledge.json_converter import EntityJsonConverter
 
 output_file_path = os.path.join(os.path.dirname(__file__), 'data.json')

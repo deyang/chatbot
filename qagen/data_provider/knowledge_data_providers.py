@@ -1,5 +1,6 @@
 import urllib2
 import json
+import re
 import sys
 reload(sys)  # Reload does the trick!
 sys.setdefaultencoding('UTF8')
@@ -93,17 +94,20 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
         # a16z -> POSTs
         # a16z -> PODCASTs
 
-        # JOB -> a COMPANY
-        # COMPANY -> JOBs
+        # JOB -> a COMPANY, COMPANY -> JOBs
         for job_listing in self.get_all_instances_of_type(Job):
             company_name = job_listing.property_value_map['company name']
-            # use company_name for searching
-            company_entity = self.get_entity_instance(Company, company_name)
-            if company_entity:
-                company_entity.add_job(job_listing)
-                job_listing.relation_value_map['company'] = company_entity
-            else:
+            matched_company_entity = None
+            # search for different variation of the company name
+            for company_entity in self.get_all_instances_of_type(Company):
+                if self.__compare_company_name(company_entity.property_value_map['name'], company_name):
+                    matched_company_entity = company_entity
+                    matched_company_entity.add_job(job_listing)
+                    job_listing.relation_value_map['company'] = matched_company_entity
+                    break
+            if not matched_company_entity:
                 print 'Cannot find company named %s to associate with' % company_name
+
 
     @staticmethod
     def __find_company_data_divs_from_url(url):
@@ -120,8 +124,10 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
         type_of_business = div.select_one('.meta > li:nth-of-type(5) > h2').next_sibling.strip()
         business_model = 'to consumer' if 'consumer' in div['class'] else 'to enterprise'
 
+        name_normalized = name.replace(u'\u00a0', ' ')
+
         return Company({
-            'name': name,
+            'name': name_normalized,
             'founder': founder,
             'location': location,
             'website': website,
@@ -153,6 +159,9 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
     @staticmethod
     def __guess_company_name_by_website(url):
         domain_name_no_suffix = urlparse(url).netloc.split('.')[-2]
+        # meetearnest.com
+        if domain_name_no_suffix.lower().startswith('meet'):
+            domain_name_no_suffix = domain_name_no_suffix[len('meet'):]
         terms = domain_name_no_suffix.split('-')
         terms_capitalized = [term.capitalize() for term in terms]
         return ' '.join(terms_capitalized)
@@ -313,6 +322,23 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
         print '%d jobs found in %s' % (len(result), url)
         return result
 
+    @staticmethod
+    def __compare_company_name(name_a, name_b):
+        non_char_regex = '[^a-zA-Z0-9]'
+        name_a_norm = name_a.lower().capitalize()
+        name_b_norm = name_b.lower().capitalize()
+        if name_a_norm == name_b_norm:
+            return True
+        if name_a_norm == re.compile(non_char_regex).split(name_b_norm)[0]:
+            return True
+        if name_b_norm == re.compile(non_char_regex).split(name_a_norm)[0]:
+            return True
+        if name_a_norm == re.sub(non_char_regex, '', name_b_norm):
+            return True
+        if name_b_norm == re.sub(non_char_regex, '', name_a_norm):
+            return True
+        return False
+
 
 class JsonFileKnowledgeDataProvider(KnowledgeDataProvider):
 
@@ -325,15 +351,7 @@ class JsonFileKnowledgeDataProvider(KnowledgeDataProvider):
             self.__load_entity_relations_from_dict(json_data)
 
         #TODO:DEBUG
-        for job_listing in self.get_all_instances_of_type(Job):
-            company_name = job_listing.property_value_map['company name']
-            # use company_name for searching
-            company_entity = self.get_entity_instance(Company, company_name)
-            if company_entity:
-                company_entity.add_job(job_listing)
-                job_listing.relation_value_map['company'] = company_entity
-            else:
-                print 'Cannot find company named %s to associate with' % company_name
+
 
     def __load_entity_property_data_from_dict(self, json_dict):
         for known_entity_type in self.entity_map:
