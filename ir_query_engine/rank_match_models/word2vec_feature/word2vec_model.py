@@ -3,6 +3,7 @@ import word2vec
 import os
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from scipy.spatial.distance import cosine
+import numpy
 
 # Use this on production ec2 instance
 filename = 'GoogleNews-vectors-negative300.bin'
@@ -23,9 +24,9 @@ class Word2VecModel(object):
             try:
                 vec = self.model[token]
                 if vec_sum is None:
-                    vec_sum = vec
+                    vec_sum = numpy.array(vec, dtype='float64')
                 else:
-                    vec_sum += vec
+                    vec_sum += numpy.array(vec, dtype='float64')
             except:
                 pass
         return vec_sum

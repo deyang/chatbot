@@ -82,9 +82,10 @@ if __name__ == '__main__':
                     data_store=data_store,
                     regen=options.regen)
 
-        query_doc = "What is investment strategy"
+        query_doc = "What is invest"
+        print query_doc
         compare_docs = data_store.doc_set
-        results = topic_word_model_struct.get_similarities(query_doc, compare_docs)
+        results = topic_word_model_struct.get_similarities(query_doc, compare_docs)[0:10]
         print compare_docs[results[0][0]]
         print compare_docs[results[1][0]]
         print compare_docs[results[2][0]]
@@ -92,7 +93,7 @@ if __name__ == '__main__':
 
     if options.train_rank_model:
         tfidf_model_struct = tfidf_model.TfIdfModelStruct.get_model()
-        lda_model_struct = lda_train.LdaModelStruct.get_model(num_topics=options.num_topics)
+        lda_model_struct = lda_train.LdaModelStruct.get_model()
         topic_word_model_struct = topic_train.TopicWordModelStruct.get_model(tfidf_model_struct=tfidf_model_struct)
         word2vec_model = Word2VecModel()
         matcher = Matcher(
