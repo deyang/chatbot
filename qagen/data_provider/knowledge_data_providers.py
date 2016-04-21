@@ -78,7 +78,6 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
         for job in self.__crawl_all_jobs():
             self.add_entity(job)
 
-
     def __reconstruct_entity_relations(self):
 
         print 'Reconstructing entity relations...'
@@ -107,7 +106,6 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
                     break
             if not matched_company_entity:
                 print 'Cannot find company named %s to associate with' % company_name
-
 
     @staticmethod
     def __find_company_data_divs_from_url(url):
@@ -349,9 +347,6 @@ class JsonFileKnowledgeDataProvider(KnowledgeDataProvider):
             # unmarshall the entity properties before reconstructing relations
             self.__load_entity_property_data_from_dict(json_data)
             self.__load_entity_relations_from_dict(json_data)
-
-        #TODO:DEBUG
-
 
     def __load_entity_property_data_from_dict(self, json_dict):
         for known_entity_type in self.entity_map:

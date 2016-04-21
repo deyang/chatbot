@@ -92,7 +92,7 @@ class Company(BaseEntity):
 class Job(BaseEntity):
 
     def get_entity_id(self):
-        return self.property_value_map['job_id']
+        return 'JOBOP' + self.property_value_map['job_id']
 
 
 class Investor(BaseEntity):
