@@ -74,7 +74,8 @@ class DataStore(object):
 
         # loop for the ranked answer, add them at last, since not all of them correspond to an question
         for segment in raw_json_object:
-            if len(segment['qa_pairs_with_matching_score']) > 0:
+            if 'qa_pairs_with_matching_score' in segment and \
+                            len(segment['qa_pairs_with_matching_score']) > 0:
                 self.rank_data[segment['question']] = []
                 for pair_dict in segment['qa_pairs_with_matching_score']:
                     self._add_doc(pair_dict['question'])
