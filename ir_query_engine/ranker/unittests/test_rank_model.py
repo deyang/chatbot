@@ -44,7 +44,8 @@ class RankModelTestCase(unittest.TestCase):
                                                  'test_train.dat')
 
     def tearDown(self):
-        os.remove(self.test_train_data_path)
+        pass
+        # os.remove(self.test_train_data_path)
 
     @patch('ir_query_engine.ranker.ranking.get_train_data_path')
     @patch.object(Matcher, 'match')
@@ -56,8 +57,8 @@ class RankModelTestCase(unittest.TestCase):
                     answer_tf_idf_sim=3.0,
                     question_lda_sim=5.0,
                     answer_lda_sim=7.0,
-                    question_topic_word_sim=9.0,
-                    answer_topic_word_sim=11.0,
+                    # question_topic_word_sim=9.0,
+                    # answer_topic_word_sim=11.0,
                     question_word2vec_sim=-0.1,
                     answer_word2vec_sim=-0.3,
                     answer_lcs_len=0,
@@ -76,8 +77,8 @@ class RankModelTestCase(unittest.TestCase):
                     answer_tf_idf_sim=4.0,
                     question_lda_sim=6.0,
                     answer_lda_sim=8.0,
-                    question_topic_word_sim=10.0,
-                    answer_topic_word_sim=12.0,
+                    # question_topic_word_sim=10.0,
+                    # answer_topic_word_sim=12.0,
                     question_word2vec_sim=-0.2,
                     answer_word2vec_sim=-0.4,
                     answer_lcs_len=0,
@@ -98,8 +99,8 @@ class RankModelTestCase(unittest.TestCase):
                     answer_tf_idf_sim=3.0,
                     question_lda_sim=5.0,
                     answer_lda_sim=7.0,
-                    question_topic_word_sim=9.5,
-                    answer_topic_word_sim=11.0,
+                    # question_topic_word_sim=9.5,
+                    # answer_topic_word_sim=11.0,
                     question_word2vec_sim=-0.1,
                     answer_word2vec_sim=-4.5,
                     answer_lcs_len=0,
@@ -118,8 +119,8 @@ class RankModelTestCase(unittest.TestCase):
                     answer_tf_idf_sim=4.0,
                     question_lda_sim=6.0,
                     answer_lda_sim=8.0,
-                    question_topic_word_sim=10.0,
-                    answer_topic_word_sim=12.0,
+                    # question_topic_word_sim=10.0,
+                    # answer_topic_word_sim=12.0,
                     question_word2vec_sim=-0.2,
                     answer_word2vec_sim=-0.4,
                     answer_lcs_len=2,

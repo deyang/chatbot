@@ -2,6 +2,7 @@ from ir_query_engine import engine_logger
 from ir_query_engine.rank_match_models.simple_features import get_lcs_length, get_edit_distance
 import os
 from numpy import dot
+from utils.util import StopWatch
 
 __author__ = 'Deyang'
 
@@ -26,15 +27,15 @@ def get_md_path():
 
 class MatchFeatures(object):
 
-    NUM_OF_FEATURES = 18
+    NUM_OF_FEATURES = 16 # 18
 
     def __init__(self,
                  question_tf_idf_sim=None,
                  answer_tf_idf_sim=None,
                  question_lda_sim=None,
                  answer_lda_sim=None,
-                 question_topic_word_sim=None,
-                 answer_topic_word_sim=None,
+                 # question_topic_word_sim=None,
+                 # answer_topic_word_sim=None,
                  question_word2vec_sim=None,
                  answer_word2vec_sim=None,
                  answer_lcs_len=None,
@@ -52,8 +53,8 @@ class MatchFeatures(object):
         self.answer_tf_idf_sim = answer_tf_idf_sim
         self.question_lda_sim = question_lda_sim
         self.answer_lda_sim = answer_lda_sim
-        self.question_topic_word_sim = question_topic_word_sim
-        self.answer_topic_word_sim = answer_topic_word_sim
+        # self.question_topic_word_sim = question_topic_word_sim
+        # self.answer_topic_word_sim = answer_topic_word_sim
         self.question_word2vec_sim = question_word2vec_sim
         self.answer_word2vec_sim = answer_word2vec_sim
         self.answer_lcs_len = answer_lcs_len
@@ -67,9 +68,17 @@ class MatchFeatures(object):
         self.answer_cooccur_avg_idf = answer_cooccur_avg_idf
         self.question_edit_distance = question_edit_distance
 
+    # def to_vec(self):
+    #     return self.question_tf_idf_sim, self.answer_tf_idf_sim, self.question_lda_sim, self.answer_lda_sim,\
+    #            self.question_topic_word_sim, self.answer_topic_word_sim, self.question_word2vec_sim, \
+    #            self.answer_word2vec_sim, self.answer_lcs_len, self.question_cooccur_size, self.answer_cooccur_size, \
+    #            self.question_cooccur_rate, self.answer_cooccur_rate, self.question_cooccur_sum_idf, \
+    #            self.answer_cooccur_sum_idf, self.question_cooccur_avg_idf, \
+    #            self.answer_cooccur_avg_idf, self.question_edit_distance
+
     def to_vec(self):
         return self.question_tf_idf_sim, self.answer_tf_idf_sim, self.question_lda_sim, self.answer_lda_sim,\
-               self.question_topic_word_sim, self.answer_topic_word_sim, self.question_word2vec_sim, \
+               self.question_word2vec_sim, \
                self.answer_word2vec_sim, self.answer_lcs_len, self.question_cooccur_size, self.answer_cooccur_size, \
                self.question_cooccur_rate, self.answer_cooccur_rate, self.question_cooccur_sum_idf, \
                self.answer_cooccur_sum_idf, self.question_cooccur_avg_idf, \
@@ -102,6 +111,7 @@ class Matcher(object):
             for _ in range(len(compare_question_answer_pairs)):
                 match_results.append(MatchFeatures())
 
+        # sw = StopWatch()
         # match question tfidf
         sims = self.tfidf_model_struct.get_similarities(query_doc,
                                                         question_docs)
@@ -114,6 +124,7 @@ class Matcher(object):
         for idx, sim in sims:
             match_results[idx].answer_tf_idf_sim = sim
 
+        # print "after tfidf: %s" % sw.lap()
         # match question lda
         sims = self.lda_model_struct.get_similarities(query_doc,
                                                       question_docs)
@@ -126,17 +137,18 @@ class Matcher(object):
         for idx, sim in sims:
             match_results[idx].answer_lda_sim = sim
 
-        # match question topic words
-        sims = self.topic_word_model_struct.get_similarities(query_doc,
-                                                             question_docs)
-        for idx, sim in sims:
-            match_results[idx].question_topic_word_sim = sim
-
-        # match answer topic words
-        sims = self.topic_word_model_struct.get_similarities(query_doc,
-                                                             answer_docs)
-        for idx, sim in sims:
-            match_results[idx].answer_topic_word_sim = sim
+        # print "after lda: %s" % sw.lap()
+        # # match question topic words
+        # sims = self.topic_word_model_struct.get_similarities(query_doc,
+        #                                                      question_docs)
+        # for idx, sim in sims:
+        #     match_results[idx].question_topic_word_sim = sim
+        #
+        # # match answer topic words
+        # sims = self.topic_word_model_struct.get_similarities(query_doc,
+        #                                                      answer_docs)
+        # for idx, sim in sims:
+        #     match_results[idx].answer_topic_word_sim = sim
 
         # match question word2vec
         sims = self.word2vec_model.get_similarities(query_doc,
@@ -150,6 +162,7 @@ class Matcher(object):
         for idx, sim in sims:
             match_results[idx].answer_word2vec_sim = sim
 
+        # print "sims: %s" % sw.stop()
         # match lcs between the answer
         for idx, answer_doc in enumerate(answer_docs):
             match_results[idx].answer_lcs_len = get_lcs_length(query_doc, answer_doc)
@@ -172,26 +185,32 @@ class Matcher(object):
             match_results[idx].answer_cooccur_sum_idf = cooccur_sum_idf
             match_results[idx].answer_cooccur_avg_idf = cooccur_avg_idf
 
+        # sw.restart()
         # match edit dist between the questions
         for idx, question_doc in enumerate(question_docs):
             match_results[idx].question_edit_distance = get_edit_distance(query_doc, question_doc)
+        # print "edit dis: %s" % sw.stop()
 
+        # print "total match: %s" % stopwatch.stop()
         return match_results
 
 
 class LinearRankModel(object):
 
-    def __init__(self, weight_vec=None, threshold=None, matcher=None, rank_data=None):
+    def __init__(self, weight_vec=None, threshold=None, matcher=None, rank_data=None, query_id_offset=0):
         self.weight_vec = weight_vec
         self.threshold = threshold
         self.matcher = matcher
         self.rank_data = rank_data
+        self.query_id_offset = query_id_offset
 
     def write_training_data(self):
-        query_id = 1
-        engine_logger.info("Writing training data")
-        with open(get_train_data_path(), 'w') as f:
-            for question, pairs in self.rank_data.iteritems():
+        query_id = self.query_id_offset
+        engine_logger.info("Writing training data. Num of queries: %s" % len(self.rank_data))
+        file_path = "%s.offset%s" % (get_train_data_path(), self.query_id_offset)
+        with open(file_path, 'w') as f:
+            for question, pairs in self.rank_data:
+                engine_logger.info("Writing for query %s" % query_id)
                 f.write("# query %s\n" % query_id)
                 qa_pairs = [t[0] for t in pairs]
                 features = self.matcher.match(question, qa_pairs)
@@ -199,6 +218,7 @@ class LinearRankModel(object):
                     f.write("%s qid:%s %s\n" % (pairs[idx][1], query_id, str(feature)))
 
                 query_id += 1
+
 
     def predict_score(self, features):
         if isinstance(features, MatchFeatures):
