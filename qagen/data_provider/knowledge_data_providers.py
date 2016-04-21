@@ -42,36 +42,36 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
     def __init__(self):
         super(WebCrawlerKnowledgeDataProvider, self).__init__()
         self.__crawl_all_entity_data()
-        # self.__reconstruct_entity_relations()
+        self.__reconstruct_entity_relations()
 
     def __crawl_all_entity_data(self):
 
-        # print 'Initializing company:A16Z...'
-        # a16z = A16Z({
-        #     'name': 'Andreessen Horowitz',
-        #     'founder': 'Marc Andreessen and Ben Horowitz',
-        #     'location': 'Melo Park, California',
-        #     'website': 'a16z.com',
-        #     'type of business': 'venture capital',
-        #     'business model': None,
-        #     'stage': None,
-        #     'contact info': 'http://a16z.com/about/contact/',
-        # })
-        # self.add_entity(a16z)
-        #
-        # print 'Crawling http://a16z.com/portfolio/...'
-        # print 'Companies in venture/growth stage...'
-        # for div in self.__find_company_data_divs_from_url('http://a16z.com/portfolio/'):
-        #     self.add_entity(self.__parse_company_data(div))
-        # print 'Companies in seed stage...'
-        # for div in self.__find_seed_company_data_divs_from_url('http://a16z.com/portfolio/'):
-        #     self.add_entity(self.__parse_seed_company_data(div))
-        #
-        # print 'Crawling http://a16z.com/about/team/'
-        # team_member_groups = self.__collect_team_member_profile_urls('http://a16z.com/about/team/')
-        # for team_member_group_info in team_member_groups:
-        #     for investor_url in team_member_group_info['urls']:
-        #         self.add_entity(self.__parse_investor_data(investor_url, team_member_group_info['role_description']))
+        print 'Initializing company:A16Z...'
+        a16z = A16Z({
+            'name': 'Andreessen Horowitz',
+            'founder': 'Marc Andreessen and Ben Horowitz',
+            'location': 'Melo Park, California',
+            'website': 'a16z.com',
+            'type of business': 'venture capital',
+            'business model': None,
+            'stage': None,
+            'contact info': 'http://a16z.com/about/contact/',
+        })
+        self.add_entity(a16z)
+
+        print 'Crawling http://a16z.com/portfolio/...'
+        print 'Companies in venture/growth stage...'
+        for div in self.__find_company_data_divs_from_url('http://a16z.com/portfolio/'):
+            self.add_entity(self.__parse_company_data(div))
+        print 'Companies in seed stage...'
+        for div in self.__find_seed_company_data_divs_from_url('http://a16z.com/portfolio/'):
+            self.add_entity(self.__parse_seed_company_data(div))
+
+        print 'Crawling http://a16z.com/about/team/'
+        team_member_groups = self.__collect_team_member_profile_urls('http://a16z.com/about/team/')
+        for team_member_group_info in team_member_groups:
+            for investor_url in team_member_group_info['urls']:
+                self.add_entity(self.__parse_investor_data(investor_url, team_member_group_info['role_description']))
 
         print 'Crawling http://portfoliojobs.a16z.com/...'
         for job in self.__crawl_all_jobs():
@@ -93,8 +93,17 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
         # a16z -> POSTs
         # a16z -> PODCASTs
 
-        # COMPANY -> JOBs
         # JOB -> a COMPANY
+        # COMPANY -> JOBs
+        for job_listing in self.get_all_instances_of_type(Job):
+            company_name = job_listing.property_value_map['company name']
+            # use company_name for searching
+            company_entity = self.get_entity_instance(Company, company_name)
+            if company_entity:
+                company_entity.add_job(job_listing)
+                job_listing.relation_value_map['company'] = company_entity
+            else:
+                print 'Cannot find company named %s to associate with' % company_name
 
     @staticmethod
     def __find_company_data_divs_from_url(url):
@@ -314,6 +323,17 @@ class JsonFileKnowledgeDataProvider(KnowledgeDataProvider):
             # unmarshall the entity properties before reconstructing relations
             self.__load_entity_property_data_from_dict(json_data)
             self.__load_entity_relations_from_dict(json_data)
+
+        #TODO:DEBUG
+        for job_listing in self.get_all_instances_of_type(Job):
+            company_name = job_listing.property_value_map['company name']
+            # use company_name for searching
+            company_entity = self.get_entity_instance(Company, company_name)
+            if company_entity:
+                company_entity.add_job(job_listing)
+                job_listing.relation_value_map['company'] = company_entity
+            else:
+                print 'Cannot find company named %s to associate with' % company_name
 
     def __load_entity_property_data_from_dict(self, json_dict):
         for known_entity_type in self.entity_map:

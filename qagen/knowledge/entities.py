@@ -82,9 +82,17 @@ class Company(BaseEntity):
         return '%s is a company invested by Andreessen Horowitz. You can ask me more about its location, founders, ' \
                'type of business, etc.' % self.property_value_map['name']
 
+    def add_job(self, job_entity):
+        jobs = self.relation_value_map.get('job openings')
+        if not jobs:
+            jobs = self.relation_value_map['job openings'] = []
+        jobs.append(job_entity)
+
 
 class Job(BaseEntity):
-    pass
+
+    def get_entity_id(self):
+        return self.property_value_map['job_id']
 
 
 class Investor(BaseEntity):
