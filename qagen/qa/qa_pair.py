@@ -42,7 +42,7 @@ class EntityInstanceSelfQA(QAConcept):
 
     def get_topic_words(self):
         result = []
-        result.extend(tokenize_sentence(self.entity_instance.property_value_map['name']))
+        result.extend(tokenize_sentence(self.entity_instance.get_entity_id()))
         return result
 
 
@@ -58,7 +58,7 @@ class EntityPropertyQA(QAConcept):
 
     def get_topic_words(self):
         result = []
-        result.extend(tokenize_sentence(self.entity_instance.property_value_map['name']))
+        result.extend(tokenize_sentence(self.entity_instance.get_entity_id()))
         result.extend(tokenize_sentence(self.property_def.property_name))
         return result
 
@@ -75,7 +75,7 @@ class EntityRelationQA(QAConcept):
 
     def get_topic_words(self):
         result = []
-        result.extend(tokenize_sentence(self.entity_instance.property_value_map['name']))
+        result.extend(tokenize_sentence(self.entity_instance.get_entity_id()))
         result.extend(tokenize_sentence(self.relation_def.relation_name))
         return result
 

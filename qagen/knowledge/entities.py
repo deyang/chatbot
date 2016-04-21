@@ -61,7 +61,7 @@ class BaseEntity(object):
 
     def __repr__(self):
         entity_type = self.__class__.__name__
-        entity_name = self.property_value_map['name']
+        entity_name = self.get_entity_id()
         return '%s[%s]' % (entity_type, entity_name)
 
     def get_entity_id(self):
@@ -71,7 +71,7 @@ class BaseEntity(object):
 
     def get_entity_self_description(self):
         """used for answering questions about the entity itself. subclass may override implementation"""
-        return '%s is a %s' % (self.property_value_map['name'], self.__class__.__name__)
+        return '%s is a %s' % (self.get_entity_id(), self.__class__.__name__)
 
 
 # Entity types and definitions

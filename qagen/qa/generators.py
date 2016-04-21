@@ -34,7 +34,7 @@ class DefaultQAPairGenerator(object):
     def __generate_qa_pairs_about_entity_instance(self, entity_self_concept):
         entity_instance = entity_self_concept.entity_instance
         wh_type = ConceptType.get_wh_type(entity_instance.__class__.entity_concept_type)
-        entity_name = entity_instance.property_value_map['name']
+        entity_name = entity_instance.get_entity_id()
 
         qa_pairs = [
             entity_self_concept.new_qa_pair(question_text, entity_instance.get_entity_self_description(),
@@ -70,7 +70,7 @@ class DefaultQAPairGenerator(object):
 
         property_wh_type = ConceptType.get_wh_type(property_def.concept_type)
         property_name = property_def.property_name
-        entity_name = entity_instance.property_value_map['name']
+        entity_name = entity_instance.get_entity_id()
 
         property_value = entity_instance.property_value_map.get(property_name)
         if property_value:
@@ -275,7 +275,7 @@ class DefaultQAPairGenerator(object):
 
         relation_wh_type = ConceptType.get_wh_type(relation_def.related_entity_class.entity_concept_type)
         relation_name = relation_def.relation_name
-        entity_name = entity_instance.property_value_map['name']
+        entity_name = entity_instance.get_entity_id()
 
         related_entity_value = entity_instance.relation_value_map.get(relation_name)
 
@@ -320,7 +320,7 @@ class JobQaGenerator(object):
 
     def generate_qa_pairs_about_one_property(self, entity_instance, property_def):
         qa_pairs = super(JobQaGenerator, self).generate_qa_pairs_about_one_property(entity_instance, property_def)
-        entity_name = entity_instance.property_value_map['name']
+        entity_name = entity_instance.get_entity_id()
 
         if property_def.property_name == 'name':
             qa_pairs.extend([
@@ -340,7 +340,7 @@ class JobQaGenerator(object):
 
     def generate_qa_pairs_about_one_relation(self, entity_instance, relation_def):
         qa_pairs = super(JobQaGenerator, self).generate_qa_pairs_about_one_relation(entity_instance, relation_def)
-        entity_name = self.property_value_map['name']
+        entity_name = entity_instance.get_entity_id()
 
         if relation_def.relation_name == 'company':
             qa_pairs.extend([
