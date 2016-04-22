@@ -14,7 +14,7 @@ class AnalyzerRewriter(object):
 
     DETECT = [
         "hers", "herself," "him", "himself", "hisself",
-        "it", "its" "itself", "she", "thee", "theirs"
+        "it", "its", "itself", "she", "thee", "theirs"
         "them", "themselves", "they", "thou", "thy", "this",
         "that", "those", "these", "her", "his", "their", "thy"
     ]
@@ -28,6 +28,7 @@ class AnalyzerRewriter(object):
         if context is None:
             return sent
         tokenized_sent = nltk.word_tokenize(sent)
+        print tokenized_sent
         detect = set(self.DETECT)
         for idx, token in enumerate(tokenized_sent):
             if token in detect:

@@ -48,6 +48,7 @@ class QueryEngine(object):
         engine_logger.info("Query engine is up")
 
     def execute_query(self, raw_query):
+        raw_query = raw_query.lower()
         engine_logger.info("Raw query: %s" % raw_query)
         query_state = QueryState(raw_query)
         engine_logger.info("State one, retrieving candidates.")
@@ -144,6 +145,14 @@ class QueryEngine(object):
                 engine_logger.debug("Matched non question not answer doc from lda: %s" % self.data_store.doc_set[doc_id])
         qa_pairs.update(qa_pairs_from_lda)
         # engine_logger.debug("Candidates after lda matching: %s" % qa_pairs_from_lda)
+
+        results = self.topic_word_model_struct.query(raw_doc=query_state.raw_query)
+        results = self.data_store.translate_question_query_results(results)
+        for qid, sim in results:
+            qa_pair = self.data_store.qid_to_qa_pair[qid]
+            engine_logger.debug("Pair from question topic word matching: %s, sim: %s" %
+                                (self.data_store.get_docs_by_pair(qa_pair), sim))
+            qa_pairs.add(qa_pair)
 
         query_state.candidate_pairs = list(qa_pairs)
         # engine_logger.info("Candidates: %s, len: %s" % (query_state.candidate_pairs, len(query_state.candidate_pairs)))
