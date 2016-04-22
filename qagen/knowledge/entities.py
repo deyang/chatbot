@@ -94,12 +94,18 @@ class Job(BaseEntity):
     def get_entity_id(self):
         return 'JOBOP' + self.property_value_map['job_id']
 
+    def get_entity_self_description(self):
+        return 'This is a job opening for %s at %s.' %(
+            self.property_value_map['title'],
+            self.property_value_map['company name'],
+        )
+
 
 class Investor(BaseEntity):
 
     def get_entity_self_description(self):
         return self.get_role_description() + \
-               ' You can ask me more to show the LinkedIn profile, the picture, recent posts, etc.'
+               ' You can ask me more to show the LinkedIn profile, the picture, etc.'
 
     def get_role_description(self):
         role_description_raw = self.property_value_map['role']
