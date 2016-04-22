@@ -281,6 +281,31 @@ class DefaultQAPairGenerator(object):
                     ]
                 ])
 
+        elif isinstance(entity_instance, Job):
+            answer = 'The %s of this job opening is for %s', % (property_name, property_value)
+            for qa_pair in qa_pairs:
+                qa_pair.answer = answer
+            if property_def.property_name == 'title':
+                qa_pairs.extend([
+                    entity_property_concept.new_qa_pair(question_text, answer, make_context_map(entity_instance))
+                    for question_text in [
+                        'what is the position for %s' % entity_name,
+                        'what do I work on for %s' % entity_name,
+                        'what expertise do I need for %s' % entity_name,
+                        'what is the requirement for %s' % entity_name,
+                    ]
+                ])
+
+            elif property_def.property_name == 'location':
+                qa_pairs.extend([
+                    entity_property_concept.new_qa_pair(question_text, answer, make_context_map(entity_instance))
+                    for question_text in [
+                        'where is the office for %s' % entity_name,
+                        'where do I need to work for %s' % entity_name,
+                    ]
+                ])
+
+
         return qa_pairs
 
     def __generate_qa_pairs_about_entity_relation(self, entity_relation_concept):
@@ -326,47 +351,6 @@ class DefaultQAPairGenerator(object):
         ]
 
         # additional stuff
-
-        return qa_pairs
-
-
-# Type-specific generators
-
-class JobQaGenerator(object):
-
-    def generate_qa_pairs_for_entity_class(self, entity_class):
-        #TODO
-        return []
-
-    def generate_qa_pairs_about_one_property(self, entity_instance, property_def):
-        qa_pairs = super(JobQaGenerator, self).generate_qa_pairs_about_one_property(entity_instance, property_def)
-        entity_name = entity_instance.get_entity_id()
-
-        if property_def.property_name == 'name':
-            qa_pairs.extend([
-                QAPair('what is the position for %s' % entity_name, 'n/a', make_context_map(entity_instance)),
-                QAPair('what do I work on for %s' % entity_name, 'n/a', make_context_map(entity_instance)),
-                QAPair('what expertise do I need for %s' % entity_name, 'n/a', make_context_map(entity_instance)),
-                QAPair('what is the requirement for %s' % entity_name, 'n/a', make_context_map(entity_instance)),
-            ])
-
-        elif property_def.property_name == 'location':
-            qa_pairs.extend([
-                QAPair('where is the office for %s' % entity_name, 'n/a', make_context_map(entity_instance)),
-                QAPair('where do I need to work for %s' % entity_name, 'n/a', make_context_map(entity_instance)),
-            ])
-
-        return qa_pairs
-
-    def generate_qa_pairs_about_one_relation(self, entity_instance, relation_def):
-        qa_pairs = super(JobQaGenerator, self).generate_qa_pairs_about_one_relation(entity_instance, relation_def)
-        entity_name = entity_instance.get_entity_id()
-
-        if relation_def.relation_name == 'company':
-            qa_pairs.extend([
-                QAPair('who is the employer of %s' % entity_name, 'n/a', make_context_map(entity_instance)),
-                QAPair('which company is %s for' % entity_name, 'n/a', make_context_map(entity_instance)),
-            ])
 
         return qa_pairs
 
