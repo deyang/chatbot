@@ -439,7 +439,7 @@ class DefaultQAPairGenerator(object):
             ]
             if related_entity_value:
                 example = ', '.join([single_intance.get_entity_id() for single_intance in related_entity_value][0:3])
-                answer = 'There are %d %s in total, including %s...' % (len(related_entity_value), relation_name, example)
+                answer = 'There are %d %s in total, including %s etc.' % (len(related_entity_value), relation_name, example)
             else:
                 answer = "Sorry, there doesn't seem to be any."
             context = make_context_map(entity_instance)
@@ -489,7 +489,7 @@ class DefaultQAPairGenerator(object):
                 qa_pairs.extend([
                     entity_relation_concept.new_qa_pair(
                         'who are board partners at %s' % entity_name,
-                        'I found %d board partners at %s, including %s...'
+                        'I found %d board partners at %s, including %s etc.'
                             % (len(board_partners), entity_name, example_names),
                         context
                     )
