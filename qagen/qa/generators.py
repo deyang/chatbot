@@ -113,7 +113,8 @@ class DefaultQAPairGenerator(object):
                 'information about %s' % entity_name,
                 'tell me about %s' % entity_name,
                 'show me %s' % entity_name,
-                'I want to know about %s' % entity_name
+                'I want to know about %s' % entity_name,
+                'do you know about %s' % entity_name,
             ]
         ]
 
@@ -183,8 +184,25 @@ class DefaultQAPairGenerator(object):
                                                     entity_instance.property_value_map['name'],
                                                     make_context_map(entity_instance)),
             ])
-        # TODO: a16z.contact info
-        if isinstance(entity_instance, Company):
+
+        if isinstance(entity_instance, A16Z):
+            ##########################
+            #    A16Z.contact info   #
+            ##########################
+            if property_def.property_name == 'contact info':
+                answer = qa_pairs[0].answer # use existing answer
+                qa_pairs.extend([
+                    entity_property_concept.new_qa_pair(question_text, answer, make_context_map(entity_instance))
+                    for question_text in [
+                        'how do I contact %s' % entity_name,
+                        'I want to talk to someone at %s' % entity_name,
+                        'how can I talk to someone at %s' % entity_name,
+                        'I want to talk to an investor at %s' % entity_name,
+                        'how can I get invested by %s' % entity_name,
+                        ]
+                ])
+
+        elif isinstance(entity_instance, Company):
             ##########################
             #    Company.founder     #
             ##########################
