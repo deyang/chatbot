@@ -496,18 +496,18 @@ class DefaultQAPairGenerator(object):
                 ])
 
             ################################################
-            #       A16Z.example portfolio company         #
+            #       A16Z.example of portfolio company      #
             ################################################
-            elif relation_def.relation_name == 'example portfolio company':
+            elif relation_def.relation_name == 'example of portfolio company':
                 # tweak answer
                 answer = 'For example, ' + related_entity_value.get_entity_self_description()
                 for qa_pair in qa_pairs:
                     qa_pair.answer = answer
 
             #######################################
-            #       A16Z.example investor         #
+            #       A16Z.example of investor      #
             #######################################
-            elif relation_def.relation_name == 'example investor':
+            elif relation_def.relation_name == 'example of investor':
                 # tweak answer
                 answer = 'For example, ' + related_entity_value.get_entity_self_description()
                 for qa_pair in qa_pairs:
@@ -535,9 +535,9 @@ class DefaultQAPairGenerator(object):
                 ])
 
             #######################################
-            #     Company.example job opening     #
+            #     Company.example of job opening  #
             #######################################
-            elif relation_def.relation_name == 'example job opening':
+            elif relation_def.relation_name == 'example of job opening':
                 if related_entity_value:
                     # tweak answer
                     answer = 'I found a job opening for %s at %s. For more results like this, you can visit %s' \

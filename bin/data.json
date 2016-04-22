@@ -16,8 +16,12 @@
       }, 
       "relations": {
         "example of investor": {
-          "ref_entity_id": "Leila Abu-Sharr", 
+          "ref_entity_id": "Alex Rampell", 
           "ref_entity_type": "Investor"
+        }, 
+        "example of portfolio company": {
+          "ref_entity_id": "500px", 
+          "ref_entity_type": "Company"
         }, 
         "people": {
           "ref_entity_ids": [

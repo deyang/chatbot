@@ -166,7 +166,7 @@ class A16Z(Company):
     
     def get_all_board_partners(self):
         return [investor
-                for investor in self.relation_value_map['team']
+                for investor in self.relation_value_map['people']
                 if 'board partner' in investor.property_value_map['role'].lower()]
 
 
@@ -184,7 +184,7 @@ Company.property_def_map = {
 }
 Company.relation_def_map = {
     'job openings': EntityRelation('job openings', Job, EntityRelation.ONE_TO_MANY),
-    'example job opening': EntityRelation('example job opening', Job, EntityRelation.ONE_TO_ONE)
+    'example of job opening': EntityRelation('example of job opening', Job, EntityRelation.ONE_TO_ONE)
 }
 
 
@@ -231,8 +231,8 @@ A16Z.property_def_map['mailing address'] = EntityProperty('mailing address', Con
 A16Z.property_def_map['twitter account'] = EntityProperty('twitter account', ConceptType.THING)
 A16Z.relation_def_map['portfolio companies'] = EntityRelation('portfolio companies', Company, EntityRelation.ONE_TO_MANY)
 A16Z.relation_def_map['people'] = EntityRelation('people', Investor, EntityRelation.ONE_TO_MANY)
-A16Z.relation_def_map['example portfolio company'] = EntityRelation('example portfolio company', Company, EntityRelation.ONE_TO_ONE)
-A16Z.relation_def_map['example investor'] = EntityRelation('example investor', Investor, EntityRelation.ONE_TO_ONE)
+A16Z.relation_def_map['example of portfolio company'] = EntityRelation('example of portfolio company', Company, EntityRelation.ONE_TO_ONE)
+A16Z.relation_def_map['example of investor'] = EntityRelation('example of investor', Investor, EntityRelation.ONE_TO_ONE)
 
 
 def find_entity_class_by_name(entity_class_name):
