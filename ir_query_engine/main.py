@@ -154,10 +154,14 @@ if __name__ == '__main__':
             print pairs
 
     if options.query:
-        query_engine = QueryEngine(data_store, options.num_topics)
+        query_engine = QueryEngine(data_store)
         # out_msg = query_engine.execute_query("facebook")
         while True:
             in_msg = raw_input()
-            out_msg = query_engine.execute_query(in_msg)
-            print "Response> %s" % out_msg
+            response = query_engine.execute_query(in_msg)
+            print response.context
+            print response.feature
+            print response.question
+            print response.score
+            print "Response> %s" % response.answer
 

@@ -16,17 +16,26 @@ class QueryState(object):
         self.match_features = []
         self.candidate_scores = []
         self.responses = []
-        self.response_doc = None
+        self.response= None
+
+
+class Response(object):
+    def __init__(self, question, answer, score, feature, context):
+        self.question = question
+        self.answer = answer
+        self.score = score
+        self.feature = feature
+        self.context = context
 
 
 class QueryEngine(object):
 
-    def __init__(self, data_store, num_topics):
+    def __init__(self, data_store):
         self.data_store = data_store
-        self.num_topics = num_topics
         self.tfidf_model_struct = TfIdfModelStruct.get_model()
         self.lda_model_struct = LdaModelStruct.get_model()
-        self.topic_word_model_struct = TopicWordModelStruct.get_model(tfidf_model_struct=self.tfidf_model_struct)
+        self.topic_word_model_struct = None
+            # TopicWordModelStruct.get_model(tfidf_model_struct=self.tfidf_model_struct)
         self.word2vec_model = Word2VecModel()
         self.matcher = Matcher(
             self.tfidf_model_struct,
@@ -52,7 +61,9 @@ class QueryEngine(object):
                 self.rank_model.predict_score(feature)
             )
 
-        query_state.responses = zip(query_state.candidate_pairs, query_state.candidate_scores, query_state.match_features)
+        query_state.responses = zip(query_state.candidate_pairs,
+                                    query_state.candidate_scores,
+                                    query_state.match_features)
         engine_logger.info("State three, ranking candidates.")
         query_state.responses.sort(key=lambda pair: pair[1], reverse=True)
 
@@ -69,8 +80,20 @@ class QueryEngine(object):
 
         engine_logger.info("Ranked top 5 responses: %s" % top5)
 
-        query_state.response_doc = self.data_store.doc_set[query_state.responses[0][0][1]]
-        return query_state.response_doc
+        resp = Response(
+            self.data_store.doc_set[query_state.responses[0][0][0]], # question
+            self.data_store.doc_set[query_state.responses[0][0][1]], # answer
+            query_state.responses[0][1], # score
+            query_state.responses[0][2].to_vec(), # feature
+            self.data_store.qa_context[query_state.responses[0][0][0]]
+        )
+        query_state.response = resp
+        print resp.question
+        print resp.feature
+        print resp.score
+        print resp.context
+
+        return query_state.response
 
     def _retrieve_candidates(self, query_state):
         # retrieve similar questions based on tf-idf

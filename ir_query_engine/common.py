@@ -35,6 +35,7 @@ class DataStore(object):
         # doc set stores all the documents
         self.doc_set = list()
         self.doc_to_id = dict()
+        self.qa_context = dict()
         # set of question doc ids
         self.question_set = list()
         # set of question doc ids
@@ -54,6 +55,8 @@ class DataStore(object):
             if added:
                 # new question, add to question set
                 self.question_set.append(qid)
+                # context
+                self.qa_context[qid] = segment['context']
 
             answer = segment['answer']
             aid, added = self._add_doc(answer)
@@ -65,6 +68,7 @@ class DataStore(object):
             if aid not in self.aid_to_qa_pairs:
                 self.aid_to_qa_pairs[aid] = []
             self.aid_to_qa_pairs[aid].append((qid, aid))
+
 
             # store data for topic words
             if '_question_topic_words' in segment:
