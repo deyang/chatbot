@@ -482,8 +482,26 @@ class DefaultQAPairGenerator(object):
                         'who work for %s' % entity_name,
                         'show me the team of %s' % entity_name,
                         'show me the folks at %s' % entity_name,
-                        ]
+                    ]
                 ])
+
+            ################################################
+            #       A16Z.example portfolio company         #
+            ################################################
+            elif relation_def.relation_name == 'example portfolio company':
+                # tweak answer
+                answer = 'For example, ' + related_entity_value.get_entity_self_description()
+                for qa_pair in qa_pairs:
+                    qa_pair.answer = answer
+
+            #######################################
+            #       A16Z.example investor         #
+            #######################################
+            elif relation_def.relation_name == 'example investor':
+                # tweak answer
+                answer = 'For example, ' + related_entity_value.get_entity_self_description()
+                for qa_pair in qa_pairs:
+                    qa_pair.answer = answer
 
         elif isinstance(entity_instance, Company):
             ############################
@@ -505,6 +523,18 @@ class DefaultQAPairGenerator(object):
                         'how can I work for %s' % entity_name,
                     ]
                 ])
+
+            #######################################
+            #     Company.example job opening     #
+            #######################################
+            elif relation_def.relation_name == 'example job opening':
+                if related_entity_value:
+                    # tweak answer
+                    answer = 'I found a job opening for %s at %s. For more results like this, you can visit %s' \
+                             % (related_entity_value.property_value_map['title'], entity_name,
+                                entity_instance.get_job_search_url())
+                    for qa_pair in qa_pairs:
+                        qa_pair.answer = answer
 
         elif isinstance(entity_instance, Job):
             ############################

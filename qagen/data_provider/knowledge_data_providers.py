@@ -1,5 +1,6 @@
 import urllib2
 import json
+import random
 import re
 import sys
 from bs4 import BeautifulSoup
@@ -90,8 +91,10 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
 
         print 'A16Z -> COMPANYs'
         the_a16z.relation_value_map['portfolio companies'] = all_companies
+        the_a16z.relation_value_map['example portfolio company'] = random.choice(all_companies)
         print 'A16Z -> INVESTORs'
         the_a16z.relation_value_map['people'] = all_investors
+        the_a16z.relation_value_map['example investor'] = random.choice(all_investors)
         # a16z -> POSTs
         # a16z -> PODCASTs
 
@@ -106,6 +109,7 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
                     if 'company_id' in job_listing.property_value_map:
                         matched_company_entity.property_value_map['company_id'] = job_listing.property_value_map['company_id']
                     matched_company_entity.add_job(job_listing)
+                    matched_company_entity.relation_value_map['example job opening'] = job_listing
                     job_listing.relation_value_map['company'] = matched_company_entity
                     break
             if not matched_company_entity:

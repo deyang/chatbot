@@ -165,7 +165,6 @@ class A16Z(Company):
                 if company.property_value_map['stage'] == 'venture']
 
 
-
 Company.entity_concept_type = ConceptType.THING
 Company.property_def_map = {
     'name': EntityProperty('name', ConceptType.THING),
@@ -179,7 +178,8 @@ Company.property_def_map = {
     'company_id': EntityProperty('company_id', ConceptType.THING, is_hidden=True)
 }
 Company.relation_def_map = {
-    'job openings': EntityRelation('job openings', Job, EntityRelation.ONE_TO_MANY)
+    'job openings': EntityRelation('job openings', Job, EntityRelation.ONE_TO_MANY),
+    'example job opening': EntityRelation('example job opening', Job, EntityRelation.ONE_TO_ONE)
 }
 
 
@@ -226,6 +226,8 @@ A16Z.property_def_map['mailing address'] = EntityProperty('mailing address', Con
 A16Z.property_def_map['twitter account'] = EntityProperty('twitter account', ConceptType.THING)
 A16Z.relation_def_map['portfolio companies'] = EntityRelation('portfolio companies', Company, EntityRelation.ONE_TO_MANY)
 A16Z.relation_def_map['people'] = EntityRelation('people', Investor, EntityRelation.ONE_TO_MANY)
+A16Z.relation_def_map['example portfolio company'] = EntityRelation('example portfolio company', Company, EntityRelation.ONE_TO_ONE)
+A16Z.relation_def_map['example investor'] = EntityRelation('example investor', Investor, EntityRelation.ONE_TO_ONE)
 
 
 def find_entity_class_by_name(entity_class_name):
