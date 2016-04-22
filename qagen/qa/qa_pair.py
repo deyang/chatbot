@@ -176,18 +176,18 @@ class QAPair(object):
     A specific variation of QA pair
     """
 
-    def __init__(self, qa_concept, question, answer, context_map):
+    def __init__(self, qa_concept, question, answer, context_list):
         """
         :param qa_concept: the parent QA concept associated with this QA pair.
         :param question:
         :param answer:
-        :param context_map: {entity_class_name: entity_instance_id}
+        :param context_list: [{entity_class_name: entity_instance_id}]
         :return:
         """
         self.qa_concept = qa_concept
         self.question = question
         self.answer = answer
-        self.context_map = context_map
+        self.context_list = context_list
         self.qa_pairs_with_matching_score = []
 
     def __repr__(self):
@@ -209,7 +209,7 @@ class QAPair(object):
             # use _question instead of question as the keyword so that they are in alphabetic order
             '_question': self.question,
             'answer': self.answer,
-            'context': self.context_map,
+            'context': self.context_list,
         }
         if is_for_training:
             result.update({

@@ -3,12 +3,12 @@ from qagen.knowledge.entities import BaseEntity
 
 
 def make_context_map(*args):
+    """Actually returns a list. Sorry"""
     for arg in args:
         if not isinstance(arg, BaseEntity):
             raise Exception('Arguements must be instances of entity')
 
-    return {entity_instance.__class__.__name__: entity_instance.get_entity_id()
-            for entity_instance in args}
+    return [{entity_instance.__class__.__name__: entity_instance.get_entity_id()} for entity_instance in args]
 
 
 def tokenize_sentence(sentence):

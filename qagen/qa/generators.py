@@ -299,7 +299,12 @@ class DefaultQAPairGenerator(object):
                 'show me the %s of %s' % (relation_name, entity_name)
             ]
             #TODO
-            answer = 'n/a'
+            if related_entity_value:
+                answer = 'n/a'
+                context = make_context_map(entity_instance, related_entity_value)
+            else:
+                answer = 'n/a'
+                context = make_context_map(entity_instance)
         else:
             question_texts = [
                 '%s are the %s of %s' % (relation_wh_type, relation_name, entity_name),
@@ -313,9 +318,10 @@ class DefaultQAPairGenerator(object):
                 answer = 'There are %d %s in total, including %s...' % (len(related_entity_value), relation_name, example)
             else:
                 answer = "Sorry, there doesn't seem to be any."
+            context = make_context_map(entity_instance)
 
         qa_pairs = [
-            entity_relation_concept.new_qa_pair(question_text, answer, make_context_map(entity_instance))
+            entity_relation_concept.new_qa_pair(question_text, answer, context)
             for question_text in question_texts
         ]
 
