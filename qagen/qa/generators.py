@@ -52,7 +52,7 @@ class DefaultQAPairGenerator(object):
                 ),
                 entity_class_concept.new_qa_pair(
                     'what kind of question can I ask about A16Z',
-                    'You can ask me about its team, portfolio, contact info, etc. '
+                    'You can ask me about its team, portfolio, job openings, contact info, etc. '
                     'Basically anything that is available on the a16z.com website',
                     make_context_map()
                 ),
@@ -65,7 +65,7 @@ class DefaultQAPairGenerator(object):
             qa_pairs = [
                 entity_class_concept.new_qa_pair(
                     'what kind of question can I ask about a company',
-                    'You can ask me about its name, founder, location, type of business, etc. '
+                    'You can ask me about its name, founder, location, type of business and even job openings. '
                     'Basically anything that is available on the a16z.com website',
                     make_context_map()
                 ),
@@ -78,7 +78,7 @@ class DefaultQAPairGenerator(object):
             qa_pairs = [
                 entity_class_concept.new_qa_pair(
                     'what kind of question can I ask about an investor',
-                    'You can ask me about its name, role, picture, linkedin profile, etc. '
+                    'You can ask me about his/her name, role, picture, linkedin profile, etc. '
                     'Basically anything that is available on the a16z.com website',
                     make_context_map()
                 ),
@@ -451,8 +451,58 @@ class DefaultQAPairGenerator(object):
         ]
 
         # additional stuff
-        # TODO: a16z.porfolio, a16z.people, company.jobopening
-        if isinstance(entity_instance, Job):
+
+        if isinstance(entity_instance, A16Z):
+            ############################
+            #  A16Z.portfolio company  #
+            ############################
+            if relation_def.relation_name == 'company':
+                # by 2b/2c
+                to_b_companies = entity_instance.get_all_2b_companies()
+                to_c_companies = entity_instance.get_all_2c_companies()
+
+                # by stage
+                # TODO
+
+
+            ############################
+            #       A16Z.people        #
+            ############################
+            elif relation_def.relation_name == 'people':
+                # use existing answer
+                answer = qa_pairs[0].answer
+                context = qa_pairs[0].context_list
+                qa_pairs.extend([
+                    entity_relation_concept.new_qa_pair(question_text, answer, context)
+                    for question_text in [
+                        'who work for %s' % entity_name,
+                        'show me the team of %s' % entity_name,
+                        'show me the folks at %s' % entity_name,
+                        ]
+                ])
+
+        elif isinstance(entity_instance, Company):
+            ############################
+            #  Company.job openings    #
+            ############################
+            if relation_def.relation_name == 'job openings':
+                if related_entity_value:
+                    answer = 'I found %d jobs available at %s. You can see the full list at %s' \
+                             % (len(related_entity_value), entity_name, entity_instance.get_job_search_url())
+                else:
+                    answer = "Sorry, I cannot find any job available at %s." % entity_name
+                for qa_pair in qa_pairs:
+                    qa_pair.answer = answer
+                qa_pairs.extend([
+                    entity_relation_concept.new_qa_pair(question_text, answer, make_context_map(entity_instance))
+                    for question_text in [
+                        'jobs at %s' % entity_name,
+                        'I want to work for %s' % entity_name,
+                        'how can I work for %s' % entity_name,
+                    ]
+                ])
+
+        elif isinstance(entity_instance, Job):
             ############################
             #      Job.company         #
             ############################

@@ -1,4 +1,4 @@
-
+from qagen.data_provider.knowledge_data_providers import construct_job_search_url
 
 class ConceptType(object):
 
@@ -88,6 +88,9 @@ class Company(BaseEntity):
             jobs = self.relation_value_map['job openings'] = []
         jobs.append(job_entity)
 
+    def get_job_search_url(self):
+        return construct_job_search_url(company_id=self.property_value_map['company_id'])
+
 
 class Job(BaseEntity):
 
@@ -139,6 +142,27 @@ class A16Z(Company):
     def get_entity_self_description(self):
         return 'Andreessen Horowitz (A16Z) is a Silicon Valley-based venture capital firm. ' \
                'You can ask me more about its team, portfolio, contact info, etc.'
+
+    def get_all_2b_companies(self):
+        return [company
+                for company in self.relation_value_map['portfolio companies']
+                if company.property_value_map['business model'] == 'to enterprise']
+
+    def get_all_2c_companies(self):
+        return [company
+                for company in self.relation_value_map['portfolio companies']
+                if company.property_value_map['business model'] == 'to consumer']
+
+    def get_all_seed_companies(self):
+        return [company
+                for company in self.relation_value_map['portfolio companies']
+                if company.property_value_map['stage'] == 'seed']
+
+    def get_all_venture_companies(self):
+        return [company
+                for company in self.relation_value_map['portfolio companies']
+                if company.property_value_map['stage'] == 'venture']
+
 
 
 Company.entity_concept_type = ConceptType.THING
