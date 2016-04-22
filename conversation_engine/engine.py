@@ -24,7 +24,7 @@ class AnalyzerRewriter(object):
 
     def rewrite(self, sent, context):
         sent = sent.lower()
-        sent = sent.replace('a16z', 'Andreessen Horowitz')
+        # sent = sent.replace('a16z', 'Andreessen Horowitz')
         if context is None:
             return sent
         tokenized_sent = nltk.word_tokenize(sent)
@@ -37,7 +37,8 @@ class AnalyzerRewriter(object):
 
     @staticmethod
     def append_context(raw_query, context):
-        return "%s %s" % (raw_query, context)
+        appended = "%s %s" % (raw_query, context)
+        return appended.lower()
 
 
 class ConversationEngine(object):
@@ -76,7 +77,7 @@ class ConversationEngine(object):
             return self.FALLBACK_ANSWER
 
         if response.context is not None and len(response.context) > 0:
-            self.last_context = response.context[0].values()[-1]
+            self.last_context = response.context[-1].values()[0]
         else:
             self.last_context = None
 

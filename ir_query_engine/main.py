@@ -99,7 +99,7 @@ if __name__ == '__main__':
                 regen=options.regen
             )
 
-        query_doc = "What is Rampell Alex"
+        query_doc = "What is jobop493507"
         print query_doc
         compare_docs = data_store.doc_set
         results = topic_model_struct.get_similarities(query_doc, compare_docs)
@@ -158,7 +158,7 @@ if __name__ == '__main__':
             rank_model.write_training_data()
             print "total time to write rank data: %s seconds" % sw.stop()
         else:
-            NUM_SPLITS = 6
+            NUM_SPLITS = 3
             unit = total_num_data / NUM_SPLITS
             pairs = []
             for i in range(NUM_SPLITS):

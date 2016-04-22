@@ -9,19 +9,21 @@ Things to evaluate:
 Need to develop a method to evaluate.
 
 
-[(0, 6021), (6021, 12042), (12042, 18063), (18063, 24084), (24084, 30105), (30105, 36128)]
+
+
+[(0, 7917), (7917, 15834), (15834, 23752)]
 
 source venv/bin/activate
 export PYTHONPATH=$(pwd)
-python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=0,6021
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=0,7917
 
 source venv/bin/activate
 export PYTHONPATH=$(pwd)
-python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=6021,12042
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=7917,15834
 
 source venv/bin/activate
 export PYTHONPATH=$(pwd)
-python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=12042,18063
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=15834,23752
 
 source venv/bin/activate
 export PYTHONPATH=$(pwd)

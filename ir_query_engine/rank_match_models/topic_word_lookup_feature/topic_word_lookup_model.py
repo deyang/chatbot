@@ -45,6 +45,7 @@ class TopicWordLookupModelStruct(object):
             return set(json.loads(c))
 
     def get_topic_word_vec(self, raw_doc):
+        raw_doc = raw_doc.lower()
         tf_vec = self.tfidf_model_struct.get_tf_vec(raw_doc)
         topic_word_vec = []
         for pair in tf_vec:
