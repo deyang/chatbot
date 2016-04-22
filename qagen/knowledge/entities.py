@@ -227,6 +227,7 @@ A16Z.property_def_map['twitter account'] = EntityProperty('twitter account', Con
 A16Z.relation_def_map['portfolio companies'] = EntityRelation('portfolio companies', Company, EntityRelation.ONE_TO_MANY)
 A16Z.relation_def_map['people'] = EntityRelation('people', Investor, EntityRelation.ONE_TO_MANY)
 
+
 def find_entity_class_by_name(entity_class_name):
     for known_entity_type in [Company, Job, Investor, A16Z]:
         if known_entity_type.__name__ == entity_class_name:

@@ -456,14 +456,18 @@ class DefaultQAPairGenerator(object):
             ############################
             #  A16Z.portfolio company  #
             ############################
-            if relation_def.relation_name == 'company':
-                # by 2b/2c
-                to_b_companies = entity_instance.get_all_2b_companies()
-                to_c_companies = entity_instance.get_all_2c_companies()
-
-                # by stage
-                # TODO
-
+            if relation_def.relation_name == 'portfolio companies':
+                answer = qa_pairs[0].answer
+                context = qa_pairs[0].context_list
+                qa_pairs.extend([
+                    entity_relation_concept.new_qa_pair(question_text, answer, context)
+                    for question_text in [
+                        'who are invested by %s' % entity_name,
+                        'companies invested by %s' % entity_name,
+                        'who has %s invested in' % entity_name,
+                        'show all the investments made by %s' % entity_name,
+                    ]
+                ])
 
             ############################
             #       A16Z.people        #
