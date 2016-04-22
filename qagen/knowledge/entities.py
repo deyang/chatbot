@@ -163,6 +163,11 @@ class A16Z(Company):
         return [company
                 for company in self.relation_value_map['portfolio companies']
                 if company.property_value_map['stage'] == 'venture']
+    
+    def get_all_board_partners(self):
+        return [investor
+                for investor in self.relation_value_map['team']
+                if 'board partner' in investor.property_value_map['role'].lower()]
 
 
 Company.entity_concept_type = ConceptType.THING

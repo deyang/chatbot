@@ -96,7 +96,6 @@ class DefaultQAPairGenerator(object):
                     make_context_map()
                 ),
             ]
-            # TODO: job query
 
         return qa_pairs
 
@@ -483,6 +482,17 @@ class DefaultQAPairGenerator(object):
                         'show me the team of %s' % entity_name,
                         'show me the folks at %s' % entity_name,
                     ]
+                ])
+                # specific question on board partner
+                board_partners = entity_instance.get_all_board_partners()
+                example_names = ', '.join([partner.get_entity_id() for partner in board_partners][0:3])
+                qa_pairs.extend([
+                    entity_relation_concept.new_qa_pair(
+                        'who are board partners at %s' % entity_name,
+                        'I found %d board partners at %s, including %s...'
+                            % (len(board_partners), entity_name, example_names),
+                        context
+                    )
                 ])
 
             ################################################
