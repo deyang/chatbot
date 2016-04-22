@@ -158,7 +158,7 @@ if __name__ == '__main__':
             rank_model.write_training_data()
             print "total time to write rank data: %s seconds" % sw.stop()
         else:
-            NUM_SPLITS = 8
+            NUM_SPLITS = 6
             unit = total_num_data / NUM_SPLITS
             pairs = []
             for i in range(NUM_SPLITS):

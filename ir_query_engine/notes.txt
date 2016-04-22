@@ -9,18 +9,24 @@ Things to evaluate:
 Need to develop a method to evaluate.
 
 
-source venv/bin/activate
-export PYTHONPATH=$(pwd)
-python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=0,9032
+[(0, 6021), (6021, 12042), (12042, 18063), (18063, 24084), (24084, 30105), (30105, 36128)]
 
 source venv/bin/activate
 export PYTHONPATH=$(pwd)
-python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=9032,18064
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=0,6021
 
 source venv/bin/activate
 export PYTHONPATH=$(pwd)
-python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=18064,27096
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=6021,12042
 
 source venv/bin/activate
 export PYTHONPATH=$(pwd)
-python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=27096,36128
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=12042,18063
+
+source venv/bin/activate
+export PYTHONPATH=$(pwd)
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=18063,24084
+
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=24084,30105
+
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=30105,36128
