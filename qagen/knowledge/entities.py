@@ -137,7 +137,7 @@ class Investor(BaseEntity):
 class A16Z(Company):
 
     def get_entity_self_description(self):
-        return 'Andreessen Horowitz is a Silicon Valley-based venture capital firm. ' \
+        return 'Andreessen Horowitz (A16Z) is a Silicon Valley-based venture capital firm. ' \
                'You can ask me more about its team, portfolio, contact info, etc.'
 
 
@@ -197,6 +197,8 @@ A16Z.property_def_map = dict(Company.property_def_map)
 A16Z.relation_def_map = dict(Company.relation_def_map)
 # additional properties and relations
 A16Z.property_def_map['contact info'] = EntityProperty('contact info', ConceptType.URL)
+A16Z.property_def_map['mailing address'] = EntityProperty('mailing address', ConceptType.THING)
+A16Z.property_def_map['twitter account'] = EntityProperty('twitter account', ConceptType.THING)
 A16Z.relation_def_map['portfolio companies'] = EntityRelation('portfolio companies', Company, EntityRelation.ONE_TO_MANY)
 A16Z.relation_def_map['people'] = EntityRelation('people', Investor, EntityRelation.ONE_TO_MANY)
 

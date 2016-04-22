@@ -49,7 +49,7 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
 
         print 'Initializing company:A16Z...'
         a16z = A16Z({
-            'name': 'Andreessen Horowitz',
+            'name': 'A16Z',
             'founder': 'Marc Andreessen and Ben Horowitz',
             'location': 'Melo Park, California',
             'website': 'a16z.com',
@@ -57,6 +57,8 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
             'business model': None,
             'stage': None,
             'contact info': 'http://a16z.com/about/contact/',
+            'mailing address': '2865 Sand Hill Road, Suite 101, Menlo Park, CA 94025',
+            'twitter account': '@a16z',
         })
         self.add_entity(a16z)
 
