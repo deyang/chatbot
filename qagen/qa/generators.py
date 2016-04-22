@@ -285,6 +285,9 @@ class DefaultQAPairGenerator(object):
             answer = 'The %s of this job opening is for %s', % (property_name, property_value)
             for qa_pair in qa_pairs:
                 qa_pair.answer = answer
+            ############################
+            #      Job.title           #
+            ############################
             if property_def.property_name == 'title':
                 qa_pairs.extend([
                     entity_property_concept.new_qa_pair(question_text, answer, make_context_map(entity_instance))
@@ -296,6 +299,9 @@ class DefaultQAPairGenerator(object):
                     ]
                 ])
 
+            ############################
+            #      Job.location        #
+            ############################
             elif property_def.property_name == 'location':
                 qa_pairs.extend([
                     entity_property_concept.new_qa_pair(question_text, answer, make_context_map(entity_instance))
@@ -323,12 +329,12 @@ class DefaultQAPairGenerator(object):
                 '%s is the %s of %s' % (relation_wh_type, relation_name, entity_name),
                 'show me the %s of %s' % (relation_name, entity_name)
             ]
-            #TODO
             if related_entity_value:
-                answer = 'n/a'
+                answer = 'The %s of %s is %s.' % (relation_name, entity_name, related_entity_value.get_entity_id())
+                # add the related entity to the context, with higher precedence
                 context = make_context_map(entity_instance, related_entity_value)
             else:
-                answer = 'n/a'
+                answer = 'Sorry, I cannot find the information about the %s of %s.' % (relation_name, entity_name)
                 context = make_context_map(entity_instance)
         else:
             question_texts = [
