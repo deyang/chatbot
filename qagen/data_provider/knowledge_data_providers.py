@@ -349,6 +349,7 @@ class JsonFileKnowledgeDataProvider(KnowledgeDataProvider):
             self.__load_entity_relations_from_dict(json_data)
 
     def __load_entity_property_data_from_dict(self, json_dict):
+        print 'Loading entity property data...'
         for known_entity_type in self.entity_map:
             entity_json_list = json_dict.get(known_entity_type.__name__)
             if entity_json_list:
@@ -356,6 +357,7 @@ class JsonFileKnowledgeDataProvider(KnowledgeDataProvider):
                     self.add_entity(EntityJsonConverter.load_from_json_dict(entity_data))
 
     def __load_entity_relations_from_dict(self, json_dict):
+        print 'Loading entity relation data...'
         for known_entity_type in self.entity_map:
             for entity_data in json_dict.get(known_entity_type.__name__):
                 # search the already-materialized instance

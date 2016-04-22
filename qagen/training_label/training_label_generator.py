@@ -34,98 +34,9 @@ class TrainingLabelGenerator(object):
                 # print '%s  +  %s = %d' % (qa_sample.qa_concept, qa_pair.qa_concept, score)
                 qa_pair.add_qa_pair_with_matching_score(qa_sample.question, qa_sample.answer, score)
 
-            # Similar concept from Google
-            #TODO
-
         return training_qa_pairs
 
     @staticmethod
     def __get_comparison_score_between(concept_a, concept_b):
-        if isinstance(concept_a, EntityClassLevelQA):
-            if isinstance(concept_b, EntityClassLevelQA):
-                if concept_a.entity_class == concept_b.entity_class:
-                    return 100
-                else:
-                    # same class level query on a different entity type
-                    return 30
-            else:
-                if concept_a.entity_class == concept_b.entity_instance.__class__:
-                    # broader query on the same entity type
-                    return 60
-                else:
-                    # broader query on a different entity type
-                    return 20
-        elif isinstance(concept_a, EntityInstanceSelfQA):
-            if isinstance(concept_b, EntityClassLevelQA):
-                if concept_a.entity_instance.__class__ == concept_b.entity_class:
-                    # broader query on the same entity type
-                    return 60
-                else:
-                    # broader query on a different entity type
-                    return 20
-            elif isinstance(concept_b, EntityInstanceSelfQA):
-                if concept_a.entity_instance == concept_b.entity_instance:
-                    return 100
-                else:
-                    # same property, different entity
-                    return 40
-            else:
-                if concept_a.entity_instance == concept_b.entity_instance:
-                    # same entity, different property
-                    return 50
-                else:
-                    # different entity, different property
-                    return 10
-        elif isinstance(concept_a, EntityPropertyQA):
-            if isinstance(concept_b, EntityClassLevelQA):
-                if concept_a.entity_instance.__class__ == concept_b.entity_class:
-                    # broader query on the same entity type
-                    return 60
-                else:
-                    # broader query on a different entity type
-                    return 20
-            elif isinstance(concept_b, EntityPropertyQA):
-                same_entity = concept_a.entity_instance == concept_b.entity_instance
-                same_property = concept_a.property_def == concept_b.property_def
-                if same_entity and same_property:
-                    return 100
-                elif same_entity and not same_property:
-                    return 50
-                elif not same_entity and same_property:
-                    return 40
-                else:
-                    return 10
-            else:
-                if concept_a.entity_instance == concept_b.entity_instance:
-                    # same entity, different property
-                    return 50
-                else:
-                    # different entity, different property
-                    return 10
-        elif isinstance(concept_a, EntityRelationQA):
-            if isinstance(concept_b, EntityClassLevelQA):
-                if concept_a.entity_instance.__class__ == concept_b.entity_class:
-                    # broader query on the same entity type
-                    return 60
-                else:
-                    # broader query on a different entity type
-                    return 20
-            elif isinstance(concept_b, EntityRelationQA):
-                same_entity = concept_a.entity_instance == concept_b.entity_instance
-                same_relation = concept_a.relation_def == concept_b.relation_def
-                if same_entity and same_relation:
-                    return 100
-                elif same_entity and not same_relation:
-                    return 50
-                elif not same_entity and same_relation:
-                    return 40
-                else:
-                    return 10
-            else:
-                if concept_a.entity_instance == concept_b.entity_instance:
-                    # same entity, different relation
-                    return 50
-                else:
-                    # different entity, different relation
-                    return 10
+        return concept_a.compare_score_with(concept_b)
 
