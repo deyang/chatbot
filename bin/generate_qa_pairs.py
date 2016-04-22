@@ -24,7 +24,7 @@ is_for_training = True
 if is_for_training:
     output_path = os.path.join(os.path.dirname(__file__), 'qa_pairs_labeled.json')
     print 'Generating training label...'
-    labeler = TrainingLabelGenerator(qa_pairs)
+    labeler = TrainingLabelGenerator(qa_pairs, concept_provider)
     output_qa_pairs = labeler.generate_qa_pairs_with_training_label()
 
 else:

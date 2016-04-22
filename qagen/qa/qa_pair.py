@@ -188,11 +188,7 @@ class QAPair(object):
         self.question = question
         self.answer = answer
         self.context_map = context_map
-        self.qa_pairs_with_matching_score = [{
-            '_question': question,
-            'answer': answer,
-            'score': 100
-        }]
+        self.qa_pairs_with_matching_score = []
 
     def __repr__(self):
         return 'Q: %s, A: %s' % (self.question, self.answer)

@@ -5,6 +5,7 @@ K_ENTITY_TYPE_TO_CLASS_LEVEL_CONCEPT = 'entity_type_to_class_level_concept'
 
 K_ALL_INSTANCE_LEVEL_CONCEPTS = 'all_instance_level_concepts'
 K_ENTITY_TYPE_TO_INSTANCE_LEVEL_CONCEPT = 'entity_type_to_instance_level_concept'
+K_ENTITY_TYPE_TO_INSTANCE_SELF_CONCEPT = 'entity_type_to_instance_self_concept'
 K_ENTITY_INSTANCE_TO_INSTANCE_LEVEL_CONCEPT = 'entity_instance_to_instance_level_concept'
 K_PROPERTY_AND_RELATION_DEF_TO_CONCEPT = 'property_and_relation_def_to_concept'
 K_SELF_PROPERTY = 'self_property'
@@ -51,6 +52,7 @@ class DefaultQAConceptProvider(object):
         all_i = []
         c_to_c = {}
         c_to_i = {}
+        c_to_s = {}
         i_to_i = {}
         pr_to_i = {}
 
@@ -60,6 +62,7 @@ class DefaultQAConceptProvider(object):
 
             K_ENTITY_TYPE_TO_CLASS_LEVEL_CONCEPT: c_to_c,
             K_ENTITY_TYPE_TO_INSTANCE_LEVEL_CONCEPT: c_to_i,
+            K_ENTITY_TYPE_TO_INSTANCE_SELF_CONCEPT: c_to_s,
             K_ENTITY_INSTANCE_TO_INSTANCE_LEVEL_CONCEPT: i_to_i,
             K_PROPERTY_AND_RELATION_DEF_TO_CONCEPT: pr_to_i,
         }
@@ -71,6 +74,7 @@ class DefaultQAConceptProvider(object):
             elif isinstance(concept, EntityInstanceSelfQA):
                 all_i.append(concept)
                 self.__append_to_dict_value(c_to_i, concept.entity_instance.__class__, concept)
+                self.__append_to_dict_value(c_to_s, concept.entity_instance.__class__, concept)
                 self.__append_to_dict_value(i_to_i, concept.entity_instance, concept)
                 self.__append_to_dict_value(pr_to_i, K_SELF_PROPERTY, concept)
             elif isinstance(concept, EntityPropertyQA) and not concept.property_def.is_hidden:
@@ -118,6 +122,9 @@ class DefaultQAConceptProvider(object):
 
     def get_instance_level_concepts_by_relation_def(self, relation_def):
         return self.qa_concepts_by_type[K_PROPERTY_AND_RELATION_DEF_TO_CONCEPT][relation_def]
+
+    def get_self_concepts_by_entity_type(self, entity_class):
+        return self.qa_concepts_by_type[K_ENTITY_TYPE_TO_INSTANCE_SELF_CONCEPT][entity_class]
 
     def get_all_self_concepts(self):
         return self.qa_concepts_by_type[K_PROPERTY_AND_RELATION_DEF_TO_CONCEPT][K_SELF_PROPERTY]
