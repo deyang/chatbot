@@ -1,8 +1,6 @@
-import itertools
-
 from qagen.knowledge.entities import *
 from qagen.qa.utils import make_context_map
-from qagen.qa.qa_pair import QAPair, EntityClassLevelQA, EntityInstanceSelfQA, EntityPropertyQA, EntityRelationQA
+from qagen.qa.qa_pair import EntityClassLevelQA, EntityInstanceSelfQA, EntityPropertyQA, EntityRelationQA
 
 
 class DefaultQAPairGenerator(object):
@@ -28,8 +26,79 @@ class DefaultQAPairGenerator(object):
             raise Exception('Unknown QA concept ' + qa_concept)
 
     def __generate_qa_pairs_about_entity_class(self, entity_class_concept):
-        # TODO
-        return []
+        entity_class = entity_class_concept.entity_class
+
+        if entity_class == A16Z:
+            the_a16z = self.data_provider.get_all_instances_of_type(A16Z)[0]
+            ##########################
+            #      A16Z.class        #
+            ##########################
+            qa_pairs = [
+                entity_class_concept.new_qa_pair(
+                    'what does A16Z mean',
+                    "A16Z is the abbreviation for Andreessen Horowitz, the combination of the two founder's last names.",
+                    make_context_map(the_a16z)
+                ),
+                entity_class_concept.new_qa_pair(
+                    'where did you get all the data about A16Z',
+                    'All the knowledge that I know of are crawled from the website a16z.com',
+                    make_context_map()
+                ),
+                entity_class_concept.new_qa_pair(
+                    'who are you',
+                    "I am robot that answers questions about A16Z. "
+                    "So you'd better not expect me to know anything that is not available on the a16z.com website",
+                    make_context_map()
+                ),
+                entity_class_concept.new_qa_pair(
+                    'what kind of question can I ask about A16Z',
+                    'You can ask me about its team, portfolio, contact info, etc. '
+                    'Basically anything that is available on the a16z.com website',
+                    make_context_map()
+                ),
+            ]
+
+        elif entity_class == Company:
+            ##########################
+            #     Company.class      #
+            ##########################
+            qa_pairs = [
+                entity_class_concept.new_qa_pair(
+                    'what kind of question can I ask about a company',
+                    'You can ask me about its name, founder, location, type of business, etc. '
+                    'Basically anything that is available on the a16z.com website',
+                    make_context_map()
+                ),
+            ]
+
+        elif entity_class == Investor:
+            ##########################
+            #     Investor.class     #
+            ##########################
+            qa_pairs = [
+                entity_class_concept.new_qa_pair(
+                    'what kind of question can I ask about an investor',
+                    'You can ask me about its name, role, picture, linkedin profile, etc. '
+                    'Basically anything that is available on the a16z.com website',
+                    make_context_map()
+                ),
+            ]
+
+        elif entity_class == Job:
+            ##########################
+            #        Job.class       #
+            ##########################
+            qa_pairs = [
+                entity_class_concept.new_qa_pair(
+                    'what kind of question can I ask about job openings',
+                    'You can ask me about its company, title, location, etc. '
+                    'Basically anything that is available on the a16z.com website',
+                    make_context_map()
+                ),
+            ]
+            # TODO: job query
+
+        return qa_pairs
 
     def __generate_qa_pairs_about_entity_instance(self, entity_self_concept):
         entity_instance = entity_self_concept.entity_instance
@@ -89,11 +158,11 @@ class DefaultQAPairGenerator(object):
         property_value = entity_instance.property_value_map.get(property_name)
         if property_value:
             if property_def.concept_type == ConceptType.URL:
-                answer = 'You can find the %s of %s at %s' %(property_name, entity_name, property_value)
+                answer = 'You can find the %s of %s at %s' % (property_name, entity_name, property_value)
             elif property_def.property_name == 'name':
                 answer = property_value
             else:
-                answer = 'The %s of %s is %s.' %(property_name, entity_name, property_value)
+                answer = 'The %s of %s is %s.' % (property_name, entity_name, property_value)
         else:
             answer = 'Sorry the %s of %s is not found on the a16z.com website.' % (property_name, entity_name)
 
@@ -114,7 +183,7 @@ class DefaultQAPairGenerator(object):
                                                     entity_instance.property_value_map['name'],
                                                     make_context_map(entity_instance)),
             ])
-
+        # TODO: a16z.contact info
         if isinstance(entity_instance, Company):
             ##########################
             #    Company.founder     #
@@ -310,7 +379,7 @@ class DefaultQAPairGenerator(object):
                         'where do I need to work for %s' % entity_name,
                     ]
                 ])
-
+            # TODO: how do I apply
 
         return qa_pairs
 
@@ -357,7 +426,7 @@ class DefaultQAPairGenerator(object):
         ]
 
         # additional stuff
-
+        # TODO: a16z.porfolio, a16z.people, company.jobopening
         if isinstance(entity_instance, Job):
             ############################
             #      Job.company         #
@@ -381,4 +450,3 @@ class DefaultQAPairGenerator(object):
                 ])
 
         return qa_pairs
-
