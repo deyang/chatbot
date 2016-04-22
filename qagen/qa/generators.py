@@ -132,7 +132,7 @@ class DefaultQAPairGenerator(object):
         #      Job.self          #
         ##########################
         elif isinstance(entity_instance, Job):
-            # NOTE: for a Job, we remove some of the common form of the self question
+            # NOTE: we remove some of the common form of the self question that doesn't make sense for a Job
             qa_pairs = [
                 entity_self_concept.new_qa_pair(question_text, entity_instance.get_entity_self_description(),
                                                 make_context_map(entity_instance))
@@ -141,6 +141,14 @@ class DefaultQAPairGenerator(object):
                     'I want to know about %s' % entity_name
                 ]
             ]
+            apply_answer = 'You can apply anytime online by visiting %s' % entity_instance.get_job_detail_page_url()
+            qa_pairs.extend([
+                entity_self_concept.new_qa_pair(question_text, apply_answer, make_context_map(entity_instance))
+                for question_text in [
+                    'how can I apply for %s' % entity_name,
+                    'I want to apply for %s' % entity_name,
+                ]
+            ])
 
         return qa_pairs
 
@@ -397,7 +405,6 @@ class DefaultQAPairGenerator(object):
                         'where do I need to work for %s' % entity_name,
                     ]
                 ])
-            # TODO: how do I apply
 
         return qa_pairs
 
