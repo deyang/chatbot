@@ -1,4 +1,5 @@
-from qagen.data_provider.knowledge_data_providers import construct_job_search_url
+from qagen.qa.utils import construct_job_search_url
+
 
 class ConceptType(object):
 

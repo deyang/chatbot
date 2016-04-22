@@ -2,14 +2,14 @@ import urllib2
 import json
 import re
 import sys
-reload(sys)  # Reload does the trick!
-sys.setdefaultencoding('UTF8')
 from bs4 import BeautifulSoup
 from urlparse import urlparse, parse_qs
-
 from qagen.knowledge.entities import *
-from qagen.knowledge.json_converter import EntityJsonConverter, ENTITY_JSON_ID, ENTITY_JSON_RELATIONS,\
+from qagen.knowledge.json_converter import EntityJsonConverter, ENTITY_JSON_ID, ENTITY_JSON_RELATIONS, \
     ENTITY_JSON_RELATION_REF_ENTITY_TYPE, ENTITY_JSON_RELATION_REF_ENTITY_ID, ENTITY_JSON_RELATION_REF_ENTITY_IDS
+from qagen.qa.utils import construct_job_search_url
+reload(sys)  # Reload does the trick!
+sys.setdefaultencoding('UTF8')
 
 
 class KnowledgeDataProvider(object):
@@ -103,6 +103,8 @@ class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
             for company_entity in self.get_all_instances_of_type(Company):
                 if self.__compare_company_name(company_entity.property_value_map['name'], company_name):
                     matched_company_entity = company_entity
+                    if 'company_id' in job_listing.property_value_map:
+                        matched_company_entity.property_value_map['company_id'] = job_listing.property_value_map['company_id']
                     matched_company_entity.add_job(job_listing)
                     job_listing.relation_value_map['company'] = matched_company_entity
                     break
@@ -382,13 +384,3 @@ class JsonFileKnowledgeDataProvider(KnowledgeDataProvider):
                     else:
                         raise Exception('Neither %s or %s is found in the relation reference'
                                         % (ENTITY_JSON_RELATION_REF_ENTITY_ID, ENTITY_JSON_RELATION_REF_ENTITY_IDS))
-
-
-def construct_job_search_url(company_id='%', location_id='%', function_id='%', page_number=1):
-    """
-    for simplicity, all ids are str type
-    """
-    return 'http://portfoliojobs.a16z.com/careers_home.php?Company=%s&Function=%s&Location=%s&p=%d' \
-              % (company_id, function_id, location_id, page_number)
-
-
