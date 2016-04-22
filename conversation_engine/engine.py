@@ -65,8 +65,8 @@ class ConversationEngine(object):
 
         if self.FALLBACK_THRESHOLD < response.score <= self.ISSUE_QUERY_WITH_CONTEXT_INJECT_THRESHOLD and \
                 self.last_context is not None:
-            print "Triggering the second query with the last context: %s %s %s" % \
-                  (response.score, response.answer, self.last_context)
+            # print "Triggering the second query with the last context: %s %s %s" % \
+            #      (response.score, response.answer, self.last_context)
             rewritten_input = self.rewriter.append_context(rewritten_input, self.last_context)
             second_response = self.query_engine.execute_query(rewritten_input)
             if second_response.score > response.score:
@@ -74,7 +74,7 @@ class ConversationEngine(object):
 
         if response.score <= self.FALLBACK_THRESHOLD:
             # left the last context untouched
-            print "Triggering fallback"
+            # print "Triggering fallback"
             return self.FALLBACK_ANSWER
 
         if response.context is not None and len(response.context) > 0:

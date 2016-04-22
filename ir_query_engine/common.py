@@ -92,10 +92,10 @@ class DataStore(object):
                         ),
                         pair_dict['score'])
                     )
-        engine_logger.info("# docs loaded: %s" % len(self.doc_set))
-        engine_logger.info("# questions loaded: %s" % len(self.question_set))
-        engine_logger.info("# answers loaded: %s" % len(self.answer_set))
-        engine_logger.info("# topic word labeled docs: %s" % len(self.topic_word_docs))
+        # engine_logger.info("# docs loaded: %s" % len(self.doc_set))
+        # engine_logger.info("# questions loaded: %s" % len(self.question_set))
+        # engine_logger.info("# answers loaded: %s" % len(self.answer_set))
+        # engine_logger.info("# topic word labeled docs: %s" % len(self.topic_word_docs))
 
     def get_all_questions(self):
         return [self.doc_set[qid] for qid in self.question_set]
