@@ -28,7 +28,7 @@ class EntityClassLevelQA(QAConcept):
         return '%s.class' % self.entity_class.__name__
 
     def get_topic_words(self):
-        return [self.entity_class.__name__]
+        return [self.entity_class.__name__.lower()]
 
     def compare_score_with(self, other):
         if isinstance(other, EntityClassLevelQA):
@@ -57,7 +57,7 @@ class EntityInstanceSelfQA(QAConcept):
 
     def get_topic_words(self):
         result = []
-        result.extend(tokenize_sentence(self.entity_instance.get_entity_id()))
+        result.extend(tokenize_sentence(self.entity_instance.get_entity_id().lower()))
         return result
 
     def compare_score_with(self, other):
@@ -95,8 +95,8 @@ class EntityPropertyQA(QAConcept):
 
     def get_topic_words(self):
         result = []
-        result.extend(tokenize_sentence(self.entity_instance.get_entity_id()))
-        result.extend(tokenize_sentence(self.property_def.property_name))
+        result.extend(tokenize_sentence(self.entity_instance.get_entity_id().lower()))
+        result.extend(tokenize_sentence(self.property_def.property_name.lower()))
         return result
 
     def compare_score_with(self, other):
@@ -139,8 +139,8 @@ class EntityRelationQA(QAConcept):
 
     def get_topic_words(self):
         result = []
-        result.extend(tokenize_sentence(self.entity_instance.get_entity_id()))
-        result.extend(tokenize_sentence(self.relation_def.relation_name))
+        result.extend(tokenize_sentence(self.entity_instance.get_entity_id().lower()))
+        result.extend(tokenize_sentence(self.relation_def.relation_name.lower()))
         return result
 
     def compare_score_with(self, other):
@@ -214,10 +214,10 @@ class QAPair(object):
         if is_for_training:
             result.update({
                 '_question_topic_words': intersect_lists(
-                    tokenize_sentence(self.question), self.qa_concept.get_topic_words()
+                    tokenize_sentence(self.question.lower()), self.qa_concept.get_topic_words()
                 ),
                 'answer_topic_words': intersect_lists(
-                    tokenize_sentence(self.answer), self.qa_concept.get_topic_words()
+                    tokenize_sentence(self.answer.lower()), self.qa_concept.get_topic_words()
                 ),
                 'qa_pairs_with_matching_score': self.qa_pairs_with_matching_score
             })
