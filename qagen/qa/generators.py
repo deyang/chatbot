@@ -438,7 +438,7 @@ class DefaultQAPairGenerator(object):
                 'the number of %s of %s' % (relation_name, entity_name),
             ]
             if related_entity_value:
-                example = ', '.join([single_intance.get_entity_id() for single_intance in related_entity_value][0:3])
+                example = ', '.join([single_intance.get_entity_id() for single_intance in related_entity_value][0:5])
                 answer = 'There are %d %s in total, including %s etc.' % (len(related_entity_value), relation_name, example)
             else:
                 answer = "Sorry, there doesn't seem to be any."
@@ -466,6 +466,13 @@ class DefaultQAPairGenerator(object):
                         'who has %s invested in' % entity_name,
                         'show all the investments made by %s' % entity_name,
                     ]
+                ])
+                more_company_names = ', '.join([company.get_entity_id() for company in related_entity_value][5:10])
+                qa_pairs.extend([
+                    entity_relation_concept.new_qa_pair(
+                        'more portfolio company',
+                        'Here are some more examples: %s...' % more_company_names,
+                        context)
                 ])
 
             ############################
