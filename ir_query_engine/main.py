@@ -139,12 +139,15 @@ if __name__ == '__main__':
             sw = StopWatch()
             tfidf_model_struct = tfidf_model.TfIdfModelStruct.get_model()
             lda_model_struct = lda_train.LdaModelStruct.get_model()
-            # topic_word_model_struct = topic_train.TopicWordModelStruct.get_model(tfidf_model_struct=tfidf_model_struct)
+            topic_word_lookup_model_struct = \
+                topic_word_lookup.TopicWordLookupModelStruct.get_model(
+                    tfidf_model_struct
+                )
             word2vec_model = Word2VecModel()
             matcher = Matcher(
                 tfidf_model_struct,
                 lda_model_struct,
-                None,
+                topic_word_lookup_model_struct,
                 word2vec_model
             )
             data_part = data[start_end[0]:start_end[1]]
@@ -155,7 +158,7 @@ if __name__ == '__main__':
             rank_model.write_training_data()
             print "total time to write rank data: %s seconds" % sw.stop()
         else:
-            NUM_SPLITS = 4
+            NUM_SPLITS = 8
             unit = total_num_data / NUM_SPLITS
             pairs = []
             for i in range(NUM_SPLITS):

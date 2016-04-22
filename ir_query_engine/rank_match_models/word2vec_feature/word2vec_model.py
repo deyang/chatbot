@@ -4,17 +4,19 @@ import os
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from scipy.spatial.distance import cosine
 import numpy
+from ir_query_engine import engine_logger
 
 # Use this on production ec2 instance
 filename = 'GoogleNews-vectors-negative300.bin'
 # Use this on mac dev env
-filename = 'vectors.bin'
+# filename = 'vectors.bin'
 dirpath = os.path.dirname(os.path.abspath(__file__))
 filepath = os.path.join(dirpath, filename)
 
 
 class Word2VecModel(object):
     def __init__(self):
+        engine_logger.info("Loading word2vec: %s" % filepath)
         self.model = word2vec.load(filepath, encoding='ISO-8859-1')
 
     def get_sent_vec(self, raw_doc):
