@@ -17,11 +17,6 @@ log
 GoogleNews-vectors-negative300.bin
 vectors.bin
 training_*h.json
-*.md
-*.simmx
-*.dict
-*.state
-lda_num_topics.txt
 *.npy
 
 # Elastic Beanstalk Files

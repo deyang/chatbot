@@ -7,3 +7,20 @@ Things to evaluate:
 
 5. Performance of LDA is very stochastic. Need to re-run several times to get a good model.
 Need to develop a method to evaluate.
+
+
+source venv/bin/activate
+export PYTHONPATH=$(pwd)
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=0,9032
+
+source venv/bin/activate
+export PYTHONPATH=$(pwd)
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=9032,18064
+
+source venv/bin/activate
+export PYTHONPATH=$(pwd)
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=18064,27096
+
+source venv/bin/activate
+export PYTHONPATH=$(pwd)
+python ir_query_engine/main.py -d large_training.json --train_rank_model --seq --pair=27096,36128

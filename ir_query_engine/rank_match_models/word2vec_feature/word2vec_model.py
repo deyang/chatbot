@@ -9,7 +9,7 @@ from ir_query_engine import engine_logger
 # Use this on production ec2 instance
 filename = 'GoogleNews-vectors-negative300.bin'
 # Use this on mac dev env
-# filename = 'vectors.bin'
+filename = 'vectors.bin'
 dirpath = os.path.dirname(os.path.abspath(__file__))
 filepath = os.path.join(dirpath, filename)
 

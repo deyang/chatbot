@@ -111,7 +111,7 @@ class Matcher(object):
             for _ in range(len(compare_question_answer_pairs)):
                 match_results.append(MatchFeatures())
 
-        # sw = StopWatch()
+        # stopwatch = StopWatch()
         # match question tfidf
         sims = self.tfidf_model_struct.get_similarities(query_doc,
                                                         question_docs)
