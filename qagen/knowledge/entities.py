@@ -95,10 +95,14 @@ class Job(BaseEntity):
         return 'JOBOP' + self.property_value_map['job_id']
 
     def get_entity_self_description(self):
-        return 'This is a job opening for %s at %s.' %(
+        return 'This is a job opening for %s at %s. You can find more details about it at %s' %(
             self.property_value_map['title'],
             self.property_value_map['company name'],
+            self.get_job_detail_page_url()
         )
+
+    def get_job_detail_page_url(self):
+        return 'http://portfoliojobs.a16z.com/jobdetail.php?jobid=%s' % self.property_value_map['job_id']
 
 
 class Investor(BaseEntity):
