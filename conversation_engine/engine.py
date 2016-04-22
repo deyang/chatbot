@@ -49,8 +49,8 @@ class ConversationEngine(object):
             self.last_context
         )
         response = self.query_engine.execute_query(rewritten_input)
-        if len(response.context) > 0:
-            self.last_context = response.context.values()[0]
+        if response.context is not None and len(response.context) > 0:
+            self.last_context = response.context[0].values()[0]
         else:
             self.last_context = None
 

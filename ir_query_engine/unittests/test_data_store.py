@@ -13,9 +13,9 @@ class DataStoreTestCase(unittest.TestCase):
             "_question_topic_words": ["a16z"],
             "answer": "a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.",
             "answer_topic_words": ["a16z", "venture", "capital"],
-            "context": {
+            "context": [{
                 "company": "a16z"
-            },
+            }],
             "qa_pairs_with_matching_score": [
                 {
                     "_question": "tell me about a16z",
@@ -42,9 +42,9 @@ class DataStoreTestCase(unittest.TestCase):
           {
             "_question": "who is the founder of a16z",
             "_question_topic_words": ["founder", "a16z"],
-            "context": {
+            "context": [{
                 "Investor": "Alex Rampell"
-            },
+            }],
             "answer": "Marc Andreessen and Ben Horowitz co-founded a16z.",
             "answer_topic_words": ["co-founded", "a16z"],
             "qa_pairs_with_matching_score": [
@@ -174,7 +174,7 @@ class DataStoreTestCase(unittest.TestCase):
         }
         self.assertEqual(d.rank_data, expected_rank_data)
 
-        expected_contexts = {0: {'company': 'a16z'}, 2: {'Investor': 'Alex Rampell'}}
+        expected_contexts = {0: [{'company': 'a16z'}], 2: [{'Investor': 'Alex Rampell'}]}
         self.assertEqual(d.qa_context, expected_contexts)
 
     def test_getters(self):

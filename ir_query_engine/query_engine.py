@@ -85,7 +85,7 @@ class QueryEngine(object):
             self.data_store.doc_set[query_state.responses[0][0][1]], # answer
             query_state.responses[0][1], # score
             query_state.responses[0][2].to_vec(), # feature
-            self.data_store.qa_context[query_state.responses[0][0][0]]
+            self.data_store.qa_context.get(query_state.responses[0][0][0], None)
         )
         query_state.response = resp
         print resp.question
