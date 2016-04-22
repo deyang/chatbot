@@ -25,6 +25,9 @@ class DefaultQAConceptProvider(object):
         print 'Categorizing QA concepts...'
         self.qa_concepts_by_type = self.__organize_concepts_by_type(self.qa_concepts)
 
+        print 'Class-level concepts: %d' % len(self.qa_concepts_by_type[K_ALL_CLASS_LEVEL_CONCEPTS])
+        print 'Instance-level concepts: %d' % len(self.qa_concepts_by_type[K_ALL_INSTANCE_LEVEL_CONCEPTS])
+
     @staticmethod
     def __expand_qa_concepts(data_provider):
 

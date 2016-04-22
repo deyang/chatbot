@@ -38,6 +38,25 @@ class KnowledgeDataProvider(object):
                 return entity_instance
         return None
 
+    def trim_down_jobs(self, max_job_per_company=3):
+        """Trim down the number of Jobs in the system so that the whole training set is not skewed towards Job data"""
+        job_ids_to_keep = set()
+        for company_instance in self.get_all_instances_of_type(Company):
+            job_list = company_instance.relation_value_map.get('job openings')
+            if job_list:
+                trimmed_list = job_list[:max_job_per_company]
+                company_instance.relation_value_map['job openings'] = trimmed_list
+                for job_instance in trimmed_list:
+                    job_ids_to_keep.add(job_instance.property_value_map['job_id'])
+
+        jobs_to_keep = []
+        for job_instance in self.get_all_instances_of_type(Job):
+            if job_instance.property_value_map['job_id'] in job_ids_to_keep:
+                jobs_to_keep.append(job_instance)
+        print '%d jobs left' % len(jobs_to_keep)
+
+        self.entity_map[Job] = jobs_to_keep
+
 
 class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
 

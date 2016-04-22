@@ -6,8 +6,10 @@ from qagen.data_provider.qa_concept_providers import *
 from qagen.qa.generators import DefaultQAPairGenerator
 from qagen.training_label.training_label_generator import TrainingLabelGenerator
 
+
 # data_provider = WebCrawlerKnowledgeDataProvider()
 data_provider = JsonFileKnowledgeDataProvider(os.path.join(os.path.dirname(__file__), 'data.json'))
+data_provider.trim_down_jobs()
 concept_provider = DefaultQAConceptProvider(data_provider)
 
 qa_generator = DefaultQAPairGenerator(data_provider)
@@ -37,4 +39,3 @@ qa_json_str = json.dumps(qa_pairs_json_data, indent=2, sort_keys=True)
 with open(output_path, 'w') as output_file:
     output_file.write(qa_json_str)
 print 'All QA pairs dumped at ' + output_path
-
