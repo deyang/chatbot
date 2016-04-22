@@ -282,7 +282,7 @@ class DefaultQAPairGenerator(object):
                 ])
 
         elif isinstance(entity_instance, Job):
-            answer = 'The %s of this job opening is for %s', % (property_name, property_value)
+            answer = 'The %s of this job opening is for %s' % (property_name, property_value)
             for qa_pair in qa_pairs:
                 qa_pair.answer = answer
             ############################
@@ -357,6 +357,28 @@ class DefaultQAPairGenerator(object):
         ]
 
         # additional stuff
+
+        if isinstance(entity_instance, Job):
+            ############################
+            #      Job.company         #
+            ############################
+            if relation_def.relation_name == 'company':
+                if related_entity_value:
+                    answer = 'The company of this job opening is %s.' % related_entity_value.get_entity_id()
+                    context = make_context_map(entity_instance, related_entity_value)
+                else:
+                    answer = 'This job opening is for %s, ' \
+                             'but unfortunately I cannot find any more information about this company' \
+                             % entity_instance.property_value_map['company name']
+                    context = make_context_map(entity_instance)
+                for qa_pair in qa_pairs:
+                    qa_pair.answer = answer
+                qa_pairs.extend([
+                    entity_relation_concept.new_qa_pair(question_text, answer, context)
+                    for question_text in [
+                        'which company is %s for' % entity_name,
+                    ]
+                ])
 
         return qa_pairs
 
