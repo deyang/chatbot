@@ -37,9 +37,9 @@ class QueryEngineTestCase(unittest.TestCase):
     @patch.object(TfIdfModelStruct, 'query_questions', return_value=[(1, 1.0), (2, 0.5)])
     def test_retrieve_candidates(self, mock_query_questions, mock_query_answers, mock_query):
         qs = QueryState("")
-        qe = QueryEngine(self.data_store, 1)
+        qe = QueryEngine(self.data_store)
         qe._retrieve_candidates(qs)
-        self.assertEqual(set(qs.candidate_pairs), set(self.data_store.qid_to_qa_pair.values()))
+        self.assertEqual(set(qs.candidate_pairs), set([(4, 5), (6, 7), (2, 3)]))
 
 
 if __name__ == '__main__':

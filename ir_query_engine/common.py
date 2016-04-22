@@ -56,7 +56,8 @@ class DataStore(object):
                 # new question, add to question set
                 self.question_set.append(qid)
                 # context
-                self.qa_context[qid] = segment['context']
+                if 'context' in segment:
+                    self.qa_context[qid] = segment['context']
 
             answer = segment['answer']
             aid, added = self._add_doc(answer)

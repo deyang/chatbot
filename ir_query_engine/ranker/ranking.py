@@ -31,10 +31,10 @@ class MatchFeatures(object):
 
     def __init__(self,
                  question_tf_idf_sim=None,
-                 answer_tf_idf_sim=None,
+                 # answer_tf_idf_sim=None,
                  question_lda_sim=None,
                  answer_lda_sim=None,
-                 # question_topic_word_sim=None,
+                 question_topic_word_sim=None,
                  # answer_topic_word_sim=None,
                  question_word2vec_sim=None,
                  answer_word2vec_sim=None,
@@ -50,10 +50,10 @@ class MatchFeatures(object):
                  question_edit_distance=None):
 
         self.question_tf_idf_sim = question_tf_idf_sim
-        self.answer_tf_idf_sim = answer_tf_idf_sim
+        # self.answer_tf_idf_sim = answer_tf_idf_sim
         self.question_lda_sim = question_lda_sim
         self.answer_lda_sim = answer_lda_sim
-        # self.question_topic_word_sim = question_topic_word_sim
+        self.question_topic_word_sim = question_topic_word_sim
         # self.answer_topic_word_sim = answer_topic_word_sim
         self.question_word2vec_sim = question_word2vec_sim
         self.answer_word2vec_sim = answer_word2vec_sim
@@ -77,7 +77,7 @@ class MatchFeatures(object):
     #            self.answer_cooccur_avg_idf, self.question_edit_distance
 
     def to_vec(self):
-        return self.question_tf_idf_sim, self.answer_tf_idf_sim, self.question_lda_sim, self.answer_lda_sim,\
+        return self.question_tf_idf_sim, self.question_lda_sim, self.answer_lda_sim, self.question_topic_word_sim, \
                self.question_word2vec_sim, \
                self.answer_word2vec_sim, self.answer_lcs_len, self.question_cooccur_size, self.answer_cooccur_size, \
                self.question_cooccur_rate, self.answer_cooccur_rate, self.question_cooccur_sum_idf, \
@@ -119,11 +119,11 @@ class Matcher(object):
             match_results[idx].question_tf_idf_sim = sim
 
 
-        # match answer tfidf
-        sims = self.tfidf_model_struct.get_similarities(query_doc,
-                                                        answer_docs)
-        for idx, sim in sims:
-            match_results[idx].answer_tf_idf_sim = sim
+        # # match answer tfidf
+        # sims = self.tfidf_model_struct.get_similarities(query_doc,
+        #                                                 answer_docs)
+        # for idx, sim in sims:
+        #     match_results[idx].answer_tf_idf_sim = sim
         # print "after tfidf: %s" % sw.lap()
         # match question lda
         sims = self.lda_model_struct.get_similarities(query_doc,
@@ -137,12 +137,12 @@ class Matcher(object):
         for idx, sim in sims:
             match_results[idx].answer_lda_sim = sim
         # print "after lda: %s" % sw.lap()
-        # # match question topic words
-        # sims = self.topic_word_model_struct.get_similarities(query_doc,
-        #                                                      question_docs)
-        # for idx, sim in sims:
-        #     match_results[idx].question_topic_word_sim = sim
-        #
+        # match question topic words
+        sims = self.topic_word_model_struct.get_similarities(query_doc,
+                                                             question_docs)
+        for idx, sim in sims:
+            match_results[idx].question_topic_word_sim = sim
+
         # # match answer topic words
         # sims = self.topic_word_model_struct.get_similarities(query_doc,
         #                                                      answer_docs)

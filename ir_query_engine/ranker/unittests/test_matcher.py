@@ -3,7 +3,7 @@ from mock import patch
 from ir_query_engine.ranker.ranking import Matcher, MatchFeatures
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
-from ir_query_engine.rank_match_models.topic_word_feature.topic_word_model import TopicWordModelStruct
+from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model import TopicWordLookupModelStruct
 from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
 
 
@@ -14,7 +14,7 @@ class MatcherTestCase(unittest.TestCase):
 
     @patch.object(TfIdfModelStruct, 'get_cooccur_features')
     @patch.object(Word2VecModel, 'get_similarities')
-    @patch.object(TopicWordModelStruct, 'get_similarities')
+    @patch.object(TopicWordLookupModelStruct, 'get_similarities')
     @patch.object(LdaModelStruct, 'get_similarities')
     @patch.object(TfIdfModelStruct, 'get_similarities')
     def test_match(self,
@@ -44,17 +44,17 @@ class MatcherTestCase(unittest.TestCase):
 
         matcher = Matcher(TfIdfModelStruct(),
                           LdaModelStruct(),
-                          TopicWordModelStruct(None, None),
+                          TopicWordLookupModelStruct(None, None),
                           Word2VecModel())
         results = matcher.match(query_doc, question_answer_pairs)
         self.assertEqual(len(results), 2)
 
         expected_match_feature1 = MatchFeatures(
             question_tf_idf_sim=1.0,
-            answer_tf_idf_sim=3.0,
+            # answer_tf_idf_sim=3.0,
             question_lda_sim=5.0,
             answer_lda_sim=7.0,
-            # question_topic_word_sim=9.0,
+            question_topic_word_sim=9.0,
             # answer_topic_word_sim=11.0,
             question_word2vec_sim=-0.1,
             answer_word2vec_sim=-0.3,
@@ -72,10 +72,10 @@ class MatcherTestCase(unittest.TestCase):
 
         expected_match_feature2 = MatchFeatures(
             question_tf_idf_sim=2.0,
-            answer_tf_idf_sim=4.0,
+            # answer_tf_idf_sim=4.0,
             question_lda_sim=6.0,
             answer_lda_sim=8.0,
-            # question_topic_word_sim=10.0,
+            question_topic_word_sim=10.0,
             # answer_topic_word_sim=12.0,
             question_word2vec_sim=-0.2,
             answer_word2vec_sim=-0.4,

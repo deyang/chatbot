@@ -1,7 +1,7 @@
 from ir_query_engine import engine_logger
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
-from ir_query_engine.rank_match_models.topic_word_feature.topic_word_model import TopicWordModelStruct
+from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model import TopicWordLookupModelStruct
 from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
 from ir_query_engine.ranker.ranking import Matcher, LinearRankModel
 
@@ -34,8 +34,8 @@ class QueryEngine(object):
         self.data_store = data_store
         self.tfidf_model_struct = TfIdfModelStruct.get_model()
         self.lda_model_struct = LdaModelStruct.get_model()
-        self.topic_word_model_struct = None
-            # TopicWordModelStruct.get_model(tfidf_model_struct=self.tfidf_model_struct)
+        self.topic_word_model_struct = \
+            TopicWordLookupModelStruct.get_model(tfidf_model_struct=self.tfidf_model_struct)
         self.word2vec_model = Word2VecModel()
         self.matcher = Matcher(
             self.tfidf_model_struct,
@@ -110,19 +110,19 @@ class QueryEngine(object):
         qa_pairs.update(qa_pairs_from_question_tfidf)
         # engine_logger.debug("Candidates from tf-idf question matching: %s" % qa_pairs_from_question_tfidf)
 
-        # retrieve similar answers based on tf-idf
-        results = self.tfidf_model_struct.query_answers(raw_doc=query_state.raw_query)
-        results = self.data_store.translate_answer_query_results(results)
-
-        qa_pairs_from_answer_tfidf = []
-        for aid, sim in results:
-            pairs = self.data_store.aid_to_qa_pairs[aid]
-            for pair in pairs:
-                engine_logger.debug("Pair from answer tfidf matching: %s, sim: %s" %
-                                    (self.data_store.get_docs_by_pair(pair), sim))
-            qa_pairs_from_answer_tfidf.extend(pairs)
-        qa_pairs.update(qa_pairs_from_answer_tfidf)
-        engine_logger.debug("Candidates after tf-idf answer matching: %s" % qa_pairs_from_answer_tfidf)
+        # # retrieve similar answers based on tf-idf
+        # results = self.tfidf_model_struct.query_answers(raw_doc=query_state.raw_query)
+        # results = self.data_store.translate_answer_query_results(results)
+        #
+        # qa_pairs_from_answer_tfidf = []
+        # for aid, sim in results:
+        #     pairs = self.data_store.aid_to_qa_pairs[aid]
+        #     for pair in pairs:
+        #         engine_logger.debug("Pair from answer tfidf matching: %s, sim: %s" %
+        #                             (self.data_store.get_docs_by_pair(pair), sim))
+        #     qa_pairs_from_answer_tfidf.extend(pairs)
+        # qa_pairs.update(qa_pairs_from_answer_tfidf)
+        # engine_logger.debug("Candidates after tf-idf answer matching: %s" % qa_pairs_from_answer_tfidf)
 
         # retrieve similar docs (question or answer) based on lda
         results = self.lda_model_struct.query(raw_doc=query_state.raw_query)

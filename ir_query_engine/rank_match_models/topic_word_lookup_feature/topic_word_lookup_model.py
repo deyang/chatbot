@@ -25,6 +25,7 @@ class TopicWordLookupModelStruct(object):
 
     def get_similarities(self, query_doc, compare_docs):
         query_vec = self.get_topic_word_vec(query_doc)
+        # print query_vec
         compare_vecs = [self.get_topic_word_vec(doc) for doc in compare_docs]
         sim_mx = similarities.SparseMatrixSimilarity(compare_vecs, num_features=len(self.tfidf_model_struct.dictionary))
         sims = sim_mx[query_vec]
@@ -50,8 +51,6 @@ class TopicWordLookupModelStruct(object):
             tokenid = pair[0]
             if tokenid in self.topic_word_set:
                 topic_word_vec.append((tokenid, pair[1]))
-            else:
-                topic_word_vec.append((tokenid, 0))
 
         return topic_word_vec
 
