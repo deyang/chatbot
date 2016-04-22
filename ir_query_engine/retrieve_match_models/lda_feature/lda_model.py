@@ -11,10 +11,11 @@ __author__ = 'Deyang'
 
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-MODEL_FILE_PATH = os.path.join(DIR_PATH, 'lda.md')
-DICT_FILE_PATH = os.path.join(DIR_PATH, 'lda.dict')
-SIMMX_FILE_PATH = os.path.join(DIR_PATH, 'lda.simmx')
-NUM_TOPIC_FILE_PATH = os.path.join(DIR_PATH, 'lda_num_topics.txt')
+MODEL_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'lda.md')
+DICT_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'lda.dict')
+SIMMX_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'lda.simmx')
+NUM_TOPIC_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'lda_num_topics.txt')
+
 
 
 def get_md_path():

@@ -9,7 +9,7 @@ from ir_query_engine import engine_logger
 __author__ = 'Deyang'
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-SET_FILE_PATH = os.path.join(DIR_PATH, 'topic_words.set')
+SET_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'topic_words.set')
 
 
 def get_set_path():
