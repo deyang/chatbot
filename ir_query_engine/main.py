@@ -102,9 +102,9 @@ if __name__ == '__main__':
         query_doc = "What is Rampell Alex"
         print query_doc
         compare_docs = data_store.doc_set
-        results = topic_model_struct.get_similarities(query_doc, compare_docs)[0:10]
+        results = topic_model_struct.get_similarities(query_doc, compare_docs)
         results.sort(key=lambda t: t[1], reverse=True)
-        print results
+        print results[0:10]
         print compare_docs[results[0][0]]
         print compare_docs[results[1][0]]
         print compare_docs[results[2][0]]
