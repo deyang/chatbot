@@ -143,7 +143,7 @@ class LdaModelStruct(object):
             sim_matrix.save(simmx_file_path)
             write_num_topics(num_topics_file_path, num_topics)
         else:
-            # engine_logger.info("Loading existing LDA models.")
+            engine_logger.info("Loading existing LDA models.")
             dictionary = corpora.Dictionary.load_from_text(dict_file_path)
             model = models.TfidfModel.load(md_file_path)
             sim_matrix = similarities.SparseMatrixSimilarity.load(simmx_file_path)

@@ -188,7 +188,7 @@ class TfIdfModelStruct(object):
                 question_sim_matrix.save(q_simmx_file_path)
                 answer_sim_matrix.save(a_simmx_file_path)
         else:
-            # engine_logger.info("Loading existing TF_IDF models.")
+            engine_logger.info("Loading existing TF_IDF models.")
 
             dictionary = corpora.Dictionary.load_from_text(dict_file_path)
             model = models.TfidfModel.load(md_file_path)

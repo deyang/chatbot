@@ -105,7 +105,7 @@ class TopicWordLookupModelStruct(object):
             simmx.save(SIMMX_FILE_PATH)
             return instance
         else:
-            # engine_logger.info("Loading existing topic word set")
+            engine_logger.info("Loading existing topic word set")
             topic_word_set = cls.read_set()
             simmx = similarities.SparseMatrixSimilarity.load(SIMMX_FILE_PATH)
 

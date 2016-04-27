@@ -45,15 +45,15 @@ class QueryEngine(object):
         )
         self.rank_model = LinearRankModel.read_model_from_file()
 
-        engine_logger.info("Question bot is up")
+        engine_logger.info("Query engine is up")
 
     def execute_query(self, raw_query):
         raw_query = raw_query.lower()
-        # engine_logger.info("Raw query: %s" % raw_query)
+        engine_logger.info("Raw query: %s" % raw_query)
         query_state = QueryState(raw_query)
-        # engine_logger.info("State one, retrieving candidates.")
+        engine_logger.info("State one, retrieving candidates.")
         self._retrieve_candidates(query_state)
-        # engine_logger.info("State two, matching candidates.")
+        engine_logger.info("State two, matching candidates.")
         self._match_candidates(query_state)
 
         # get the scores
@@ -65,7 +65,7 @@ class QueryEngine(object):
         query_state.responses = zip(query_state.candidate_pairs,
                                     query_state.candidate_scores,
                                     query_state.match_features)
-        # engine_logger.info("State three, ranking candidates.")
+        engine_logger.info("State three, ranking candidates.")
         query_state.responses.sort(key=lambda pair: pair[1], reverse=True)
 
         top5 = []
@@ -79,7 +79,7 @@ class QueryEngine(object):
                 )
             )
 
-        # engine_logger.info("Ranked top 5 responses: %s" % top5)
+        engine_logger.info("Ranked top 5 responses: %s" % top5)
 
         resp = Response(
             self.data_store.doc_set[query_state.responses[0][0][0]], # question
@@ -89,10 +89,10 @@ class QueryEngine(object):
             self.data_store.qa_context.get(query_state.responses[0][0][0], None)
         )
         query_state.response = resp
-        # print resp.question
-        # print resp.feature
-        # print resp.score
-        # print resp.context
+        print resp.question
+        print resp.feature
+        print resp.score
+        print resp.context
 
         return query_state.response
 
@@ -105,8 +105,8 @@ class QueryEngine(object):
         qa_pairs_from_question_tfidf = []
         for qid, sim in results:
             qa_pair = self.data_store.qid_to_qa_pair[qid]
-            # engine_logger.debug("Pair from question tfidf matching: %s, sim: %s" %
-            #                     (self.data_store.get_docs_by_pair(qa_pair), sim))
+            engine_logger.debug("Pair from question tfidf matching: %s, sim: %s" %
+                                (self.data_store.get_docs_by_pair(qa_pair), sim))
             qa_pairs_from_question_tfidf.append(qa_pair)
         qa_pairs.update(qa_pairs_from_question_tfidf)
         # engine_logger.debug("Candidates from tf-idf question matching: %s" % qa_pairs_from_question_tfidf)
@@ -133,13 +133,13 @@ class QueryEngine(object):
             if doc_id in self.data_store.question_set:
                 pair = self.data_store.qid_to_qa_pair[doc_id]
                 qa_pairs_from_lda.append(pair)
-                # engine_logger.debug("Pair from question lda matching: %s, sim: %s" %
-                #                     (self.data_store.get_docs_by_pair(qa_pair), sim))
+                engine_logger.debug("Pair from question lda matching: %s, sim: %s" %
+                                    (self.data_store.get_docs_by_pair(qa_pair), sim))
             elif doc_id in self.data_store.answer_set:
                 pairs = self.data_store.aid_to_qa_pairs[doc_id]
-                # for pair in pairs:
-                #     engine_logger.debug("Pair from answer lda matching: %s, sim: %s" %
-                #                         (self.data_store.get_docs_by_pair(pair), sim))
+                for pair in pairs:
+                    engine_logger.debug("Pair from answer lda matching: %s, sim: %s" %
+                                        (self.data_store.get_docs_by_pair(pair), sim))
                 qa_pairs_from_lda.extend(pairs)
             else:
                 engine_logger.debug("Matched non question not answer doc from lda: %s" % self.data_store.doc_set[doc_id])
@@ -150,8 +150,8 @@ class QueryEngine(object):
         results = self.data_store.translate_question_query_results(results)
         for qid, sim in results:
             qa_pair = self.data_store.qid_to_qa_pair[qid]
-            # engine_logger.debug("Pair from question topic word matching: %s, sim: %s" %
-            #                     (self.data_store.get_docs_by_pair(qa_pair), sim))
+            engine_logger.debug("Pair from question topic word matching: %s, sim: %s" %
+                                (self.data_store.get_docs_by_pair(qa_pair), sim))
             qa_pairs.add(qa_pair)
 
         query_state.candidate_pairs = list(qa_pairs)
