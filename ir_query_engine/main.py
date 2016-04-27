@@ -174,9 +174,5 @@ if __name__ == '__main__':
         while True:
             in_msg = raw_input()
             response = query_engine.execute_query(in_msg)
-            print response.context
-            print response.feature
-            print response.question
-            print response.score
             print "Response> %s" % response.answer
 

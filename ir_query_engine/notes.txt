@@ -3,10 +3,14 @@ Things to evaluate:
 2. tf-ifd caculation: stop words removal and low freq words removal
 3. Which pre-trained word2vec to use.
 4. Number of latent states in LDA
-
-
 5. Performance of LDA is very stochastic. Need to re-run several times to get a good model.
 Need to develop a method to evaluate.
+6. Evaluate LSI vs. LDA
+7. Try rank SVM using different kernels
+8. Fusion using boosted stumps
+9. Confidence score by platt scaling
+10. Modify topic word model
+11. translation model
 
 
 
