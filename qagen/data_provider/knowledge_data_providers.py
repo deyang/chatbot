@@ -57,6 +57,26 @@ class KnowledgeDataProvider(object):
 
         self.entity_map[Job] = jobs_to_keep
 
+    def trim_down_companies(self, max_company=100):
+        company_list = self.get_all_instances_of_type(Company)
+
+        job_ids_to_keep = set()
+        trimmed_list = company_list[:max_company]
+        self.entity_map[Company] = trimmed_list
+        for company_instance in trimmed_list:
+            company_job_instances = company_instance.relation_value_map.get('job openings')
+            if not company_job_instances:
+                continue
+            for job_instance in company_job_instances:
+                job_ids_to_keep.add(job_instance.property_value_map['job_id'])
+
+        # discard jobs that belong to companies that were discarded
+        jobs_to_keep = []
+        for job_instance in self.get_all_instances_of_type(Job):
+            if job_instance.property_value_map['job_id'] in job_ids_to_keep:
+                jobs_to_keep.append(job_instance)
+        self.entity_map[Job] = jobs_to_keep
+
 
 class WebCrawlerKnowledgeDataProvider(KnowledgeDataProvider):
 
