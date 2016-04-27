@@ -28,7 +28,6 @@ class AnalyzerRewriter(object):
         if context is None:
             return sent
         tokenized_sent = nltk.word_tokenize(sent)
-        print tokenized_sent
         detect = set(self.DETECT)
         for idx, token in enumerate(tokenized_sent):
             if token in detect:
@@ -61,6 +60,9 @@ class ConversationEngine(object):
             input_msg,
             self.last_context
         )
+        if rewritten_input == "help":
+            return "You can ask me about information of A16Z that is available on its website."
+
         response = self.query_engine.execute_query(rewritten_input)
 
         if self.FALLBACK_THRESHOLD < response.score <= self.ISSUE_QUERY_WITH_CONTEXT_INJECT_THRESHOLD and \
@@ -100,5 +102,7 @@ if __name__ == '__main__':
 
     while True:
         in_msg = raw_input()
+        if in_msg is None or len(in_msg) == 0:
+            continue
         answer = conversation_engine.talk(in_msg)
         print "Answer> %s" % answer
