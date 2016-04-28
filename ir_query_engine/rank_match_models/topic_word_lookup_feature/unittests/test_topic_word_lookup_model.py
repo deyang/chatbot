@@ -3,14 +3,13 @@ from mock import patch
 import os
 import glob
 from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model import TopicWordLookupModelStruct
-from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from ir_query_engine.common import DataStore
 from gensim.models.tfidfmodel import df2idf
 
 __author__ = 'Deyang'
 
 
-class TopicWordModelTestCase(unittest.TestCase):
+class TopicWordLookupModelTestCase(unittest.TestCase):
 
     def setUp(self):
         self.data = [
@@ -36,66 +35,73 @@ class TopicWordModelTestCase(unittest.TestCase):
         ]
         self.data_store = DataStore(self.data)
         self.dir_path = os.path.dirname(os.path.abspath(__file__))
-        self.test_md_file_path = os.path.join(self.dir_path, 'test_topic_words.set')
+        self.test_simmx_file_path = os.path.join(self.dir_path, 'test_topic_words.simmx')
+        self.test_dict_file_path = os.path.join(self.dir_path, 'test_topic_words.dict')
 
     def tearDown(self):
-        os.remove(self.test_md_file_path)
+        os.remove(self.test_simmx_file_path)
+        os.remove(self.test_dict_file_path)
 
-    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_set_path')
-    def test_get_topic_word_vec(self, mock_md_file_path):
-        mock_md_file_path.return_value = self.test_md_file_path
+    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_dict_path')
+    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_simmx_path')
+    def test_get_topic_word_vec(self, mock_simmx_file_path, mock_dict_file_path):
+        mock_simmx_file_path.return_value = self.test_simmx_file_path
+        mock_dict_file_path.return_value = self.test_dict_file_path
 
-        tfidf_model_struct = TfIdfModelStruct.get_model(data_store=self.data_store, save=False, regen=True)
-        model_struct = TopicWordLookupModelStruct.get_model(
-            tfidf_model_struct,
-            data_store=self.data_store)
-        query_doc = "tell me about a16z"
+        model_struct = TopicWordLookupModelStruct.get_model(data_store=self.data_store)
+        query_doc = "tell me about a16z. what is A16Z"
         vec = model_struct.get_topic_word_vec(query_doc)
-        for tokenid, value in vec:
-            if value:
-                self.assertEqual(tfidf_model_struct.dictionary.get(tokenid),
-                                 'a16z')
+        self.assertEqual(vec, [(0, 2)])
+        self.assertEqual(model_struct.dictionary.get(vec[0][0]),
+                         'a16z')
 
-        query_doc = "who is the founder"
+        query_doc = "who is the founder that co-founded a16z"
         vec = model_struct.get_topic_word_vec(query_doc)
-        for tokenid, value in vec:
-            if value:
-                self.assertEqual(tfidf_model_struct.dictionary.get(tokenid),
-                                 'founder')
+        self.assertEqual(vec, [(0, 1), (3, 1), (4, 1)])
+        self.assertEqual(model_struct.dictionary.get(vec[0][0]),
+                         'a16z')
+        self.assertEqual(model_struct.dictionary.get(vec[1][0]),
+                         'founder')
+        self.assertEqual(model_struct.dictionary.get(vec[2][0]),
+                         'co-found')
 
+    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_dict_path')
+    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_simmx_path')
+    def test_get_similarities_and_query(self, mock_simmx_file_path, mock_dict_file_path):
+        mock_simmx_file_path.return_value = self.test_simmx_file_path
+        mock_dict_file_path.return_value = self.test_dict_file_path
+        model_struct = TopicWordLookupModelStruct.get_model(data_store=self.data_store)
 
-    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_set_path')
-    def test_get_similarities(self, mock_md_file_path):
-        mock_md_file_path.return_value = self.test_md_file_path
-        tfidf_model_struct = TfIdfModelStruct.get_model(data_store=self.data_store, save=False, regen=True)
-        model_struct = TopicWordLookupModelStruct.get_model(
-            tfidf_model_struct,
-            data_store=self.data_store)
-
-        query_doc = "Who are the managers of a16z?"
+        query_doc = "Who are the founders of a16z?"
         compare_docs = [pair[0] for pair in self.data_store.topic_word_docs]
         results = model_struct.get_similarities(query_doc, compare_docs)
 
         results.sort(key=lambda p: p[1], reverse=True)
-        ranked_docs = [t[0] for t in results]
-        self.assertEqual(ranked_docs, [0, 3, 2, 1, 5, 4])
+        self.assertEqual(self.data_store.topic_word_docs[results[0][0]][0],
+                         "who is the founder of a16z")
 
-    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_set_path')
-    def test_get_model(self, mock_md_file_path):
-        mock_md_file_path.return_value = self.test_md_file_path
-        self.assertFalse(os.path.isfile(self.test_md_file_path))
+        results = model_struct.query(raw_doc=query_doc)
+        self.assertEqual(self.data_store.doc_set[results[0][0]],
+                         "who is the founder of a16z")
 
-        tfidf_model_struct = TfIdfModelStruct.get_model(data_store=self.data_store, save=False, regen=True)
+    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_dict_path')
+    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_simmx_path')
+    def test_get_model(self, mock_simmx_file_path, mock_dict_file_path):
+        mock_simmx_file_path.return_value = self.test_simmx_file_path
+        mock_dict_file_path.return_value = self.test_dict_file_path
+        self.assertFalse(os.path.isfile(self.test_dict_file_path))
+        self.assertFalse(os.path.isfile(self.test_simmx_file_path))
+
         new_model_struct = TopicWordLookupModelStruct.get_model(
-            tfidf_model_struct,
             data_store=self.data_store)
         # assert file saves
-        self.assertTrue(os.path.isfile(self.test_md_file_path))
+        self.assertTrue(os.path.isfile(self.test_simmx_file_path))
+        self.assertTrue(os.path.isfile(self.test_dict_file_path))
 
         # loading model
-        loaded_model_struct = TopicWordLookupModelStruct.get_model(tfidf_model_struct)
-        self.assertEqual(loaded_model_struct.topic_word_set,
-                         new_model_struct.topic_word_set)
+        loaded_model_struct = TopicWordLookupModelStruct.get_model()
+        self.assertEqual(loaded_model_struct.dictionary,
+                         new_model_struct.dictionary)
 
 
 if __name__ == '__main__':

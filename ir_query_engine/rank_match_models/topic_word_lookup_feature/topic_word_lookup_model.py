@@ -1,63 +1,44 @@
 import os
 from gensim import similarities
 from ir_query_engine.common import p_stemmer
-import json
-
+from ir_query_engine.common import pre_process_doc
+from gensim import corpora
 from ir_query_engine import engine_logger
 
 
 __author__ = 'Deyang'
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-SET_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'topic_words.set')
 SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'topic_words.simmx')
+DICT_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'topic_words.dict')
 
 
-def get_set_path():
-    return SET_FILE_PATH
+def get_simmx_path():
+    return SIMMX_FILE_PATH
+
+
+def get_dict_path():
+    return DICT_FILE_PATH
 
 
 class TopicWordLookupModelStruct(object):
 
-    def __init__(self, tfidf_model_struct, topic_word_set, simmx):
-        # Topic model mush have a tfidf model struct
-        self.tfidf_model_struct = tfidf_model_struct
-        self.topic_word_set = topic_word_set
+    def __init__(self, dictionary, simmx):
+        self.dictionary = dictionary
         self.simmx = simmx
 
     def get_similarities(self, query_doc, compare_docs):
         query_vec = self.get_topic_word_vec(query_doc)
-        # print query_vec
         compare_vecs = [self.get_topic_word_vec(doc) for doc in compare_docs]
-        sim_mx = similarities.SparseMatrixSimilarity(compare_vecs, num_features=len(self.tfidf_model_struct.dictionary))
+        sim_mx = similarities.SparseMatrixSimilarity(compare_vecs, num_features=len(self.dictionary))
         sims = sim_mx[query_vec]
         return list(enumerate(sims))
 
-    @classmethod
-    def write_set(cls, topic_word_set):
-        path = get_set_path()
-        with open(path, 'w') as f:
-            f.write(json.dumps(list(topic_word_set)))
-
-    @classmethod
-    def read_set(cls):
-        path = get_set_path()
-        with open(path, 'r') as f:
-            c = f.read()
-            return set(json.loads(c))
-
     def get_topic_word_vec(self, raw_doc):
-        raw_doc = raw_doc.lower()
-        tf_vec = self.tfidf_model_struct.get_tf_vec(raw_doc)
-        topic_word_vec = []
-        for pair in tf_vec:
-            tokenid = pair[0]
-            if tokenid in self.topic_word_set:
-                topic_word_vec.append((tokenid, pair[1]))
+        pre_processed_doc = pre_process_doc(raw_doc)
+        return self.dictionary.doc2bow(pre_processed_doc)
 
-        return topic_word_vec
-
-    def query(self, raw_doc, limit=3):
+    def query(self, raw_doc=None, limit=10):
         vec = self.get_topic_word_vec(raw_doc)
 
         sims = self.simmx[vec]
@@ -65,49 +46,42 @@ class TopicWordLookupModelStruct(object):
         results.sort(key=lambda t: t[1], reverse=True)
         return results[:limit]
 
-
     @staticmethod
     def normalize_word(raw_word):
         return p_stemmer.stem(raw_word.lower())
 
     @classmethod
-    def get_model(cls, tfidf_model_struct, data_store=None, regen=False):
-        md_file_path = get_set_path()
-        if not os.path.isfile(md_file_path) or regen:
+    def get_model(cls, data_store=None, regen=False):
+        dict_file_path = get_dict_path()
+        simmx_file_path = get_simmx_path()
+        if not os.path.isfile(dict_file_path) or not os.path.isfile(simmx_file_path) or \
+                regen:
             engine_logger.info("Generating topic word lookup model")
-            topic_word_set = set([])
+
+            # construct on a refined vocabulary of only topic words
+            topic_words_across_all_docs = []
             for pair in data_store.topic_word_docs:
-                topic_words = pair[1]
+                topic_words_per_doc = pair[1]
+                normed_topic_words_per_doc = [cls.normalize_word(word) for word in topic_words_per_doc]
+                topic_words_across_all_docs.append(normed_topic_words_per_doc)
 
-                for topic_word in topic_words:
-                    normed_w = cls.normalize_word(topic_word)
-                    tokenid = tfidf_model_struct.dictionary.token2id.get(normed_w, None)
-                    if tokenid is not None:
-                        topic_word_set.add(tokenid)
-
-            # saving
-            cls.write_set(topic_word_set)
-            instance = TopicWordLookupModelStruct(tfidf_model_struct,
-                                                  topic_word_set,
+            dictionary = corpora.Dictionary(topic_words_across_all_docs)
+            instance = TopicWordLookupModelStruct(dictionary,
                                                   None)
 
-            dictionary, corpus = \
-                tfidf_model_struct.docs_to_corpus_tf_idf(data_store.doc_set)
-
-            # extract question corpus
-            question_corpus = [data_store.doc_set[aid] for aid in data_store.question_set]
-            question_vecs = [instance.get_topic_word_vec(doc) for doc in question_corpus]
+            topic_word_vecs = [instance.get_topic_word_vec(doc) for doc in data_store.doc_set]
             simmx = \
-                similarities.SparseMatrixSimilarity(question_vecs,
-                                                    num_features=len(tfidf_model_struct.dictionary))
+                similarities.SparseMatrixSimilarity(topic_word_vecs,
+                                                    num_features=len(dictionary))
 
             instance.simmx = simmx
-            simmx.save(SIMMX_FILE_PATH)
+            # saving
+            simmx.save(simmx_file_path)
+            dictionary.save_as_text(dict_file_path)
             return instance
         else:
-            engine_logger.info("Loading existing topic word set")
-            topic_word_set = cls.read_set()
-            simmx = similarities.SparseMatrixSimilarity.load(SIMMX_FILE_PATH)
+            engine_logger.info("Loading existing topic word lookup model")
+            dictionary = corpora.Dictionary.load_from_text(dict_file_path)
+            simmx = similarities.SparseMatrixSimilarity.load(simmx_file_path)
 
-            return TopicWordLookupModelStruct(tfidf_model_struct, topic_word_set, simmx)
-
+            return TopicWordLookupModelStruct(dictionary, simmx)

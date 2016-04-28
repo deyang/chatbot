@@ -28,9 +28,6 @@ def get_a_simmx_path():
     return A_SIMMX_FILE_PATH
 
 
-
-
-
 class TfIdfModelStruct(object):
 
     def __init__(self, model=None, dictionary=None, question_sim_matrix=None, answer_sim_matrix=None):

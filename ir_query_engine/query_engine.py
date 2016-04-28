@@ -34,13 +34,13 @@ class QueryEngine(object):
         self.data_store = data_store
         self.tfidf_model_struct = TfIdfModelStruct.get_model()
         self.lda_model_struct = LdaModelStruct.get_model()
-        self.topic_word_model_struct = \
-            TopicWordLookupModelStruct.get_model(tfidf_model_struct=self.tfidf_model_struct)
+        self.topic_word_lookup_model = \
+            TopicWordLookupModelStruct.get_model()
         self.word2vec_model = Word2VecModel()
         self.matcher = Matcher(
             self.tfidf_model_struct,
             self.lda_model_struct,
-            self.topic_word_model_struct,
+            self.topic_word_lookup_model,
             self.word2vec_model
         )
         self.rank_model = LinearRankModel.read_model_from_file()
@@ -96,65 +96,54 @@ class QueryEngine(object):
 
         return query_state.response
 
-    def _retrieve_candidates(self, query_state):
-        # retrieve similar questions based on tf-idf
-        results = self.tfidf_model_struct.query_questions(raw_doc=query_state.raw_query)
-        results = self.data_store.translate_question_query_results(results)
-        qa_pairs = set()
-
-        qa_pairs_from_question_tfidf = []
-        for qid, sim in results:
-            qa_pair = self.data_store.qid_to_qa_pair[qid]
-            engine_logger.debug("Pair from question tfidf matching: %s, sim: %s" %
-                                (self.data_store.get_docs_by_pair(qa_pair), sim))
-            qa_pairs_from_question_tfidf.append(qa_pair)
-        qa_pairs.update(qa_pairs_from_question_tfidf)
-        # engine_logger.debug("Candidates from tf-idf question matching: %s" % qa_pairs_from_question_tfidf)
-
-        # # retrieve similar answers based on tf-idf
-        # results = self.tfidf_model_struct.query_answers(raw_doc=query_state.raw_query)
-        # results = self.data_store.translate_answer_query_results(results)
-        #
-        # qa_pairs_from_answer_tfidf = []
-        # for aid, sim in results:
-        #     pairs = self.data_store.aid_to_qa_pairs[aid]
-        #     for pair in pairs:
-        #         engine_logger.debug("Pair from answer tfidf matching: %s, sim: %s" %
-        #                             (self.data_store.get_docs_by_pair(pair), sim))
-        #     qa_pairs_from_answer_tfidf.extend(pairs)
-        # qa_pairs.update(qa_pairs_from_answer_tfidf)
-        # engine_logger.debug("Candidates after tf-idf answer matching: %s" % qa_pairs_from_answer_tfidf)
-
-        # retrieve similar docs (question or answer) based on lda
-        results = self.lda_model_struct.query(raw_doc=query_state.raw_query)
-
-        qa_pairs_from_lda = []
+    def _retrieve_candidates_from_query_doc_results(self, results, qa_pair_candidates, model_name=""):
+        retrieved_qa_pairs = []
         for doc_id, sim in results:
             if doc_id in self.data_store.question_set:
                 pair = self.data_store.qid_to_qa_pair[doc_id]
-                qa_pairs_from_lda.append(pair)
-                engine_logger.debug("Pair from question lda matching: %s, sim: %s" %
-                                    (self.data_store.get_docs_by_pair(qa_pair), sim))
+                retrieved_qa_pairs.append(pair)
+                engine_logger.debug("Pair from question matching: model %s, %s, sim: %s" %
+                                    (model_name, self.data_store.get_docs_by_pair(pair), sim))
             elif doc_id in self.data_store.answer_set:
                 pairs = self.data_store.aid_to_qa_pairs[doc_id]
+                retrieved_qa_pairs.extend(pairs)
                 for pair in pairs:
-                    engine_logger.debug("Pair from answer lda matching: %s, sim: %s" %
-                                        (self.data_store.get_docs_by_pair(pair), sim))
-                qa_pairs_from_lda.extend(pairs)
+                    engine_logger.debug("Pair from answer matching: model %s, %s, sim: %s" %
+                                        (model_name, self.data_store.get_docs_by_pair(pair), sim))
             else:
-                engine_logger.debug("Matched non question not answer doc from lda: %s" % self.data_store.doc_set[doc_id])
-        qa_pairs.update(qa_pairs_from_lda)
-        # engine_logger.debug("Candidates after lda matching: %s" % qa_pairs_from_lda)
+                engine_logger.debug("Matched not question nor answer doc from model %s: %s" %
+                                    (model_name, self.data_store.doc_set[doc_id]))
 
-        results = self.topic_word_model_struct.query(raw_doc=query_state.raw_query)
+        qa_pair_candidates.update(retrieved_qa_pairs)
+
+    def _retrieve_candidates_from_query_question_results(self, results, qa_pair_candidates, model_name=""):
+        retrieved_qa_pairs = []
         results = self.data_store.translate_question_query_results(results)
         for qid, sim in results:
-            qa_pair = self.data_store.qid_to_qa_pair[qid]
-            engine_logger.debug("Pair from question topic word matching: %s, sim: %s" %
-                                (self.data_store.get_docs_by_pair(qa_pair), sim))
-            qa_pairs.add(qa_pair)
+            pair = self.data_store.qid_to_qa_pair[qid]
+            engine_logger.debug("Pair from question matching: model %s, %s, sim: %s" %
+                                (model_name, self.data_store.get_docs_by_pair(pair), sim))
+            retrieved_qa_pairs.append(pair)
+        qa_pair_candidates.update(retrieved_qa_pairs)
 
-        query_state.candidate_pairs = list(qa_pairs)
+    def _retrieve_candidates(self, query_state):
+        qa_pair_candidates = set()
+
+        # retrieve similar questions based on tf-idf
+        results = self.tfidf_model_struct.query_questions(raw_doc=query_state.raw_query)
+        self._retrieve_candidates_from_query_question_results(results, qa_pair_candidates, model_name="TFIDF")
+        # engine_logger.debug("Candidates from tf-idf question matching: %s" % qa_pairs_from_question_tfidf)
+
+        # retrieve similar docs (question or answer) based on lda
+        results = self.lda_model_struct.query(raw_doc=query_state.raw_query)
+        self._retrieve_candidates_from_query_doc_results(results, qa_pair_candidates, model_name="LDA")
+        # engine_logger.debug("Candidates after lda matching: %s" % qa_pairs_from_lda)
+
+        # retrieve similar docs (question or answer) based on topic words lookup
+        results = self.topic_word_lookup_model.query(raw_doc=query_state.raw_query)
+        self._retrieve_candidates_from_query_doc_results(results, qa_pair_candidates, model_name="TopicWordLookup")
+
+        query_state.candidate_pairs = list(qa_pair_candidates)
         # engine_logger.info("Candidates: %s, len: %s" % (query_state.candidate_pairs, len(query_state.candidate_pairs)))
 
     def _match_candidates(self, query_state):

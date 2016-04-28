@@ -4,6 +4,8 @@ from ir_query_engine.main import parser
 from common import split_raw_data_k_fold
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
+from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model \
+    import TopicWordLookupModelStruct
 from ir_query_engine import engine_logger
 import json
 
@@ -17,6 +19,10 @@ parser.add_option('', '--eval_lda', dest='eval_lda',
                   action='store_true',
                   default=False,
                   help='Evaluate LDA model')
+parser.add_option('', '--eval_topic_word_lookup', dest='eval_topic_word_lookup',
+                  action='store_true',
+                  default=False,
+                  help='Evaluate topic words lookup model')
 parser.add_option('', '--num_folds', dest='num_folds',
                   action='store',
                   default=None,
@@ -135,7 +141,7 @@ class EvaluateSingleModel(object):
 
     def write_output(self):
         engine_logger.info("Writing output")
-        with open('cv.log', 'w') as f:
+        with open('cv_test.log', 'w') as f:
             f.write("%f, %f\n" % (self.test_data_set.accuracy, self.test_data_set.avg_relevance_score))
             for idx in range(len(self.test_data_set.questions)):
                 f.write("Question: %s\n" % self.test_data_set.questions[idx].encode('utf-8'))
@@ -144,6 +150,7 @@ class EvaluateSingleModel(object):
                 f.write("Label: %s, relevance score: %f\n" %
                         (self.test_data_set.judgement_labels[idx], self.test_data_set.relevance_scores[idx]))
 
+        with open('cv_train.log', 'w') as f:
             f.write(">>>>>>>> Training data\n")
             for idx in range(len(self.train_data_set.questions)):
                 f.write("Question: %s\n" % self.train_data_set.questions[idx].encode('utf-8'))
@@ -272,6 +279,14 @@ if __name__ == '__main__':
             LdaModelStruct,
             EvaluateDocRetrieveSingleModel,
             {'num_topics': int(options.num_topics)})
+        cv.cross_validate()
+        print cv.report()
+
+    if options.eval_topic_word_lookup:
+        engine_logger.info("Cross validation on Topic Words Lookup model for %s folds" %
+                           options.num_folds)
+        cv = SingleModelCrossValidationRunner(
+            raw_data, int(options.num_folds), TopicWordLookupModelStruct, EvaluateDocRetrieveSingleModel, {})
         cv.cross_validate()
         print cv.report()
 

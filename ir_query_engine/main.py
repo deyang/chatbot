@@ -10,6 +10,7 @@ from ranker.ranking import Matcher, LinearRankModel
 from query_engine import QueryEngine
 from utils.util import StopWatch
 from ir_query_engine import engine_logger
+from common import tokenizer, stop_words
 
 
 __author__ = 'Deyang'
@@ -20,7 +21,7 @@ parser.add_option('-d', '--data_file', dest='data_file',
                   action='store',
                   default=None,
                   help='Input data file')
-parser.add_option('', '--load_tf_idf', dest='load_tf_idf',
+parser.add_option('', '--load_tfidf', dest='load_tfidf',
                   action='store_true',
                   default=False,
                   help='Load TF-IDF model only')
@@ -56,6 +57,10 @@ parser.add_option('', '--num_topics', dest='num_topics',
                   action='store',
                   default=None,
                   help='Number of topics in LDA model.')
+parser.add_option('-c', '--count_words', dest='count_words',
+                  action='store_true',
+                  default=False,
+                  help='Count and print the most frequent words after rmed stop words')
 parser.add_option('-r', '--regen', dest='regen',
                   action='store_true',
                   default=False,
@@ -67,24 +72,23 @@ if __name__ == '__main__':
     if options.data_file:
         data_store = load_data_store(options.data_file)
 
+    if options.count_words:
         counter = dict()
         for doc in data_store.doc_set:
-            tokens = lda_train.tokenizer.tokenize(doc.lower())
+            tokens = tokenizer.tokenize(doc.lower())
 
             for token in tokens:
-
-                if token in lda_train.stop_words:
+                if token in stop_words:
                     continue
-
                 if token not in counter:
                     counter[token] = 0
                 counter[token] += 1
 
         items = list(counter.iteritems())
         items.sort(key=lambda t: t[1], reverse=True)
-        print items[:100]
+        print items[:50]
 
-    if options.load_tf_idf:
+    if options.load_tfidf:
         tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store, regen=options.regen)
         raw_doc = "Mark Zuckerberg established Facebook"
         results = tf_idf_model_struct.query_questions(raw_doc=raw_doc)
@@ -107,24 +111,16 @@ if __name__ == '__main__':
         print data_store.doc_set[results[2][0]]
 
     if options.collect_topic_words:
-        tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store)
         topic_model_struct = \
             topic_word_lookup.TopicWordLookupModelStruct.get_model(
-                tf_idf_model_struct,
                 data_store=data_store,
                 regen=options.regen
             )
 
-        query_doc = "What is jobop493507"
-        print query_doc
-        compare_docs = data_store.doc_set
-        results = topic_model_struct.get_similarities(query_doc, compare_docs)
-        results.sort(key=lambda t: t[1], reverse=True)
+        query_doc = "What is steven"
+        results = topic_model_struct.query(raw_doc=query_doc)
         print results[0:10]
-        print compare_docs[results[0][0]]
-        print compare_docs[results[1][0]]
-        print compare_docs[results[2][0]]
-        print compare_docs[results[3][0]]
+        print data_store.doc_set[results[0][0]]
 
     if options.train_topic_words:
         tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store)

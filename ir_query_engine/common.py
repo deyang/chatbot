@@ -157,13 +157,13 @@ def sample_by_index_generator(indices, raw_list):
     for index in indices:
         yield raw_list[index]
 
-tokenizer = RegexpTokenizer(r'\w+')
+tokenizer = RegexpTokenizer(r'\w+-?\w+')
 p_stemmer = PorterStemmer()
 
 # create English stop words list
 en_stop = get_stop_words('en')
 customized_stop_words = [
-    'show', 'want', 'know', 'can', 'find', 'tell', 'need', 'information'
+    'show', 'want', 'know', 'can', 'find', 'tell', 'need', 'information', 'ask'
 ]
 stop_words = set(en_stop + customized_stop_words)
 
