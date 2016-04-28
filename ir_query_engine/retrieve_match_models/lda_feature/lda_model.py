@@ -1,11 +1,8 @@
-from nltk.tokenize import RegexpTokenizer
-from stop_words import get_stop_words
-from nltk.stem.porter import PorterStemmer
 from gensim import corpora, models, similarities
 import os
 from ir_query_engine import engine_logger
-import re
 from utils.util import StopWatch
+from ir_query_engine.common import pre_process_doc, docs_to_corpus
 
 __author__ = 'Deyang'
 
@@ -15,7 +12,6 @@ MODEL_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda.md')
 DICT_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda.dict')
 SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda.simmx')
 NUM_TOPIC_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda_num_topics.txt')
-
 
 
 def get_md_path():
@@ -34,22 +30,6 @@ def get_num_topic_path():
     return NUM_TOPIC_FILE_PATH
 
 
-tokenizer = RegexpTokenizer(r'\w+')
-
-# create English stop words list
-en_stop = get_stop_words('en')
-
-customized_stop_words = [
-    'show', 'want', 'know', 'can', 'find', 'tell', 'need', 'information'
-]
-
-
-stop_words = set(en_stop + customized_stop_words)
-
-# Create p_stemmer of class PorterStemmer
-p_stemmer = PorterStemmer()
-
-
 def write_num_topics(filepath, num_topics):
     with open(filepath, 'w') as f:
         f.write(str(num_topics))
@@ -63,43 +43,15 @@ def read_num_topics(filepath):
 
 class LdaModelStruct(object):
 
-    def __init__(self, model=None, dictionary=None, sim_matrix=None, num_topics=None):
+    def __init__(self, model=None, dictionary=None, sim_matrix=None, num_topics=None, rm_stop_words=True):
         self.model = model
         self.dictionary = dictionary
         self.sim_matrix = sim_matrix
         self.num_topics = num_topics
-
-    @staticmethod
-    def pre_process_doc_lda(raw_doc):
-        # clean and tokenize document string
-        cleaned_doc = re.sub(r'https?:\/\/.*\s?$', 'http', raw_doc.lower())
-        tokens = tokenizer.tokenize(cleaned_doc)
-
-        # remove stop words from tokens
-        stopped_tokens = [t for t in tokens if t not in en_stop]
-
-        # stem tokens
-        stemmed_tokens = [p_stemmer.stem(t) for t in stopped_tokens]
-        return stemmed_tokens
-
-    @classmethod
-    def docs_to_corpus_lda(cls, doc_set):
-        # list for tokenized documents in loop
-        texts = []
-
-        # loop through document list
-        for i in doc_set:
-            # add tokens to list
-            texts.append(cls.pre_process_doc_lda(i))
-
-        # turn our tokenized documents into a id <-> term dictionary
-        dictionary = corpora.Dictionary(texts)
-        # convert tokenized documents into a document-term matrix
-        corpus = [dictionary.doc2bow(text) for text in texts]
-        return dictionary, corpus
+        self.rm_stop_words = rm_stop_words
 
     def get_topic_predict(self, raw_doc):
-        return self.model[self.dictionary.doc2bow(self.pre_process_doc_lda(raw_doc))]
+        return self.model[self.dictionary.doc2bow(pre_process_doc(raw_doc, rm_stop_words=self.rm_stop_words))]
 
     def get_similarities(self, query_doc, compare_docs):
         # sw = StopWatch()
@@ -139,7 +91,7 @@ class LdaModelStruct(object):
                 os.path.isfile(num_topics_file_path) or regen:
             engine_logger.info("Generating LDA models.")
 
-            dictionary, corpus = cls.docs_to_corpus_lda(data_store.doc_set)
+            dictionary, corpus = docs_to_corpus(data_store.doc_set, rm_stop_words=True)
             # generate LDA model
             # LDA model is trained on all the docs
             model = models.ldamodel.LdaModel(corpus, num_topics=num_topics, id2word=dictionary)

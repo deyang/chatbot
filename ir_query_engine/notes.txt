@@ -11,7 +11,7 @@ Need to develop a method to evaluate.
 9. Confidence score by platt scaling
 10. Modify topic word model
 11. translation model
-
+12. generate rank training data based on wrong top answers running on training and test.!!
 
 
 

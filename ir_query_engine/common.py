@@ -2,6 +2,11 @@ import os
 import sys
 import json
 from ir_query_engine import engine_logger
+import re
+from nltk.tokenize import RegexpTokenizer
+from stop_words import get_stop_words
+from nltk.stem.porter import PorterStemmer
+from gensim import corpora
 
 __author__ = 'Deyang'
 
@@ -151,3 +156,43 @@ def load_data_store(file_name):
 def sample_by_index_generator(indices, raw_list):
     for index in indices:
         yield raw_list[index]
+
+tokenizer = RegexpTokenizer(r'\w+')
+p_stemmer = PorterStemmer()
+
+# create English stop words list
+en_stop = get_stop_words('en')
+customized_stop_words = [
+    'show', 'want', 'know', 'can', 'find', 'tell', 'need', 'information'
+]
+stop_words = set(en_stop + customized_stop_words)
+
+
+def pre_process_doc(raw_doc, rm_stop_words=False):
+    # clean and tokenize document string
+    cleaned_doc = re.sub(r'https?:\/\/.*\s?$', 'http', raw_doc.lower())
+    tokens = tokenizer.tokenize(cleaned_doc)
+
+    if rm_stop_words:
+        # remove stop words from tokens
+        tokens = [t for t in tokens if t not in en_stop]
+
+    # stem tokens
+    stemmed_tokens = [p_stemmer.stem(t) for t in tokens]
+    return stemmed_tokens
+
+
+def docs_to_corpus(doc_set, rm_stop_words=False):
+    # list for tokenized documents in loop
+    texts = []
+
+    # loop through document list
+    for i in doc_set:
+        # add tokens to list
+        texts.append(pre_process_doc(i, rm_stop_words=rm_stop_words))
+
+    # turn our tokenized documents into a id <-> term dictionary
+    dictionary = corpora.Dictionary(texts)
+    # convert tokenized documents into a document-term matrix
+    corpus = [dictionary.doc2bow(text) for text in texts]
+    return dictionary, corpus

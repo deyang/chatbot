@@ -1,6 +1,6 @@
 import os
 from gensim import similarities
-from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import p_stemmer
+from ir_query_engine.common import p_stemmer
 import json
 
 from ir_query_engine import engine_logger

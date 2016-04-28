@@ -192,13 +192,6 @@ class TfIdfModelTestCase(unittest.TestCase):
             )
             self.assertAlmostEqual(sim[1], expected_sim)
 
-    def test_process(self):
-        raw_doc = 'You can find the website of Matternet at http'
-        self.assertEqual(TfIdfModelStruct.pre_process_doc_tf_idf(raw_doc),
-                         [u'you', u'can', u'find', u'the', u'websit', u'of', u'matternet', u'at', u'http'])
-        raw_doc = 'What do you like to eat?'
-        self.assertEqual(TfIdfModelStruct.pre_process_doc_tf_idf(raw_doc),
-                         [u'what', u'do', u'you', u'like', u'to', u'eat'])
 
 
 if __name__ == '__main__':

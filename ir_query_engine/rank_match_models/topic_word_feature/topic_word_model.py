@@ -1,7 +1,8 @@
 import os
 from sklearn.externals import joblib
 from gensim import similarities
-from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct, p_stemmer
+from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
+from ir_query_engine.common import p_stemmer, pre_process_doc
 import re
 
 from ir_query_engine import engine_logger
@@ -181,7 +182,7 @@ class TopicWordModelStruct(object):
         :param raw_doc:
         :return:
         """
-        tokens = TfIdfModelStruct.pre_process_doc_tf_idf(raw_doc)
+        tokens = pre_process_doc(raw_doc)
         feature_vecs = []
         doc_word_pairs = [(raw_doc, token) for token in tokens]
         for doc_word_pair in doc_word_pairs:
@@ -216,7 +217,7 @@ class TopicWordModelStruct(object):
                 doc = pair[0]
 
                 # iterate the combination of doc-word pairs and as positive and negative ex.
-                tokens = TfIdfModelStruct.pre_process_doc_tf_idf(doc)
+                tokens = pre_process_doc(doc)
                 positive_topics_words = set(DocWordAnalyzer.normalize_word(w) for w in pair[1])
                 for t in tokens:
                     training_doc_word_pairs.append((doc, t))
