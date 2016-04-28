@@ -1,5 +1,6 @@
 from ir_query_engine.common import sample_by_index_generator, DataStore
 from sklearn.cross_validation import KFold
+import random
 
 __author__ = 'Deyang'
 
@@ -26,6 +27,9 @@ class TestDataSet(object):
 def split_raw_data_k_fold(raw_data, num_folds):
     """Return tuple of training data store, training data set for evaluation, and the unseen test data set."""
     assert isinstance(raw_data, list)
+    # since our generated raw_data has an inherent order,
+    # we must shuffle it before k-folds
+    random.shuffle(raw_data)
     train_test_data_tuples = []
     kf = KFold(len(raw_data), n_folds=num_folds)
     for train_index, test_index in kf:
