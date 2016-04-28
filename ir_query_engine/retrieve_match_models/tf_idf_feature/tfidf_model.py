@@ -8,10 +8,10 @@ import re
 __author__ = 'Deyang'
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-MODEL_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'tfidf.md')
-DICT_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'tfidf.dict')
-Q_SIMMX_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'tfidf_q.simmx')
-A_SIMMX_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'tfidf_a.simmx')
+MODEL_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'tfidf.md')
+DICT_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'tfidf.dict')
+Q_SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'tfidf_q.simmx')
+A_SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'tfidf_a.simmx')
 
 
 def get_md_path():

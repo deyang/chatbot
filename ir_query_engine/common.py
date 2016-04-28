@@ -123,7 +123,7 @@ class DataStore(object):
                (json.dumps(self.doc_set, indent=4), json.dumps(self.topic_word_docs, indent=4))
 
 
-def load_data(file_name):
+def load_raw_data(file_name):
     path = os.path.join(DATA_PATH, file_name)
 
     if not os.path.isfile(path):
@@ -133,9 +133,21 @@ def load_data(file_name):
         contents = f.read()
     try:
         json_obj = json.loads(contents)
+        return json_obj
     except Exception as e:
         engine_logger.error(e)
         return None
 
     data_store = DataStore(json_obj)
     return data_store
+
+
+def load_data_store(file_name):
+    raw_data = load_raw_data(file_name)
+    if raw_data:
+        return DataStore(raw_data)
+
+
+def sample_by_index_generator(indices, raw_list):
+    for index in indices:
+        yield raw_list[index]

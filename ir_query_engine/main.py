@@ -1,6 +1,6 @@
 from optparse import OptionParser
 
-from common import load_data
+from common import load_data_store
 import retrieve_match_models.tf_idf_feature.tfidf_model as tfidf_model
 import retrieve_match_models.lda_feature.lda_model as lda_train
 import rank_match_models.topic_word_feature.topic_word_model as topic_train
@@ -15,58 +15,57 @@ from ir_query_engine import engine_logger
 __author__ = 'Deyang'
 
 
+parser = OptionParser()
+parser.add_option('-d', '--data_file', dest='data_file',
+                  action='store',
+                  default=None,
+                  help='Input data file')
+parser.add_option('', '--load_tf_idf', dest='load_tf_idf',
+                  action='store_true',
+                  default=False,
+                  help='Load TF-IDF model only')
+parser.add_option('', '--train_lda', dest='train_lda',
+                  action='store_true',
+                  default=False,
+                  help='Train LDA model only')
+parser.add_option('', '--train_topic_words', dest='train_topic_words',
+                  action='store_true',
+                  default=False,
+                  help='Train topic words model')
+parser.add_option('', '--collect_topic_words', dest='collect_topic_words',
+                  action='store_true',
+                  default=False,
+                  help='Lookup topic words model')
+parser.add_option('', '--train_rank_model', dest='train_rank_model',
+                  action='store_true',
+                  default=False,
+                  help='Train rank model')
+parser.add_option('-q', '--query', dest='query',
+                  action='store_true',
+                  default=False,
+                  help='Start a QueryEngine')
+parser.add_option('', '--seq', dest='seq',
+                  action='store_true',
+                  default=False,
+                  help='Write sequentially')
+parser.add_option('', '--pair', dest='pair',
+                  action='store',
+                  default=None,
+                  help='Data split pair')
+parser.add_option('', '--num_topics', dest='num_topics',
+                  action='store',
+                  default=None,
+                  help='Number of topics in LDA model.')
+parser.add_option('-r', '--regen', dest='regen',
+                  action='store_true',
+                  default=False,
+                  help='Force to re gen/train models')
+
 if __name__ == '__main__':
-
-    parser = OptionParser()
-    parser.add_option('-d', '--data_file', dest='data_file',
-                      action='store',
-                      default=None,
-                      help='Input data file')
-    parser.add_option('', '--load_tf_idf', dest='load_tf_idf',
-                      action='store_true',
-                      default=False,
-                      help='Load TF-IDF model only')
-    parser.add_option('', '--train_lda', dest='train_lda',
-                      action='store_true',
-                      default=False,
-                      help='Train LDA model only')
-    parser.add_option('', '--train_topic_words', dest='train_topic_words',
-                      action='store_true',
-                      default=False,
-                      help='Train topic words model')
-    parser.add_option('', '--collect_topic_words', dest='collect_topic_words',
-                      action='store_true',
-                      default=False,
-                      help='Lookup topic words model')
-    parser.add_option('', '--train_rank_model', dest='train_rank_model',
-                      action='store_true',
-                      default=False,
-                      help='Train rank model')
-    parser.add_option('-q', '--query', dest='query',
-                      action='store_true',
-                      default=False,
-                      help='Start a QueryEngine')
-    parser.add_option('', '--seq', dest='seq',
-                      action='store_true',
-                      default=False,
-                      help='Write sequentially')
-    parser.add_option('', '--pair', dest='pair',
-                      action='store',
-                      default=None,
-                      help='Data split pair')
-    parser.add_option('', '--num_topics', dest='num_topics',
-                      action='store',
-                      default=None,
-                      help='Number of topics in LDA model.')
-    parser.add_option('-r', '--regen', dest='regen',
-                      action='store_true',
-                      default=False,
-                      help='Force to re gen/train models')
-
     (options, args) = parser.parse_args()
 
     if options.data_file:
-        data_store = load_data(options.data_file)
+        data_store = load_data_store(options.data_file)
 
     if options.load_tf_idf:
         tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store, regen=options.regen)

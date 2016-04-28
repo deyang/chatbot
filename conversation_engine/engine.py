@@ -1,5 +1,5 @@
 from ir_query_engine.query_engine import QueryEngine
-from ir_query_engine.common import load_data
+from ir_query_engine.common import load_data_store
 
 import nltk
 from optparse import OptionParser
@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
 
-    data_store = load_data(options.data_file)
+    data_store = load_data_store(options.data_file)
     query_engine = QueryEngine(data_store)
     conversation_engine = ConversationEngine(query_engine)
 
