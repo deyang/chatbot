@@ -5,8 +5,7 @@ from common import split_raw_data_k_fold
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
 from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
 from ir_query_engine import engine_logger
-
-from optparse import OptionParser
+import json
 
 __author__ = 'Deyang'
 
@@ -22,6 +21,10 @@ parser.add_option('', '--num_folds', dest='num_folds',
                   action='store',
                   default=None,
                   help='Number of folds in k-fold cross validation')
+parser.add_option('-w', '--write_output', dest='write_output',
+                  action='store_true',
+                  default=False,
+                  help='Write experiments')
 
 
 class SingleModelCrossValidationRunner(object):
@@ -46,7 +49,7 @@ class SingleModelCrossValidationRunner(object):
         train_test_data_tuples = split_raw_data_k_fold(self.raw_data, self.num_folds)
         for train_data_store, train_data, test_data in train_test_data_tuples:
             engine_logger.info("Cross validation iter: %d" % iter_num)
-            iter_num += 1
+
             model = self.ModelClass.get_model(data_store=train_data_store,
                                               regen=True,
                                               **self.model_kargs)
@@ -60,6 +63,11 @@ class SingleModelCrossValidationRunner(object):
             self.each_run_train_relevance.append(train_relevance)
             self.each_run_test_accuracy.append(test_accuracy)
             self.each_run_test_relevance.append(test_relevance)
+
+            if iter_num == 0 and options.write_output:
+                eval_model.write_output()
+
+            iter_num += 1
 
         self.avg_train_accuracy = sum(self.each_run_train_accuracy) / float(self.num_folds)
         self.avg_train_relevance = sum(self.each_run_train_relevance) / float(self.num_folds)
@@ -124,6 +132,22 @@ class EvaluateSingleModel(object):
 
     def post_process(self, results):
         raise NotImplementedError
+
+    def write_output(self):
+        engine_logger.info("Writing output")
+        with open('cv.log', 'w') as f:
+            f.write("%f, %f\n" % (self.test_data_set.accuracy, self.test_data_set.avg_relevance_score))
+            for idx in range(len(self.test_data_set.questions)):
+                f.write("Question: %s\n" % self.test_data_set.questions[idx].encode('utf-8'))
+                f.write("Correct answer: %s\n" % self.test_data_set.top_answers[idx].encode('utf-8'))
+                f.write("Retrieved answer: %s\n" % self.test_data_set.retrieved_results[idx].encode('utf-8'))
+                f.write("Label: %s, relevance score: %f\n" %
+                        (self.test_data_set.judgement_labels[idx], self.test_data_set.relevance_scores[idx]))
+
+            f.write(">>>>>>>> Training data\n")
+            for idx in range(len(self.train_data_set.questions)):
+                f.write("Question: %s\n" % self.train_data_set.questions[idx].encode('utf-8'))
+                f.write("Answer: %s\n" % self.train_data_set.top_answers[idx].encode('utf-8'))
 
 
 class EvaluateQuestionRetrieveSingleModel(EvaluateSingleModel):
