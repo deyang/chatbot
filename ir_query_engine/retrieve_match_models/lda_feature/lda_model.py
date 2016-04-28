@@ -11,10 +11,10 @@ __author__ = 'Deyang'
 
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-MODEL_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'lda.md')
-DICT_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'lda.dict')
-SIMMX_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'lda.simmx')
-NUM_TOPIC_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'lda_num_topics.txt')
+MODEL_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda.md')
+DICT_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda.dict')
+SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda.simmx')
+NUM_TOPIC_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda_num_topics.txt')
 
 
 
@@ -38,6 +38,13 @@ tokenizer = RegexpTokenizer(r'\w+')
 
 # create English stop words list
 en_stop = get_stop_words('en')
+
+customized_stop_words = [
+    'show', 'want', 'know', 'can', 'find', 'tell', 'need', 'information'
+]
+
+
+stop_words = set(en_stop + customized_stop_words)
 
 # Create p_stemmer of class PorterStemmer
 p_stemmer = PorterStemmer()
@@ -112,11 +119,12 @@ class LdaModelStruct(object):
         sims = self.sim_matrix[topic_predict]
         results = list(enumerate(sims))
         results.sort(key=lambda t: t[1], reverse=True)
-        truncated_results = []
-        for docid, sim in results[:limit]:
-            if sim > 0.1:
-                truncated_results.append((docid, sim))
-        return truncated_results
+        return results
+        # truncated_results = []
+        # for docid, sim in results[:limit]:
+        #     if sim > 0.1:
+        #         truncated_results.append((docid, sim))
+        # return truncated_results
 
     @classmethod
     def get_model(cls, data_store=None, regen=False, num_topics=None):

@@ -67,6 +67,23 @@ if __name__ == '__main__':
     if options.data_file:
         data_store = load_data_store(options.data_file)
 
+        counter = dict()
+        for doc in data_store.doc_set:
+            tokens = lda_train.tokenizer.tokenize(doc.lower())
+
+            for token in tokens:
+
+                if token in lda_train.stop_words:
+                    continue
+
+                if token not in counter:
+                    counter[token] = 0
+                counter[token] += 1
+
+        items = list(counter.iteritems())
+        items.sort(key=lambda t: t[1], reverse=True)
+        print items[:100]
+
     if options.load_tf_idf:
         tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store, regen=options.regen)
         raw_doc = "Mark Zuckerberg established Facebook"

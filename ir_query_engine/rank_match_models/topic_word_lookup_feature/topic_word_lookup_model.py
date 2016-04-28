@@ -9,8 +9,8 @@ from ir_query_engine import engine_logger
 __author__ = 'Deyang'
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-SET_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'topic_words.set')
-SIMMX_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'topic_words.simmx')
+SET_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'topic_words.set')
+SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'topic_words.simmx')
 
 
 def get_set_path():
@@ -94,7 +94,7 @@ class TopicWordLookupModelStruct(object):
             dictionary, corpus = \
                 tfidf_model_struct.docs_to_corpus_tf_idf(data_store.doc_set)
 
-            # extract answer corpus
+            # extract question corpus
             question_corpus = [data_store.doc_set[aid] for aid in data_store.question_set]
             question_vecs = [instance.get_topic_word_vec(doc) for doc in question_corpus]
             simmx = \

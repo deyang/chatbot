@@ -3,6 +3,7 @@ from ir_query_engine.common import load_raw_data, load_data_store
 from ir_query_engine.main import parser
 from common import split_raw_data_k_fold
 from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
+from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
 from ir_query_engine import engine_logger
 
 from optparse import OptionParser
@@ -13,6 +14,10 @@ parser.add_option('', '--eval_tfidf', dest='eval_tfidf',
                   action='store_true',
                   default=False,
                   help='Evaluate TF-IDF model')
+parser.add_option('', '--eval_lda', dest='eval_lda',
+                  action='store_true',
+                  default=False,
+                  help='Evaluate LDA model')
 parser.add_option('', '--num_folds', dest='num_folds',
                   action='store',
                   default=None,
@@ -21,10 +26,12 @@ parser.add_option('', '--num_folds', dest='num_folds',
 
 class SingleModelCrossValidationRunner(object):
 
-    def __init__(self, data, num_folds, ModelClass):
+    def __init__(self, data, num_folds, ModelClass, EvaluateClass, model_kargs):
         self.raw_data = data
         self.num_folds = num_folds
         self.ModelClass = ModelClass
+        self.EvaluateClass = EvaluateClass
+        self.model_kargs = model_kargs
         self.each_run_train_accuracy = []
         self.each_run_test_accuracy = []
         self.each_run_train_relevance = []
@@ -41,12 +48,14 @@ class SingleModelCrossValidationRunner(object):
             engine_logger.info("Cross validation iter: %d" % iter_num)
             iter_num += 1
             model = self.ModelClass.get_model(data_store=train_data_store,
-                                              regen=True)
-            eval_model = EvaluateQuestionRetrieveModel(
+                                              regen=True,
+                                              **self.model_kargs)
+            eval_model = self.EvaluateClass(
                 train_data_store, train_data, test_data, model)
             eval_model.run_eval()
 
             train_accuracy, train_relevance, test_accuracy, test_relevance = eval_model.report_metrics()
+            print train_accuracy, train_relevance, test_accuracy, test_relevance
             self.each_run_train_accuracy.append(train_accuracy)
             self.each_run_train_relevance.append(train_relevance)
             self.each_run_test_accuracy.append(test_accuracy)
@@ -117,7 +126,7 @@ class EvaluateSingleModel(object):
         raise NotImplementedError
 
 
-class EvaluateQuestionRetrieveModel(EvaluateSingleModel):
+class EvaluateQuestionRetrieveSingleModel(EvaluateSingleModel):
 
     def query(self, raw_doc):
         return self.model.query_questions(raw_doc=raw_doc)
@@ -127,6 +136,20 @@ class EvaluateQuestionRetrieveModel(EvaluateSingleModel):
         qa_pair = self.train_data_store.get_docs_by_pair(self.train_data_store.qid_to_qa_pair[results[0][0]])
         return qa_pair[1]
 
+
+class EvaluateDocRetrieveSingleModel(EvaluateSingleModel):
+
+    def query(self, raw_doc):
+        return self.model.query(raw_doc=raw_doc)
+
+    def post_process(self, results):
+        doc_id = results[0][0]
+        if doc_id in self.train_data_store.question_set:
+            qa_pair = self.train_data_store.qid_to_qa_pair[doc_id]
+            return self.train_data_store.doc_set[qa_pair[1]]
+        elif doc_id in self.train_data_store.answer_set:
+            return self.train_data_store.doc_set[doc_id]
+        return ""
 
 def eval_score():
     data_store = load_data_store(options.data_file)
@@ -212,6 +235,20 @@ if __name__ == '__main__':
 
     if options.eval_tfidf:
         engine_logger.info("Cross validation on TFIDF model for %s folds" % options.num_folds)
-        cv = SingleModelCrossValidationRunner(raw_data, int(options.num_folds), TfIdfModelStruct)
+        cv = SingleModelCrossValidationRunner(
+            raw_data, int(options.num_folds), TfIdfModelStruct, EvaluateQuestionRetrieveSingleModel, {})
         cv.cross_validate()
         print cv.report()
+
+    if options.eval_lda:
+        engine_logger.info("Cross validation on LDA model for %s folds" % options.num_folds)
+        cv = SingleModelCrossValidationRunner(
+            raw_data,
+            int(options.num_folds),
+            LdaModelStruct,
+            EvaluateDocRetrieveSingleModel,
+            {'num_topics': int(options.num_topics)})
+        cv.cross_validate()
+        print cv.report()
+
+
