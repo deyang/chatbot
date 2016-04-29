@@ -180,7 +180,9 @@ class EvaluateDocRetrieveSingleModel(EvaluateSingleModel):
             return self.train_data_store.doc_set[qa_pair[1]]
         elif doc_id in self.train_data_store.answer_set:
             return self.train_data_store.doc_set[doc_id]
-        return ""
+        else:
+            print "Missing match!"
+            return ""
 
 def eval_score():
     data_store = load_data_store(options.data_file)

@@ -35,7 +35,27 @@ class DataStore(object):
             doc_id = self.doc_to_id[doc]
             return doc_id, False
 
-    def __init__(self, raw_json_object):
+    def _add_question(self, question):
+        qid, added = self._add_doc(question)
+        if added:
+            # new question, add to question set
+            self.question_set.append(qid)
+        return qid, added
+
+    def _add_answer(self, answer):
+        aid, added = self._add_doc(answer)
+        if added:
+            # new answer, add to answer set
+            self.answer_set.append(aid)
+        return aid, added
+
+    def _add_qa_pair(self, qid, aid):
+        self.qid_to_qa_pair[qid] = (qid, aid)
+        if aid not in self.aid_to_qa_pairs:
+            self.aid_to_qa_pairs[aid] = []
+        self.aid_to_qa_pairs[aid].append((qid, aid))
+
+    def __init__(self, raw_json_object, load_rank_training_data=True):
         engine_logger.info("Initializing data store.")
         # doc set stores all the documents
         self.doc_set = list()
@@ -56,25 +76,16 @@ class DataStore(object):
 
         for segment in raw_json_object:
             question = segment['_question']
-            qid, added = self._add_doc(question)
+            qid, added = self._add_question(question)
             if added:
-                # new question, add to question set
-                self.question_set.append(qid)
                 # context
                 if 'context' in segment:
                     self.qa_context[qid] = segment['context']
 
             answer = segment['answer']
-            aid, added = self._add_doc(answer)
-            if added:
-                # new answer, add to answer set
-                self.answer_set.append(aid)
+            aid, added = self._add_answer(answer)
 
-            self.qid_to_qa_pair[qid] = (qid, aid)
-            if aid not in self.aid_to_qa_pairs:
-                self.aid_to_qa_pairs[aid] = []
-            self.aid_to_qa_pairs[aid].append((qid, aid))
-
+            self._add_qa_pair(qid, aid)
 
             # store data for topic words
             if '_question_topic_words' in segment:
@@ -82,21 +93,31 @@ class DataStore(object):
             if 'answer_topic_words' in segment:
                 self.topic_word_docs.append((answer, segment['answer_topic_words']))
 
-        # loop for the ranked answer, add them at last, since not all of them correspond to an question
-        for segment in raw_json_object:
-            if 'qa_pairs_with_matching_score' in segment and \
-                            len(segment['qa_pairs_with_matching_score']) > 0:
-                self.rank_data[segment['_question']] = []
-                for pair_dict in segment['qa_pairs_with_matching_score']:
-                    self._add_doc(pair_dict['_question'])
-                    self._add_doc(pair_dict['answer'])
-                    self.rank_data[segment['_question']].append((
-                        (
-                            pair_dict['_question'],
-                            pair_dict['answer']
-                        ),
-                        pair_dict['score'])
-                    )
+        if load_rank_training_data:
+            # loop for the ranked answer, add them at last
+            for segment in raw_json_object:
+                if 'qa_pairs_with_matching_score' in segment and \
+                                len(segment['qa_pairs_with_matching_score']) > 0:
+                    self.rank_data[segment['_question']] = []
+                    for pair_dict in segment['qa_pairs_with_matching_score']:
+                        qid, q_added = self._add_question(pair_dict['_question'])
+                        aid, a_added = self._add_answer(pair_dict['answer'])
+                        if q_added:
+                            # don't override previous question-answer pair
+                            self._add_qa_pair(qid, aid)
+                        elif a_added:
+                            # the question is not new, but the answer is new, usually we shoudln't see this
+                            if aid not in self.aid_to_qa_pairs:
+                                self.aid_to_qa_pairs[aid] = []
+                            self.aid_to_qa_pairs[aid].append((qid, aid))
+
+                        self.rank_data[segment['_question']].append((
+                            (
+                                pair_dict['_question'],
+                                pair_dict['answer']
+                            ),
+                            pair_dict['score'])
+                        )
         engine_logger.info("# docs loaded: %s" % len(self.doc_set))
         engine_logger.info("# questions loaded: %s" % len(self.question_set))
         engine_logger.info("# answers loaded: %s" % len(self.answer_set))

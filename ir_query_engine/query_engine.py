@@ -111,7 +111,7 @@ class QueryEngine(object):
                     engine_logger.debug("Pair from answer matching: model %s, %s, sim: %s" %
                                         (model_name, self.data_store.get_docs_by_pair(pair), sim))
             else:
-                engine_logger.debug("Matched not question nor answer doc from model %s: %s" %
+                engine_logger.error("Matched not question nor answer doc from model %s: %s" %
                                     (model_name, self.data_store.doc_set[doc_id]))
 
         qa_pair_candidates.update(retrieved_qa_pairs)

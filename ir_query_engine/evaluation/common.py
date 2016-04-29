@@ -42,7 +42,7 @@ def split_raw_data_k_fold(raw_data, num_folds):
             test_data.append(data_piece)
 
         train_test_data_tuples.append(
-            (DataStore(train_data), TestDataSet(train_data), TestDataSet(test_data))
+            (DataStore(train_data, load_rank_training_data=False), TestDataSet(train_data), TestDataSet(test_data))
         )
 
     return train_test_data_tuples
