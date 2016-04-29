@@ -23,8 +23,7 @@ class MatcherTestCase(unittest.TestCase):
                    mock_topic_get_sims,
                    mock_word2vec_get_sims,
                    mock_get_cooccur_features):
-        mock_tfidf_get_sims.side_effect = [[(0, 1.0), (1, 2.0)],
-                                           [(0, 3.0), (1, 4.0)]]
+        mock_tfidf_get_sims.side_effect = [[(0, 1.0), (1, 2.0)]]
         mock_lda_get_sims.side_effect = [[(0, 5.0), (1, 6.0)],
                                          [(0, 7.0), (1, 8.0)]]
         mock_topic_get_sims.side_effect = [[(0, 9.0), (1, 10.0)],
@@ -40,7 +39,7 @@ class MatcherTestCase(unittest.TestCase):
         ]
 
         query_doc = "q"
-        question_answer_pairs = [("q1", "a1"), ("q2", "a2")]
+        question_answer_pairs = [("q1", "a1"), ("q", "aq2")]
 
         matcher = Matcher(TfIdfModelStruct(),
                           LdaModelStruct(),
@@ -50,12 +49,11 @@ class MatcherTestCase(unittest.TestCase):
         self.assertEqual(len(results), 2)
 
         expected_match_feature1 = MatchFeatures(
-            question_tf_idf_sim=1.0,
-            # answer_tf_idf_sim=3.0,
+            question_tfidf_sim=1.0,
             question_lda_sim=5.0,
             answer_lda_sim=7.0,
             question_topic_word_sim=9.0,
-            # answer_topic_word_sim=11.0,
+            answer_topic_word_sim=11.0,
             question_word2vec_sim=-0.1,
             answer_word2vec_sim=-0.3,
             answer_lcs_len=0,
@@ -71,15 +69,14 @@ class MatcherTestCase(unittest.TestCase):
         )
 
         expected_match_feature2 = MatchFeatures(
-            question_tf_idf_sim=2.0,
-            # answer_tf_idf_sim=4.0,
+            question_tfidf_sim=2.0,
             question_lda_sim=6.0,
             answer_lda_sim=8.0,
             question_topic_word_sim=10.0,
-            # answer_topic_word_sim=12.0,
+            answer_topic_word_sim=12.0,
             question_word2vec_sim=-0.2,
             answer_word2vec_sim=-0.4,
-            answer_lcs_len=0,
+            answer_lcs_len=1,
             question_cooccur_size=2,
             answer_cooccur_size=4,
             question_cooccur_rate=0.6,
@@ -88,13 +85,10 @@ class MatcherTestCase(unittest.TestCase):
             answer_cooccur_sum_idf=4.0,
             question_cooccur_avg_idf=2.0,
             answer_cooccur_avg_idf=1.0,
-            question_edit_distance=1,
+            question_edit_distance=0,
         )
 
-        self.assertEqual(len(results[0].to_vec()), MatchFeatures.NUM_OF_FEATURES)
         self.assertEqual(results[0].to_vec(), expected_match_feature1.to_vec())
-
-        self.assertEqual(len(results[1].to_vec()), MatchFeatures.NUM_OF_FEATURES)
         self.assertEqual(results[1].to_vec(), expected_match_feature2.to_vec())
 
 

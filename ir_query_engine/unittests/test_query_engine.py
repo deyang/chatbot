@@ -90,7 +90,7 @@ class QueryEngineTestCase(unittest.TestCase):
         mock_retrieve.side_effect = mock_retrieve_side_effect
 
         def mock_match_side_effect(qs):
-            qs.match_features = [MatchFeatures(question_tf_idf_sim=0.9),
+            qs.match_features = [MatchFeatures(question_tfidf_sim=0.9),
                                  MatchFeatures(question_lda_sim=0.8),
                                  MatchFeatures(answer_lda_sim=0.8),
                                  MatchFeatures(question_topic_word_sim=0.8),

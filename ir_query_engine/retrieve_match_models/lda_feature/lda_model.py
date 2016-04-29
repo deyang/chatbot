@@ -71,7 +71,7 @@ class LdaModelStruct(object):
         sims = self.sim_matrix[topic_predict]
         results = list(enumerate(sims))
         results.sort(key=lambda t: t[1], reverse=True)
-        return results
+        return results[:limit]
         # truncated_results = []
         # for docid, sim in results[:limit]:
         #     if sim > 0.1:
