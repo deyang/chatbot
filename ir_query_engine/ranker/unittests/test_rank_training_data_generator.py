@@ -1,16 +1,12 @@
 import unittest
 from mock import patch
-from ir_query_engine.ranker.ranking import Matcher, MatchFeatures, LinearRankModel
-from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
-from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
-from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model import TopicWordLookupModelStruct
-from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
+from ir_query_engine.ranker.ranking import Matcher, MatchFeatures, RankTrainingDataGenerator
 import os
 
 __author__ = 'Deyang'
 
 
-class RankModelTestCase(unittest.TestCase):
+class RankTrainingDataGeneratorTestCase(unittest.TestCase):
 
     def setUp(self):
         self.rank_data = {
@@ -42,10 +38,6 @@ class RankModelTestCase(unittest.TestCase):
         dir_path = os.path.dirname(os.path.abspath(__file__))
         self.test_train_data_path = os.path.join(dir_path,
                                                  'test_train.dat')
-
-    def tearDown(self):
-        pass
-        # os.remove(self.test_train_data_path)
 
     @patch('ir_query_engine.ranker.ranking.get_train_data_path')
     @patch.object(Matcher, 'match')
@@ -138,16 +130,14 @@ class RankModelTestCase(unittest.TestCase):
         ]
         mock_train_data_path.return_value = self.test_train_data_path
 
-        matcher = Matcher(TfIdfModelStruct(),
-                          LdaModelStruct(),
-                          TopicWordLookupModelStruct(None, None),
-                          Word2VecModel())
+        matcher = Matcher(None,
+                          None,
+                          None,
+                          None)
         rank_data = list(self.rank_data.iteritems())
-        rank_model = LinearRankModel(matcher=matcher, rank_data=rank_data)
+        rank_model = RankTrainingDataGenerator(matcher=matcher, rank_data=rank_data)
 
         rank_model.write_training_data()
-
-
 
 
 if __name__ == '__main__':
