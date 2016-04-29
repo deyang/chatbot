@@ -1,7 +1,7 @@
 import unittest
 import os
 from mock import patch
-from ir_query_engine.ranker.ranking import RankModelTrainer, read_model_from_file, LinearSVMRankModel, RBFSVMRankModel
+from ir_query_engine.ranker.ranking import RankModelTrainer, read_rank_model_from_file, LinearSVMRankModel, RBFSVMRankModel
 
 __author__ = 'Deyang'
 
@@ -27,7 +27,7 @@ class RankModelTrainerTestCase(unittest.TestCase):
         trainer.train_model()
 
         self.assertTrue(os.path.isfile(self.test_model_file_path))
-        rank_model = read_model_from_file()
+        rank_model = read_rank_model_from_file()
         self.assertTrue(isinstance(rank_model, LinearSVMRankModel))
 
     @patch('ir_query_engine.ranker.ranking.get_train_data_path')
@@ -41,7 +41,7 @@ class RankModelTrainerTestCase(unittest.TestCase):
         trainer.train_model()
 
         self.assertTrue(os.path.isfile(self.test_model_file_path))
-        rank_model = read_model_from_file()
+        rank_model = read_rank_model_from_file()
         self.assertTrue(isinstance(rank_model, RBFSVMRankModel))
 
 
@@ -72,7 +72,7 @@ class ReadModelTestCase(unittest.TestCase):
 1 1:1.521512 2:-0.057497051 3:-0.52151203 4:-0.17125149 5:0.96401501 #"""
             f.write(contents)
 
-        rank_model = read_model_from_file()
+        rank_model = read_rank_model_from_file()
         self.assertTrue(isinstance(rank_model, LinearSVMRankModel))
         self.assertEqual(rank_model.threshold, 0.0)
         self.assertEqual(rank_model.weight_vec, [1.521512, -0.057497051, -0.52151203, -0.17125149, 0.96401501])
@@ -100,7 +100,7 @@ empty# kernel parameter -u
 0.30003541024106716861297172727063 1:1 2:0 3:0 4:0.40000001 5:1 #"""
             f.write(contents)
 
-        rank_model = read_model_from_file()
+        rank_model = read_rank_model_from_file()
         self.assertTrue(isinstance(rank_model, RBFSVMRankModel))
         self.assertEqual(rank_model.threshold, 0.0)
         self.assertAlmostEqual(rank_model.alphays,

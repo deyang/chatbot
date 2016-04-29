@@ -3,7 +3,7 @@ from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfI
 from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
 from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model import TopicWordLookupModelStruct
 from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
-from ir_query_engine.ranker.ranking import Matcher, LinearRankModel
+from ir_query_engine.ranker.ranking import Matcher, read_rank_model_from_file
 
 __author__ = 'Deyang'
 
@@ -16,19 +16,54 @@ class QueryState(object):
         self.match_features = []
         self.candidate_scores = []
         self.responses = []
-        self.response= None
+        self.final_response = None
 
 
 class Response(object):
-    def __init__(self, question, answer, score, feature, context):
+
+    def __init__(self, question, answer, match_score, feature, context, confidence_score=None):
         self.question = question
         self.answer = answer
-        self.score = score
+        # match score is the original feature match score
+        self.match_score = match_score
         self.feature = feature
         self.context = context
+        # confidence score is a calibrated probability indicating the confidence
+        self.confidence_score = confidence_score
+
+    def __str__(self):
+        return "Response<question: %s, answer: %s, match_score: %f, feature: %s, context: %s, confidence_score: %s>" % \
+               (self.question, self.answer, self.match_score, self.feature, self.context, self.confidence_score)
 
 
-class QueryEngine(object):
+class QueryEngineAbstract(object):
+
+    def __init__(self):
+        pass
+
+    def execute_query(self, raw_query):
+        raise NotImplementedError
+
+
+class QueryEngine(QueryEngineAbstract):
+
+    def execute_query(self, raw_query):
+        pass
+
+
+class QueryEngineComponent(QueryEngineAbstract):
+
+    def __init__(self):
+        pass
+
+    def execute_query(self, raw_query):
+        raise NotImplementedError
+
+
+class RankBasedQueryEngineComponent(QueryEngineComponent):
+    """
+    Combine multi-models and rank the final results
+    """
 
     def __init__(self, data_store):
         self.data_store = data_store
@@ -43,9 +78,9 @@ class QueryEngine(object):
             self.topic_word_lookup_model,
             self.word2vec_model
         )
-        self.rank_model = LinearRankModel.read_model_from_file()
+        self.rank_model = read_rank_model_from_file()
 
-        engine_logger.info("Query engine is up")
+        engine_logger.info("Rank based query engine is up")
 
     def execute_query(self, raw_query):
         raw_query = raw_query.lower()
@@ -62,41 +97,27 @@ class QueryEngine(object):
                 self.rank_model.predict_score(feature)
             )
 
-        query_state.responses = zip(query_state.candidate_pairs,
-                                    query_state.candidate_scores,
-                                    query_state.match_features)
-        engine_logger.info("State three, ranking candidates.")
-        query_state.responses.sort(key=lambda pair: pair[1], reverse=True)
-
-        top5 = []
-        for pair in query_state.responses[0:5]:
-            top5.append(
-                (
-                    self.data_store.doc_set[pair[0][0]],
-                    self.data_store.doc_set[pair[0][1]],
-                    pair[1],
-                    pair[2].to_vec()
-                )
+        for idx in range(len(query_state.candidate_pairs)):
+            resp = Response(
+                self.data_store.doc_set[query_state.candidate_pairs[idx][0]], # question
+                self.data_store.doc_set[query_state.candidate_pairs[idx][1]], # answer
+                query_state.candidate_scores[idx], # match score
+                query_state.match_features[idx].to_vec(), # feature
+                self.data_store.qa_context.get(query_state.candidate_pairs[idx][0], None) # context
             )
+            query_state.responses.append(resp)
 
-        engine_logger.info("Ranked top 5 responses: %s" % top5)
+        engine_logger.info("State three, ranking candidates.")
+        query_state.responses.sort(key=lambda r: r.match_score, reverse=True)
 
-        resp = Response(
-            self.data_store.doc_set[query_state.responses[0][0][0]], # question
-            self.data_store.doc_set[query_state.responses[0][0][1]], # answer
-            query_state.responses[0][1], # score
-            query_state.responses[0][2].to_vec(), # feature
-            self.data_store.qa_context.get(query_state.responses[0][0][0], None)
-        )
-        query_state.response = resp
-        print resp.question
-        print resp.feature
-        print resp.score
-        print resp.context
+        engine_logger.info("Ranked top 5 responses: %s" % query_state.responses[:5])
 
-        return query_state.response
+        query_state.final_response = query_state.responses[0]
+        engine_logger.debug(query_state.final_response)
+        return query_state.final_response
 
     def _retrieve_candidates_from_query_doc_results(self, results, qa_pair_candidates, model_name=""):
+        assert isinstance(qa_pair_candidates, set)
         retrieved_qa_pairs = []
         for doc_id, sim in results:
             if doc_id in self.data_store.question_set:
@@ -117,6 +138,7 @@ class QueryEngine(object):
         qa_pair_candidates.update(retrieved_qa_pairs)
 
     def _retrieve_candidates_from_query_question_results(self, results, qa_pair_candidates, model_name=""):
+        assert isinstance(qa_pair_candidates, set)
         retrieved_qa_pairs = []
         results = self.data_store.translate_question_query_results(results)
         for qid, sim in results:

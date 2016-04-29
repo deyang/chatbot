@@ -242,7 +242,7 @@ class RankModelTrainer(object):
             engine_logger.info("Finished RBF kernel based SVM model")
 
 
-def read_model_from_file():
+def read_rank_model_from_file():
     md_file_path = get_md_path()
     if not os.path.isfile(md_file_path):
         raise Exception("Missing model file: %s" % md_file_path)
