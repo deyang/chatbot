@@ -73,29 +73,36 @@ class CommonTestCase(unittest.TestCase):
             2
         )
         # assert the first train data store
-        self.assertEqual(train_test_data_tuples[0][0].doc_set,
-                         ['who is the founder of a16z', 'Marc Andreessen and Ben Horowitz co-founded a16z.', 'who is Steven Sinofsky', 'Steven Sinofsky is a board partner at a16z.', 'Where id a16z?', 'a16z is located in Menlo Park'])
-        self.assertEqual(train_test_data_tuples[0][0].question_set,
+        if 'who is the founder of a16z' in train_test_data_tuples[0][0].doc_set:
+            tuple1 = train_test_data_tuples[0]
+            tuple2 = train_test_data_tuples[1]
+        else:
+            tuple1 = train_test_data_tuples[1]
+            tuple2 = train_test_data_tuples[0]
+
+        self.assertEqual(tuple1[0].doc_set,
+                         ['who is the founder of a16z', 'Marc Andreessen and Ben Horowitz co-founded a16z.'])
+        self.assertEqual(tuple1[0].question_set,
                          [0])
-        self.assertEqual(train_test_data_tuples[0][0].answer_set,
+        self.assertEqual(tuple1[0].answer_set,
                          [1])
         # assert the first test data set
-        self.assertEqual(train_test_data_tuples[0][2].questions,
+        self.assertEqual(tuple1[2].questions,
                          ['tell me about a16z'])
-        self.assertEqual(train_test_data_tuples[0][2].top_answers,
+        self.assertEqual(tuple1[2].top_answers,
                          ['a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.'])
 
         # assert the second train data store
-        self.assertEqual(train_test_data_tuples[1][0].doc_set,
-                         ['tell me about a16z', 'a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.', 'who is the founder of a16z', 'Marc Andreessen and Ben Horowitz co-founded a16z.', 'Where id a16z?', 'a16z is located in Menlo Park', 'Where is the headquarter of 500px?', '500px headquarter in san francisco'])
-        self.assertEqual(train_test_data_tuples[1][0].question_set,
+        self.assertEqual(tuple2[0].doc_set,
+                         ['tell me about a16z', 'a16z is a Silicon Valley-based venture capital firm with $2.7 billion under management. They invest from seed to growth.'])
+        self.assertEqual(tuple2[0].question_set,
                          [0])
-        self.assertEqual(train_test_data_tuples[1][0].answer_set,
+        self.assertEqual(tuple2[0].answer_set,
                          [1])
         # assert the second test data set
-        self.assertEqual(train_test_data_tuples[1][2].questions,
+        self.assertEqual(tuple2[2].questions,
                          ['who is the founder of a16z'])
-        self.assertEqual(train_test_data_tuples[1][2].top_answers,
+        self.assertEqual(tuple2[2].top_answers,
                          ['Marc Andreessen and Ben Horowitz co-founded a16z.'])
 
 if __name__ == '__main__':

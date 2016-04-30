@@ -1,4 +1,4 @@
-from ir_query_engine.query_engine import QueryEngine
+from ir_query_engine.query_engine import QueryEngine, RankBasedQueryEngineComponent
 from ir_query_engine.common import load_raw_data, load_data_store
 from ir_query_engine.main import parser
 from common import split_raw_data_k_fold
@@ -6,8 +6,11 @@ from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfI
 from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
 from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model \
     import TopicWordLookupModelStruct
+from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
 from ir_query_engine import engine_logger
+from ir_query_engine.ranker.ranking import read_rank_model_from_file
 import json
+import logging
 
 __author__ = 'Deyang'
 
@@ -23,6 +26,10 @@ parser.add_option('', '--eval_topic_word_lookup', dest='eval_topic_word_lookup',
                   action='store_true',
                   default=False,
                   help='Evaluate topic words lookup model')
+parser.add_option('', '--eval_ranked_query_engine', dest='eval_ranked_query_engine',
+                  action='store_true',
+                  default=False,
+                  help='Evaluate RankBasedQueryEngineComponent')
 parser.add_option('', '--num_folds', dest='num_folds',
                   action='store',
                   default=None,
@@ -31,16 +38,17 @@ parser.add_option('-w', '--write_output', dest='write_output',
                   action='store_true',
                   default=False,
                   help='Write experiments')
+parser.add_option('-s', '--silence', dest='silence',
+                  action='store_true',
+                  default=False,
+                  help='Set logging level to INFO')
 
 
-class SingleModelCrossValidationRunner(object):
+class CrossValidationRunnerAbstract(object):
 
-    def __init__(self, data, num_folds, ModelClass, EvaluateClass, model_kargs):
+    def __init__(self, data, num_folds):
         self.raw_data = data
         self.num_folds = num_folds
-        self.ModelClass = ModelClass
-        self.EvaluateClass = EvaluateClass
-        self.model_kargs = model_kargs
         self.each_run_train_accuracy = []
         self.each_run_test_accuracy = []
         self.each_run_train_relevance = []
@@ -50,17 +58,19 @@ class SingleModelCrossValidationRunner(object):
         self.avg_train_relevance = 0.0
         self.avg_test_relevance = 0.0
 
+    def report(self):
+        return self.avg_train_accuracy, self.avg_train_relevance, self.avg_test_accuracy, self.avg_test_relevance
+
+    def _get_eval_model(self, train_data_store, train_data, test_data):
+        raise NotImplementedError
+
     def cross_validate(self):
         iter_num = 0
         train_test_data_tuples = split_raw_data_k_fold(self.raw_data, self.num_folds)
         for train_data_store, train_data, test_data in train_test_data_tuples:
             engine_logger.info("Cross validation iter: %d" % iter_num)
 
-            model = self.ModelClass.get_model(data_store=train_data_store,
-                                              regen=True,
-                                              **self.model_kargs)
-            eval_model = self.EvaluateClass(
-                train_data_store, train_data, test_data, model)
+            eval_model = self._get_eval_model(train_data_store, train_data, test_data)
             eval_model.run_eval()
 
             train_accuracy, train_relevance, test_accuracy, test_relevance = eval_model.report_metrics()
@@ -80,8 +90,51 @@ class SingleModelCrossValidationRunner(object):
         self.avg_test_accuracy = sum(self.each_run_test_accuracy) / float(self.num_folds)
         self.avg_test_relevance = sum(self.each_run_test_relevance) / float(self.num_folds)
 
-    def report(self):
-        return self.avg_train_accuracy, self.avg_train_relevance, self.avg_test_accuracy, self.avg_test_relevance
+
+class SingleModelCrossValidationRunner(CrossValidationRunnerAbstract):
+
+    def __init__(self, data, num_folds, ModelClass, EvaluateClass, model_kargs):
+        super(SingleModelCrossValidationRunner, self).__init__(data, num_folds)
+        self.ModelClass = ModelClass
+        self.EvaluateClass = EvaluateClass
+        self.model_kargs = model_kargs
+
+    def _get_eval_model(self, train_data_store, train_data, test_data):
+        # train the model
+        model = self.ModelClass.get_model(data_store=train_data_store,
+                                          regen=True,
+                                          save=False,
+                                          **self.model_kargs)
+        eval_model = self.EvaluateClass(train_data_store, train_data, test_data, model)
+        return eval_model
+
+
+class RankBasedQueryEngineComponentCrossValidationRunner(CrossValidationRunnerAbstract):
+
+    def __init__(self, data, num_folds):
+        super(RankBasedQueryEngineComponentCrossValidationRunner, self).__init__(data, num_folds)
+
+    def _get_eval_model(self, train_data_store, train_data, test_data):
+        # train new sub models one by one
+        tfidf_model = TfIdfModelStruct.get_model(data_store=train_data_store,
+                                                 regen=True,
+                                                 save=False)
+        lda_model = LdaModelStruct.get_model(data_store=train_data_store,
+                                             num_topics=int(options.num_topics),
+                                             regen=True,
+                                             save=False)
+        topic_word_lookup_model = TopicWordLookupModelStruct.get_model(data_store=train_data_store,
+                                                                       regen=True,
+                                                                       save=False)
+        word2vec_model = Word2VecModel()
+        rank_model = read_rank_model_from_file()
+
+        rank_based_query_engine = RankBasedQueryEngineComponent(train_data_store, eager_loading=False)
+        rank_based_query_engine.set_models(
+            tfidf_model, lda_model, topic_word_lookup_model, word2vec_model, rank_model
+        )
+        eval_model = EvaluateQueryEngine(train_data_store, train_data, test_data, rank_based_query_engine)
+        return eval_model
 
 
 class EvaluateSingleModel(object):
@@ -108,19 +161,22 @@ class EvaluateSingleModel(object):
 
     def _eval_on_data_set(self,  data_set):
         for idx in range(len(data_set.questions)):
+            print idx
             test_question = data_set.questions[idx]
-            query_results = self.query(
-                raw_doc=test_question)
-            retrieved_result = self.post_process(query_results)
+            retrieved_result = self.query_model(test_question)
             data_set.retrieved_results.append(retrieved_result)
+
             if retrieved_result == data_set.top_answers[idx]:
                 data_set.judgement_labels.append(1)
             else:
                 data_set.judgement_labels.append(0)
 
             # compute relevance score
-            sim = self.model.get_similarities(retrieved_result,
-                                              [data_set.top_answers[idx]])[0][1]
+            if hasattr(self.model, 'get_similarities'):
+                sim = self.model.get_similarities(retrieved_result,
+                                                  [data_set.top_answers[idx]])[0][1]
+            else:
+                sim = 0.0
             data_set.relevance_scores.append(sim)
 
         # compute metric
@@ -133,10 +189,7 @@ class EvaluateSingleModel(object):
         return self.train_data_set.accuracy, self.train_data_set.avg_relevance_score, \
                self.test_data_set.accuracy, self.test_data_set.avg_relevance_score
 
-    def query(self, raw_doc):
-        raise NotImplementedError
-
-    def post_process(self, results):
+    def query_model(self, raw_doc):
         raise NotImplementedError
 
     def write_output(self):
@@ -159,10 +212,8 @@ class EvaluateSingleModel(object):
 
 class EvaluateQuestionRetrieveSingleModel(EvaluateSingleModel):
 
-    def query(self, raw_doc):
-        return self.model.query_questions(raw_doc=raw_doc)
-
-    def post_process(self, results):
+    def query_model(self, raw_doc):
+        results = self.model.query_questions(raw_doc=raw_doc)
         results = self.train_data_store.translate_question_query_results(results)
         qa_pair = self.train_data_store.get_docs_by_pair(self.train_data_store.qid_to_qa_pair[results[0][0]])
         return qa_pair[1]
@@ -170,10 +221,8 @@ class EvaluateQuestionRetrieveSingleModel(EvaluateSingleModel):
 
 class EvaluateDocRetrieveSingleModel(EvaluateSingleModel):
 
-    def query(self, raw_doc):
-        return self.model.query(raw_doc=raw_doc)
-
-    def post_process(self, results):
+    def query_model(self, raw_doc):
+        results = self.model.query(raw_doc=raw_doc)
         doc_id = results[0][0]
         if doc_id in self.train_data_store.question_set:
             qa_pair = self.train_data_store.qid_to_qa_pair[doc_id]
@@ -183,6 +232,15 @@ class EvaluateDocRetrieveSingleModel(EvaluateSingleModel):
         else:
             print "Missing match!"
             return ""
+
+
+class EvaluateQueryEngine(EvaluateSingleModel):
+
+    def query_model(self, raw_doc):
+        resp = self.model.execute_query(raw_doc)
+        return resp.answer
+
+
 
 def eval_score():
     data_store = load_data_store(options.data_file)
@@ -266,6 +324,9 @@ if __name__ == '__main__':
     if options.data_file:
         raw_data = load_raw_data(options.data_file)
 
+    if options.silence:
+        engine_logger.setLevel(logging.INFO)
+
     if options.eval_tfidf:
         engine_logger.info("Cross validation on TFIDF model for %s folds" % options.num_folds)
         cv = SingleModelCrossValidationRunner(
@@ -292,4 +353,9 @@ if __name__ == '__main__':
         cv.cross_validate()
         print cv.report()
 
-
+    if options.eval_ranked_query_engine:
+        engine_logger.info("Cross validation on RankBasedQueryEngineComponent for %s folds" %
+                           options.num_folds)
+        cv = RankBasedQueryEngineComponentCrossValidationRunner(raw_data, int(options.num_folds))
+        cv.cross_validate()
+        print cv.report()

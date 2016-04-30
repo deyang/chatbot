@@ -51,7 +51,7 @@ class TopicWordLookupModelStruct(object):
         return p_stemmer.stem(raw_word.lower())
 
     @classmethod
-    def get_model(cls, data_store=None, regen=False):
+    def get_model(cls, data_store=None, regen=False, save=True):
         dict_file_path = get_dict_path()
         simmx_file_path = get_simmx_path()
         if not os.path.isfile(dict_file_path) or not os.path.isfile(simmx_file_path) or \
@@ -75,9 +75,11 @@ class TopicWordLookupModelStruct(object):
                                                     num_features=len(dictionary))
 
             instance.simmx = simmx
-            # saving
-            simmx.save(simmx_file_path)
-            dictionary.save_as_text(dict_file_path)
+            if save:
+                # saving
+                simmx.save(simmx_file_path)
+                dictionary.save_as_text(dict_file_path)
+
             return instance
         else:
             engine_logger.info("Loading existing topic word lookup model")

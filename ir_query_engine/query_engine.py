@@ -65,30 +65,61 @@ class RankBasedQueryEngineComponent(QueryEngineComponent):
     Combine multi-models and rank the final results
     """
 
-    def __init__(self, data_store):
+    def __init__(self, data_store, eager_loading=True):
         self.data_store = data_store
-        self.tfidf_model_struct = TfIdfModelStruct.get_model()
-        self.lda_model_struct = LdaModelStruct.get_model()
-        self.topic_word_lookup_model = \
-            TopicWordLookupModelStruct.get_model()
+        self.tfidf_model = None
+        self.lda_model = None
+        self.topic_word_lookup_model = None
+        self.word2vec_model = None
+        self.matcher = None
+        self.rank_model = None
+        self.is_up = False
+        if eager_loading:
+            self.load_models()
+
+    def get_status(self):
+        return self.is_up
+
+    def load_models(self):
+        """
+        Load all the models from files
+        :return
+        """
+        self.tfidf_model = TfIdfModelStruct.get_model()
+        self.lda_model = LdaModelStruct.get_model()
+        self.topic_word_lookup_model = TopicWordLookupModelStruct.get_model()
         self.word2vec_model = Word2VecModel()
         self.matcher = Matcher(
-            self.tfidf_model_struct,
-            self.lda_model_struct,
+            self.tfidf_model,
+            self.lda_model,
             self.topic_word_lookup_model,
             self.word2vec_model
         )
         self.rank_model = read_rank_model_from_file()
-
         engine_logger.info("Rank based query engine is up")
+        self.is_up = True
+
+    def set_models(self, tfidf_model, lda_model, topic_word_lookup_model, word2vec_model, rank_model):
+        self.tfidf_model = tfidf_model
+        self.lda_model = lda_model
+        self.topic_word_lookup_model = topic_word_lookup_model
+        self.word2vec_model = word2vec_model
+        self.rank_model = rank_model
+        self.matcher = Matcher(
+            self.tfidf_model,
+            self.lda_model,
+            self.topic_word_lookup_model,
+            self.word2vec_model
+        )
+        self.is_up = True
 
     def execute_query(self, raw_query):
         raw_query = raw_query.lower()
-        engine_logger.info("Raw query: %s" % raw_query)
+        engine_logger.debug("Raw query: %s" % raw_query)
         query_state = QueryState(raw_query)
-        engine_logger.info("State one, retrieving candidates.")
+        engine_logger.debug("State one, retrieving candidates.")
         self._retrieve_candidates(query_state)
-        engine_logger.info("State two, matching candidates.")
+        engine_logger.debug("State two, matching candidates.")
         self._match_candidates(query_state)
 
         # get the scores
@@ -107,10 +138,10 @@ class RankBasedQueryEngineComponent(QueryEngineComponent):
             )
             query_state.responses.append(resp)
 
-        engine_logger.info("State three, ranking candidates.")
+        engine_logger.debug("State three, ranking candidates.")
         query_state.responses.sort(key=lambda r: r.match_score, reverse=True)
 
-        engine_logger.info("Ranked top 5 responses: %s" % query_state.responses[:5])
+        engine_logger.debug("Ranked top 5 responses: %s" % query_state.responses[:5])
 
         query_state.final_response = query_state.responses[0]
         engine_logger.debug(query_state.final_response)
@@ -152,12 +183,12 @@ class RankBasedQueryEngineComponent(QueryEngineComponent):
         qa_pair_candidates = set()
 
         # retrieve similar questions based on tf-idf
-        results = self.tfidf_model_struct.query_questions(raw_doc=query_state.raw_query)
+        results = self.tfidf_model.query_questions(raw_doc=query_state.raw_query)
         self._retrieve_candidates_from_query_question_results(results, qa_pair_candidates, model_name="TFIDF")
         # engine_logger.debug("Candidates from tf-idf question matching: %s" % qa_pairs_from_question_tfidf)
 
         # retrieve similar docs (question or answer) based on lda
-        results = self.lda_model_struct.query(raw_doc=query_state.raw_query)
+        results = self.lda_model.query(raw_doc=query_state.raw_query)
         self._retrieve_candidates_from_query_doc_results(results, qa_pair_candidates, model_name="LDA")
         # engine_logger.debug("Candidates after lda matching: %s" % qa_pairs_from_lda)
 

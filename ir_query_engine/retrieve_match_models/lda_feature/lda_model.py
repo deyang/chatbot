@@ -79,7 +79,7 @@ class LdaModelStruct(object):
         # return truncated_results
 
     @classmethod
-    def get_model(cls, data_store=None, regen=False, num_topics=None):
+    def get_model(cls, data_store=None, regen=False, num_topics=None, save=True):
         md_file_path = get_md_path()
         dict_file_path = get_dict_path()
         simmx_file_path = get_simmx_path()
@@ -97,11 +97,12 @@ class LdaModelStruct(object):
             model = models.ldamodel.LdaModel(corpus, num_topics=num_topics, id2word=dictionary)
             sim_matrix = similarities.MatrixSimilarity(model[corpus])
 
-            # saving
-            dictionary.save_as_text(dict_file_path)
-            model.save(md_file_path)
-            sim_matrix.save(simmx_file_path)
-            write_num_topics(num_topics_file_path, num_topics)
+            if save:
+                # saving
+                dictionary.save_as_text(dict_file_path)
+                model.save(md_file_path)
+                sim_matrix.save(simmx_file_path)
+                write_num_topics(num_topics_file_path, num_topics)
         else:
             engine_logger.info("Loading existing LDA models.")
             dictionary = corpora.Dictionary.load_from_text(dict_file_path)

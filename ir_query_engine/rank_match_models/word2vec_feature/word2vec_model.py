@@ -15,8 +15,13 @@ filepath = os.path.join(dirpath, filename)
 
 
 class Word2VecModel(object):
-    def __init__(self):
+    def __init__(self, eager_loading=True):
         engine_logger.info("Loading word2vec: %s" % filepath)
+        self.model = None
+        if eager_loading:
+            self.model = word2vec.load(filepath, encoding='ISO-8859-1')
+
+    def load_model(self):
         self.model = word2vec.load(filepath, encoding='ISO-8859-1')
 
     def get_sent_vec(self, raw_doc):

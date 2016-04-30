@@ -1,7 +1,7 @@
 import unittest
 from ir_query_engine.query_engine import RankBasedQueryEngineComponent, QueryState, TfIdfModelStruct, LdaModelStruct, \
-    TopicWordLookupModelStruct, Response
-from ir_query_engine.ranker.ranking import Matcher, MatchFeatures
+    TopicWordLookupModelStruct, Response, Word2VecModel
+from ir_query_engine.ranker.ranking import Matcher, MatchFeatures, LinearSVMRankModel
 from ir_query_engine.common import DataStore
 from mock import patch
 
@@ -40,7 +40,14 @@ class QueryEngineTestCase(unittest.TestCase):
             }
         ]
         cls.data_store = DataStore(cls.data)
-        cls.qe = RankBasedQueryEngineComponent(cls.data_store)
+        cls.qe = RankBasedQueryEngineComponent(cls.data_store, eager_loading=False)
+        cls.qe.set_models(
+            TfIdfModelStruct(),
+            LdaModelStruct(),
+            TopicWordLookupModelStruct(None, None),
+            Word2VecModel(eager_loading=False),
+            LinearSVMRankModel()
+        )
 
     @patch.object(TopicWordLookupModelStruct, 'query', return_value=[(7, 1.0), (1, 3.0)])
     @patch.object(LdaModelStruct, 'query', return_value=[(7, 2.0)])
