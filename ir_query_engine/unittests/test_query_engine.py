@@ -1,6 +1,6 @@
 import unittest
 from ir_query_engine.query_engine import RankBasedQueryEngineComponent, QueryState, TfIdfModelStruct, LdaModelStruct, \
-    TopicWordLookupModelStruct, Response, Word2VecModel
+    TopicWordLookupModelStruct, Response, Word2VecModel, TfIdfQueryEngineComponent
 from ir_query_engine.ranker.ranking import Matcher, MatchFeatures, LinearSVMRankModel
 from ir_query_engine.common import DataStore
 from mock import patch
@@ -8,7 +8,7 @@ from mock import patch
 __author__ = 'Deyang'
 
 
-class QueryEngineTestCase(unittest.TestCase):
+class RankBasedQueryEngineComponentTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -130,8 +130,54 @@ class QueryEngineTestCase(unittest.TestCase):
         self.assertEqual(resp.context, [{"Object": "Brocolli"}])
 
 
+class TfIdfQueryEngineComponentTestCase(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        cls.data = [
+            {
+                "_question": "What do you like to eat?",
+                "answer": "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother.",
+                "context": [{"Object": "Brocolli"}],
+            },
+            {
+                "_question": "Tell me about your mother.",
+                "answer": "My mother spends a lot of time driving my brother around to baseball practice.",
+                "context": [{"Person": "Mother"}],
+            },
+            {
+                "_question": "Is driving safe?",
+                "answer": "Some health experts suggest that driving may cause increased tension and blood pressure.",
+                "context": [{"Concept": "Driving"}],
+            },
+            {
+                "_question": "Does your mother love you?",
+                "answer": "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better.",
+                "context": [{"Person": "Mother"}],
+            },
+            {
+                "_question": "Want some brocolli?",
+                "answer": "Brocolli is good to eat. My brother likes to eat good brocolli, but not my mother.",
+                "context": [{"Object": "Brocolli"}],
+            }
+        ]
+        cls.data_store = DataStore(cls.data)
+        cls.qe = TfIdfQueryEngineComponent(cls.data_store, eager_loading=False)
+        cls.qe.set_models(
+            TfIdfModelStruct(),
+        )
 
+    @patch.object(TfIdfModelStruct, 'query_questions', return_value=[(3, 1.0), (2, 0.5)])
+    def test_execute_query(self, mock_query_tfidf):
+        resp = self.qe.execute_query("test")
+        self.assertIsInstance(resp, Response)
+        self.assertEqual(resp.question,
+                         "Does your mother love you?")
+        self.assertEqual(resp.answer,
+                         "I often feel pressure to perform well at school, but my mother never seems to drive my brother to do better.")
+        self.assertEqual(resp.match_score, 1.0)
+        self.assertIsNone(resp.feature)
+        self.assertEqual(resp.context, [{"Person": "Mother"}])
 
 
 if __name__ == '__main__':

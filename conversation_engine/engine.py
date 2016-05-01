@@ -24,7 +24,6 @@ class AnalyzerRewriter(object):
 
     def rewrite(self, sent, context):
         sent = sent.lower()
-        # sent = sent.replace('a16z', 'Andreessen Horowitz')
         if context is None:
             return sent
         tokenized_sent = nltk.word_tokenize(sent)

@@ -38,8 +38,18 @@ class Response(object):
 
 class QueryEngineAbstract(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, data_store):
+        self.data_store = data_store
+        self.is_up = False
+
+    def get_status(self):
+        return self.is_up
+
+    def load_models(self):
+        raise NotImplementedError
+
+    def set_models(self):
+        raise NotImplementedError
 
     def execute_query(self, raw_query):
         raise NotImplementedError
@@ -51,34 +61,55 @@ class QueryEngine(QueryEngineAbstract):
         pass
 
 
-class QueryEngineComponent(QueryEngineAbstract):
+class TfIdfQueryEngineComponent(QueryEngineAbstract):
 
-    def __init__(self):
-        pass
+    def __init__(self, data_store, eager_loading=True):
+        super(TfIdfQueryEngineComponent, self).__init__(data_store)
+        self.tfidf_model = None
+        if eager_loading:
+            self.load_models()
+
+    def load_models(self):
+        self.tfidf_model = TfIdfModelStruct.get_model()
+        self.is_up = True
+
+    def set_models(self, tfidf_model):
+        self.tfidf_model = tfidf_model
+        self.is_up = True
 
     def execute_query(self, raw_query):
-        raise NotImplementedError
+        engine_logger.debug("Execute raw query: %s in tfidf query engine component" % raw_query)
+        raw_query = raw_query.lower()
+        query_state = QueryState(raw_query)
+        results = self.tfidf_model.query_questions(raw_doc=query_state.raw_query)
+        results = self.data_store.translate_question_query_results(results)
+        top_doc_id, sim = results[0]
+        qid, aid = self.data_store.qid_to_qa_pair[top_doc_id]
+
+        return Response(
+            self.data_store.doc_set[qid], # question
+            self.data_store.doc_set[aid], # answer
+            sim,
+            None,
+            self.data_store.qa_context.get(qid, None) # context
+        )
 
 
-class RankBasedQueryEngineComponent(QueryEngineComponent):
+class RankBasedQueryEngineComponent(QueryEngineAbstract):
     """
     Combine multi-models and rank the final results
     """
 
     def __init__(self, data_store, eager_loading=True):
-        self.data_store = data_store
+        super(RankBasedQueryEngineComponent, self).__init__(data_store)
         self.tfidf_model = None
         self.lda_model = None
         self.topic_word_lookup_model = None
         self.word2vec_model = None
         self.matcher = None
         self.rank_model = None
-        self.is_up = False
         if eager_loading:
             self.load_models()
-
-    def get_status(self):
-        return self.is_up
 
     def load_models(self):
         """
@@ -114,8 +145,8 @@ class RankBasedQueryEngineComponent(QueryEngineComponent):
         self.is_up = True
 
     def execute_query(self, raw_query):
+        engine_logger.debug("Execute raw query: %s in ranked query engine component" % raw_query)
         raw_query = raw_query.lower()
-        engine_logger.debug("Raw query: %s" % raw_query)
         query_state = QueryState(raw_query)
         engine_logger.debug("State one, retrieving candidates.")
         self._retrieve_candidates(query_state)

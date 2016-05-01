@@ -1,6 +1,6 @@
 import logging
 
-from ir_query_engine.query_engine import QueryEngine, RankBasedQueryEngineComponent
+from ir_query_engine.query_engine import QueryEngine, RankBasedQueryEngineComponent, TfIdfQueryEngineComponent
 from ir_query_engine.common import load_raw_data, load_data_store
 from ir_query_engine.main import parser
 from common import split_raw_data_k_fold
@@ -30,6 +30,10 @@ parser.add_option('', '--eval_ranked_query_engine', dest='eval_ranked_query_engi
                   action='store_true',
                   default=False,
                   help='Evaluate RankBasedQueryEngineComponent')
+parser.add_option('', '--eval_tfidf_query_engine', dest='eval_tfidf_query_engine',
+                  action='store_true',
+                  default=False,
+                  help='Evaluate TfIdfQueryEngineComponent')
 parser.add_option('', '--num_folds', dest='num_folds',
                   action='store',
                   default=None,
@@ -137,6 +141,23 @@ class RankBasedQueryEngineComponentCrossValidationRunner(CrossValidationRunnerAb
         return eval_model
 
 
+class TfIdfQueryEngineComponentCrossValidationRunner(CrossValidationRunnerAbstract):
+
+    def __init__(self, data, num_folds):
+        super(TfIdfQueryEngineComponentCrossValidationRunner, self).__init__(data, num_folds)
+
+    def _get_eval_model(self, train_data_store, train_data, test_data):
+        # train new sub models one by one
+        tfidf_model = TfIdfModelStruct.get_model(data_store=train_data_store,
+                                                 regen=True,
+                                                 save=False)
+        tfidf_query_engine = TfIdfQueryEngineComponent(train_data_store, eager_loading=False)
+        tfidf_query_engine.set_models(tfidf_model)
+
+        eval_model = EvaluateQueryEngine(train_data_store, train_data, test_data, tfidf_query_engine)
+        return eval_model
+
+
 class EvaluateSingleModel(object):
 
     def __init__(self, train_data_store, train_data_set, test_data_set, model):
@@ -161,7 +182,6 @@ class EvaluateSingleModel(object):
 
     def _eval_on_data_set(self,  data_set):
         for idx in range(len(data_set.questions)):
-            print idx
             test_question = data_set.questions[idx]
             retrieved_result = self.query_model(test_question)
             data_set.retrieved_results.append(retrieved_result)
@@ -357,5 +377,12 @@ if __name__ == '__main__':
         engine_logger.info("Cross validation on RankBasedQueryEngineComponent for %s folds" %
                            options.num_folds)
         cv = RankBasedQueryEngineComponentCrossValidationRunner(raw_data, int(options.num_folds))
+        cv.cross_validate()
+        print cv.report()
+
+    if options.eval_tfidf_query_engine:
+        engine_logger.info("Cross validation on TfIdfQueryEngineComponent for %s folds" %
+                           options.num_folds)
+        cv = TfIdfQueryEngineComponentCrossValidationRunner(raw_data, int(options.num_folds))
         cv.cross_validate()
         print cv.report()
