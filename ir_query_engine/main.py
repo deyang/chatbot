@@ -1,11 +1,10 @@
 from optparse import OptionParser
 
 from common import load_data_store
-import retrieve_match_models.tf_idf_feature.tfidf_model as tfidf_model
-import retrieve_match_models.lda_feature.lda_model as lda_train
-import rank_match_models.topic_word_feature.topic_word_model as topic_train
-from rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
-import rank_match_models.topic_word_lookup_feature.topic_word_lookup_model as topic_word_lookup
+import ir_query_engine.match_models.tfidf_model as tfidf_model
+import ir_query_engine.match_models.lda_model as lda_train
+from ir_query_engine.match_models.word2vec_model import Word2VecModel
+import ir_query_engine.match_models.topic_word_lookup_model as topic_word_lookup
 from ranker.ranking import Matcher, RankTrainingDataGenerator, RankModelTrainer
 from query_engine import QueryEngine
 from utils.util import StopWatch
@@ -29,10 +28,6 @@ parser.add_option('', '--train_lda', dest='train_lda',
                   action='store_true',
                   default=False,
                   help='Train LDA model only')
-parser.add_option('', '--train_topic_words', dest='train_topic_words',
-                  action='store_true',
-                  default=False,
-                  help='Train topic words model')
 parser.add_option('', '--collect_topic_words', dest='collect_topic_words',
                   action='store_true',
                   default=False,
@@ -134,23 +129,6 @@ if __name__ == '__main__':
         print results[0:10]
         print data_store.doc_set[results[0][0]]
 
-    if options.train_topic_words:
-        tf_idf_model_struct = tfidf_model.TfIdfModelStruct.get_model(data_store=data_store)
-        topic_word_model_struct = \
-                topic_train.TopicWordModelStruct.get_model(
-                    tfidf_model_struct=tf_idf_model_struct,
-                    data_store=data_store,
-                    regen=options.regen)
-
-        query_doc = "What is invest"
-        print query_doc
-        compare_docs = data_store.doc_set
-        results = topic_word_model_struct.get_similarities(query_doc, compare_docs)[0:10]
-        results.sort(key=lambda t: t[1])
-        print compare_docs[results[0][0]]
-        print compare_docs[results[1][0]]
-        print compare_docs[results[2][0]]
-        print compare_docs[results[3][0]]
 
     if options.train_rank_model:
         c = len(data_store.rank_data)

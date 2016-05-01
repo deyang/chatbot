@@ -1,10 +1,9 @@
 import unittest
+
 from mock import patch
 import os
-import glob
-from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model import TopicWordLookupModelStruct
+from ir_query_engine.match_models.topic_word_lookup_model import TopicWordLookupModelStruct
 from ir_query_engine.common import DataStore
-from gensim.models.tfidfmodel import df2idf
 
 __author__ = 'Deyang'
 
@@ -42,8 +41,8 @@ class TopicWordLookupModelTestCase(unittest.TestCase):
         os.remove(self.test_simmx_file_path)
         os.remove(self.test_dict_file_path)
 
-    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_dict_path')
-    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_simmx_path')
+    @patch('ir_query_engine.match_models.topic_word_lookup_model.get_dict_path')
+    @patch('ir_query_engine.match_models.topic_word_lookup_model.get_simmx_path')
     def test_get_topic_word_vec(self, mock_simmx_file_path, mock_dict_file_path):
         mock_simmx_file_path.return_value = self.test_simmx_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path
@@ -65,8 +64,8 @@ class TopicWordLookupModelTestCase(unittest.TestCase):
         self.assertEqual(model_struct.dictionary.get(vec[2][0]),
                          'co-found')
 
-    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_dict_path')
-    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_simmx_path')
+    @patch('ir_query_engine.match_models.topic_word_lookup_model.get_dict_path')
+    @patch('ir_query_engine.match_models.topic_word_lookup_model.get_simmx_path')
     def test_get_similarities_and_query(self, mock_simmx_file_path, mock_dict_file_path):
         mock_simmx_file_path.return_value = self.test_simmx_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path
@@ -84,8 +83,8 @@ class TopicWordLookupModelTestCase(unittest.TestCase):
         self.assertEqual(self.data_store.doc_set[results[0][0]],
                          "who is the founder of a16z")
 
-    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_dict_path')
-    @patch('ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model.get_simmx_path')
+    @patch('ir_query_engine.match_models.topic_word_lookup_model.get_dict_path')
+    @patch('ir_query_engine.match_models.topic_word_lookup_model.get_simmx_path')
     def test_get_model(self, mock_simmx_file_path, mock_dict_file_path):
         mock_simmx_file_path.return_value = self.test_simmx_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path

@@ -8,10 +8,10 @@ __author__ = 'Deyang'
 
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-MODEL_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda.md')
-DICT_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda.dict')
-SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda.simmx')
-NUM_TOPIC_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'lda_num_topics.txt')
+MODEL_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'lda.md')
+DICT_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'lda.dict')
+SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'lda.simmx')
+NUM_TOPIC_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'lda_num_topics.txt')
 
 
 def get_md_path():
@@ -68,7 +68,12 @@ class LdaModelStruct(object):
         if raw_doc:
             topic_predict = self.get_topic_predict(raw_doc)
 
-        sims = self.sim_matrix[topic_predict]
+        try:
+            sims = self.sim_matrix[topic_predict]
+        except Exception as e:
+            engine_logger.error(e)
+            return []
+
         results = list(enumerate(sims))
         results.sort(key=lambda t: t[1], reverse=True)
         return results[:limit]

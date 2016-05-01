@@ -1,11 +1,11 @@
 import unittest
+
 from mock import patch
 from ir_query_engine.ranker.ranking import Matcher, MatchFeatures
-from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
-from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
-from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model import TopicWordLookupModelStruct
-from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
-
+from ir_query_engine.match_models.tfidf_model import TfIdfModelStruct
+from ir_query_engine.match_models.lda_model import LdaModelStruct
+from ir_query_engine.match_models.topic_word_lookup_model import TopicWordLookupModelStruct
+from ir_query_engine.match_models.word2vec_model import Word2VecModel
 
 __author__ = 'Deyang'
 

@@ -45,7 +45,7 @@ class RankTrainingDataGeneratorTestCase(unittest.TestCase):
         mock_match.side_effect = [
             [
                 MatchFeatures(
-                    question_tf_idf_sim=1.0,
+                    question_tfidf_sim=1.0,
                     # answer_tf_idf_sim=3.0,
                     question_lda_sim=5.0,
                     answer_lda_sim=7.0,
@@ -65,7 +65,7 @@ class RankTrainingDataGeneratorTestCase(unittest.TestCase):
                     question_edit_distance=1,
                 ),
                 MatchFeatures(
-                    question_tf_idf_sim=2.0,
+                    question_tfidf_sim=2.0,
                     # answer_tf_idf_sim=4.0,
                     question_lda_sim=6.0,
                     answer_lda_sim=8.0,
@@ -87,7 +87,7 @@ class RankTrainingDataGeneratorTestCase(unittest.TestCase):
             ],
             [
                 MatchFeatures(
-                    question_tf_idf_sim=1.03,
+                    question_tfidf_sim=1.03,
                     # answer_tf_idf_sim=3.0,
                     question_lda_sim=5.0,
                     answer_lda_sim=7.0,
@@ -107,7 +107,7 @@ class RankTrainingDataGeneratorTestCase(unittest.TestCase):
                     question_edit_distance=1,
                 ),
                 MatchFeatures(
-                    question_tf_idf_sim=2.03,
+                    question_tfidf_sim=2.03,
                     # answer_tf_idf_sim=4.0,
                     question_lda_sim=6.0,
                     answer_lda_sim=8.0,

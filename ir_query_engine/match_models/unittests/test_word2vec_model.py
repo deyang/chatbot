@@ -1,5 +1,6 @@
 import unittest
-from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
+
+from ir_query_engine.match_models.word2vec_model import Word2VecModel
 
 __author__ = 'Deyang'
 

@@ -1,5 +1,5 @@
 from ir_query_engine import engine_logger
-from ir_query_engine.rank_match_models.simple_features import get_lcs_length, get_edit_distance
+from ir_query_engine.match_models.simple_features import get_lcs_length, get_edit_distance
 import os
 from numpy import dot, array
 from numpy.linalg import norm

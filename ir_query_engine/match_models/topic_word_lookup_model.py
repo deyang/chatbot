@@ -9,8 +9,8 @@ from ir_query_engine import engine_logger
 __author__ = 'Deyang'
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'topic_words.simmx')
-DICT_FILE_PATH = os.path.join(DIR_PATH, "..", "..", "saved_models", 'topic_words.dict')
+SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'topic_words.simmx')
+DICT_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'topic_words.dict')
 
 
 def get_simmx_path():
