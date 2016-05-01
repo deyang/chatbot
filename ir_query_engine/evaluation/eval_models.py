@@ -1,6 +1,6 @@
 import logging
 
-from ir_query_engine.query_engine import QueryEngine, RankBasedQueryEngineComponent, TfIdfQueryEngineComponent
+from ir_query_engine.query_engine import CompositeQueryEngine, RankBasedQueryEngineComponent, TfIdfQueryEngineComponent
 from ir_query_engine.common import load_raw_data, load_data_store
 from ir_query_engine.main import parser
 from common import split_raw_data_k_fold
@@ -279,7 +279,7 @@ class EvaluateQueryEngine(EvaluateSingleModel):
 
 def eval_score():
     data_store = load_data_store(options.data_file)
-    query_engine = QueryEngine(data_store)
+    query_engine = CompositeQueryEngine(data_store)
 
     exact_match_test_data = [
             # exact match, high score

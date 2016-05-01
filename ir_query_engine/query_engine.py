@@ -4,6 +4,7 @@ from ir_query_engine.match_models.lda_model import LdaModelStruct
 from ir_query_engine.match_models.topic_word_lookup_model import TopicWordLookupModelStruct
 from ir_query_engine.match_models.word2vec_model import Word2VecModel
 from ir_query_engine.ranker.ranking import Matcher, read_rank_model_from_file
+from ir_query_engine.judge.classifier_and_calibration import CalibratedBoostedDecisionStumpsFactory
 
 __author__ = 'Deyang'
 
@@ -32,7 +33,7 @@ class Response(object):
         self.confidence_score = confidence_score
 
     def __str__(self):
-        return "Response<question: %s, answer: %s, match_score: %f, feature: %s, context: %s, confidence_score: %s>" % \
+        return "Response<question: %s, answer: %s, match_score: %s, feature: %s, context: %s, confidence_score: %s>" % \
                (self.question, self.answer, self.match_score, self.feature, self.context, self.confidence_score)
 
 
@@ -55,10 +56,49 @@ class QueryEngineAbstract(object):
         raise NotImplementedError
 
 
-class QueryEngine(QueryEngineAbstract):
+class CompositeQueryEngine(QueryEngineAbstract):
+
+    def __init__(self, data_store, eager_loading=True):
+        super(CompositeQueryEngine, self).__init__(data_store)
+        self.query_components = None
+        self.final_judge = None
+        if eager_loading:
+            self.load_models()
+
+    def get_status(self):
+        return reduce(lambda ret, comp: ret & comp.get_status(), self.query_components, initial=self.is_up)
+
+    def load_models(self):
+        tfidf_query_engine_component = TfIdfQueryEngineComponent(self.data_store)
+        rank_based_query_engine_component = RankBasedQueryEngineComponent(self.data_store)
+        self.query_components = [tfidf_query_engine_component, rank_based_query_engine_component]
+        self.final_judge = CalibratedBoostedDecisionStumpsFactory.load_existing_model()
+        self.is_up = True
+
+    def set_models(self, query_components, final_judge):
+        self.query_components = query_components
+        self.final_judge = final_judge
+        self.is_up = True
 
     def execute_query(self, raw_query):
-        pass
+        responses_from_components = map(lambda component: component.execute_query(raw_query),
+                                        self.query_components)
+        judge_input = map(lambda resp: resp.match_score, responses_from_components)
+        predicts = self.final_judge.predict_proba(judge_input)
+        idx, _ = max(enumerate(predicts), key=lambda t: t[1])
+        if idx < len(responses_from_components):
+            final_resp = responses_from_components[idx]
+        else:
+            final_resp = Response(
+                "",
+                "",
+                None,
+                None,
+                None
+            )
+
+        final_resp.confidence_score = sum(predicts[:-1])
+        return final_resp
 
 
 class TfIdfQueryEngineComponent(QueryEngineAbstract):

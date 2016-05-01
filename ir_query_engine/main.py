@@ -6,7 +6,7 @@ import ir_query_engine.match_models.lda_model as lda_train
 from ir_query_engine.match_models.word2vec_model import Word2VecModel
 import ir_query_engine.match_models.topic_word_lookup_model as topic_word_lookup
 from ranker.ranking import Matcher, RankTrainingDataGenerator, RankModelTrainer
-from query_engine import QueryEngine
+from query_engine import CompositeQueryEngine
 from utils.util import StopWatch
 from ir_query_engine import engine_logger
 from common import tokenizer, stop_words
@@ -175,7 +175,7 @@ if __name__ == '__main__':
             print pairs
 
     if options.query:
-        query_engine = QueryEngine(data_store)
+        query_engine = CompositeQueryEngine(data_store)
         # out_msg = query_engine.execute_query("facebook")
         while True:
             in_msg = raw_input()

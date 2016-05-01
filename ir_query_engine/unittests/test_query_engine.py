@@ -1,6 +1,6 @@
 import unittest
 from ir_query_engine.query_engine import RankBasedQueryEngineComponent, QueryState, TfIdfModelStruct, LdaModelStruct, \
-    TopicWordLookupModelStruct, Response, Word2VecModel, TfIdfQueryEngineComponent
+    TopicWordLookupModelStruct, Response, Word2VecModel, TfIdfQueryEngineComponent, CompositeQueryEngine
 from ir_query_engine.ranker.ranking import Matcher, MatchFeatures, LinearSVMRankModel
 from ir_query_engine.common import DataStore
 from mock import patch
@@ -178,6 +178,107 @@ class TfIdfQueryEngineComponentTestCase(unittest.TestCase):
         self.assertEqual(resp.match_score, 1.0)
         self.assertIsNone(resp.feature)
         self.assertEqual(resp.context, [{"Person": "Mother"}])
+
+
+class CompositeQueryEngineTestCase(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.data_store = DataStore({})
+        cls.qe = CompositeQueryEngine(cls.data_store, eager_loading=False)
+
+        class MockJudge(object):
+            def __init__(self):
+                predicts = [
+                    [0.8, 0.1, 0.1],
+                    [0.3, 0.5, 0.2],
+                    [0.3, 0.1, 0.6]
+                ]
+                self.predict_iter = iter(predicts)
+
+            def predict_proba(self, input):
+                return next(self.predict_iter)
+
+        cls.qe.set_models(
+            [TfIdfQueryEngineComponent(cls.data_store, eager_loading=False),
+             RankBasedQueryEngineComponent(cls.data_store, eager_loading=False)],
+            MockJudge()
+        )
+
+    @patch.object(RankBasedQueryEngineComponent, 'execute_query')
+    @patch.object(TfIdfQueryEngineComponent, 'execute_query')
+    def test_execute_query(self, mock_query_tfidf_query_engine, mock_query_rank_query_engine):
+        mock_query_tfidf_query_engine.side_effect = [
+            Response(
+                "tfidf matched question1",
+                "tfidf matched answer1",
+                0.95,
+                None,
+                "context1",
+            ),
+            Response(
+                "tfidf matched question2",
+                "tfidf matched answer2",
+                0.85,
+                None,
+                "context2",
+            ),
+            Response(
+                "tfidf matched question3",
+                "tfidf matched answer3",
+                0.30,
+                None,
+                "context3",
+            )
+        ]
+        mock_query_rank_query_engine.side_effect = [
+            Response(
+                "rank matched question1",
+                "rank matched answer1",
+                0.6,
+                None,
+                "context4",
+            ),
+            Response(
+                "rank matched question2",
+                "rank matched answer2",
+                0.7,
+                None,
+                "context5",
+            ),
+            Response(
+                "rank matched question3",
+                "rank matched answer3",
+                0.2,
+                None,
+                "context6",
+            )
+        ]
+        resp1 = self.qe.execute_query("test1")
+        self.assertEqual(resp1.question,
+                         "tfidf matched question1")
+        self.assertEqual(resp1.answer,
+                         "tfidf matched answer1")
+        self.assertEqual(resp1.match_score,
+                         0.95)
+        self.assertEqual(resp1.confidence_score,
+                         0.9)
+        resp2 = self.qe.execute_query("test2")
+        self.assertEqual(resp2.question,
+                         "rank matched question2")
+        self.assertEqual(resp2.answer,
+                         "rank matched answer2")
+        self.assertEqual(resp2.match_score,
+                         0.7)
+        self.assertEqual(resp2.confidence_score,
+                         0.8)
+        resp3 = self.qe.execute_query("test3")
+        self.assertEqual(resp3.question,
+                         "")
+        self.assertEqual(resp3.answer,
+                         "")
+        self.assertEqual(resp3.confidence_score,
+                         0.4)
 
 
 if __name__ == '__main__':
