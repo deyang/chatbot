@@ -8,19 +8,31 @@ __author__ = 'Deyang'
 class TestDataSet(object):
 
     def __init__(self, raw_data):
+        # testing questions
         self.questions = []
+        self.question_topic_words = []
+        # the correct answers
         self.top_answers = []
+        self.answer_topic_words = []
         self.relevant_answers = []
+        # matched question from the model
+        self.retrieved_questions = []
+        # final answer of the matched qa pair
+        self.retrieved_answers = []
+        # the relevance between the retrieved answer and the top answer, measured by the similarity defined by the model
         self.relevance_scores = []
-        self.retrieved_results = []
+        # 1 or 0, indicating retrieved_answer == top_answer
         self.judgement_labels = []
-        self.relevance_scores = []
+        # percentage of correctly retrieved answer
         self.accuracy = 0.0
+        # average of relevance
         self.avg_relevance_score = 0.0
 
         for segment in raw_data:
             self.questions.append(segment['_question'])
+            self.question_topic_words.append(segment['_question_topic_words'])
             self.top_answers.append(segment['answer'])
+            self.answer_topic_words.append(segment['answer_topic_words'])
             self.relevant_answers.append(segment['qa_pairs_with_matching_score'])
 
 

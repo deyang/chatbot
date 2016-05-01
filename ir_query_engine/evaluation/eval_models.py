@@ -183,17 +183,18 @@ class EvaluateSingleModel(object):
     def _eval_on_data_set(self,  data_set):
         for idx in range(len(data_set.questions)):
             test_question = data_set.questions[idx]
-            retrieved_result = self.query_model(test_question)
-            data_set.retrieved_results.append(retrieved_result)
+            retrieved_question, retrieved_answer = self.query_model(test_question)
+            data_set.retrieved_answers.append(retrieved_answer)
+            data_set.retrieved_questions.append(retrieved_question)
 
-            if retrieved_result == data_set.top_answers[idx]:
+            if retrieved_answer == data_set.top_answers[idx]:
                 data_set.judgement_labels.append(1)
             else:
                 data_set.judgement_labels.append(0)
 
             # compute relevance score
             if hasattr(self.model, 'get_similarities'):
-                sim = self.model.get_similarities(retrieved_result,
+                sim = self.model.get_similarities(retrieved_answer,
                                                   [data_set.top_answers[idx]])[0][1]
             else:
                 sim = 0.0
@@ -213,21 +214,33 @@ class EvaluateSingleModel(object):
         raise NotImplementedError
 
     def write_output(self):
+        show_topic_words = isinstance(self.model, TopicWordLookupModelStruct)
         engine_logger.info("Writing output")
         with open('cv_test.log', 'w') as f:
             f.write("%f, %f\n" % (self.test_data_set.accuracy, self.test_data_set.avg_relevance_score))
             for idx in range(len(self.test_data_set.questions)):
                 f.write("Question: %s\n" % self.test_data_set.questions[idx].encode('utf-8'))
+                if show_topic_words:
+                    f.write("Question topic words: %s\n" % self.test_data_set.question_topic_words[idx])
                 f.write("Correct answer: %s\n" % self.test_data_set.top_answers[idx].encode('utf-8'))
-                f.write("Retrieved answer: %s\n" % self.test_data_set.retrieved_results[idx].encode('utf-8'))
+                if show_topic_words:
+                    f.write("Answer topic words: %s\n" % self.test_data_set.answer_topic_words[idx])
+                f.write("Retrieved question: %s\n" % self.test_data_set.retrieved_questions[idx].encode('utf-8'))
+                f.write("Retrieved answer: %s\n" % self.test_data_set.retrieved_answers[idx].encode('utf-8'))
                 f.write("Label: %s, relevance score: %f\n" %
                         (self.test_data_set.judgement_labels[idx], self.test_data_set.relevance_scores[idx]))
+                f.write("================================================================== \n")
 
         with open('cv_train.log', 'w') as f:
             f.write(">>>>>>>> Training data\n")
             for idx in range(len(self.train_data_set.questions)):
                 f.write("Question: %s\n" % self.train_data_set.questions[idx].encode('utf-8'))
+                if show_topic_words:
+                    f.write("Question topic words: %s\n" % self.train_data_set.question_topic_words[idx])
                 f.write("Answer: %s\n" % self.train_data_set.top_answers[idx].encode('utf-8'))
+                if show_topic_words:
+                    f.write("Answer topic words: %s\n" % self.train_data_set.answer_topic_words[idx])
+                f.write("================================================================== \n")
 
 
 class EvaluateQuestionRetrieveSingleModel(EvaluateSingleModel):
@@ -236,7 +249,8 @@ class EvaluateQuestionRetrieveSingleModel(EvaluateSingleModel):
         results = self.model.query_questions(raw_doc=raw_doc)
         results = self.train_data_store.translate_question_query_results(results)
         qa_pair = self.train_data_store.get_docs_by_pair(self.train_data_store.qid_to_qa_pair[results[0][0]])
-        return qa_pair[1]
+        # return question, answer => retrieved_question, retrieved_answer
+        return qa_pair
 
 
 class EvaluateDocRetrieveSingleModel(EvaluateSingleModel):
@@ -246,20 +260,21 @@ class EvaluateDocRetrieveSingleModel(EvaluateSingleModel):
         doc_id = results[0][0]
         if doc_id in self.train_data_store.question_set:
             qa_pair = self.train_data_store.qid_to_qa_pair[doc_id]
-            return self.train_data_store.doc_set[qa_pair[1]]
+            # return question, answer => retrieved_question, retrieved_answer
+            return self.train_data_store.get_docs_by_pair(qa_pair)
         elif doc_id in self.train_data_store.answer_set:
-            return self.train_data_store.doc_set[doc_id]
+            answer = self.train_data_store.doc_set[doc_id]
+            return "", answer
         else:
             print "Missing match!"
-            return ""
+            return "", ""
 
 
 class EvaluateQueryEngine(EvaluateSingleModel):
 
     def query_model(self, raw_doc):
         resp = self.model.execute_query(raw_doc)
-        return resp.answer
-
+        return resp.questoin, resp.answer
 
 
 def eval_score():

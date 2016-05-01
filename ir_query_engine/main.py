@@ -125,6 +125,7 @@ if __name__ == '__main__':
             )
 
         query_doc = "What is steven"
+        query_doc = "what is the title of JOBOP163410"
         results = topic_model_struct.query(raw_doc=query_doc)
         print results[0:10]
         print data_store.doc_set[results[0][0]]
