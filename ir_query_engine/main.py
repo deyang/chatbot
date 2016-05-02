@@ -9,7 +9,7 @@ from ranker.ranking import Matcher, RankTrainingDataGenerator, RankModelTrainer
 from query_engine import CompositeQueryEngine
 from utils.util import StopWatch
 from ir_query_engine import engine_logger
-from common import tokenizer, stop_words
+from common import tokenizer, stop_words, split_data_to_train_validate_test
 
 
 __author__ = 'Deyang'
@@ -20,6 +20,10 @@ parser.add_option('-d', '--data_file', dest='data_file',
                   action='store',
                   default=None,
                   help='Input data file')
+parser.add_option('', '--disable_load_rank_data', dest='disable_load_rank_data',
+                  action='store_true',
+                  default=False,
+                  help='Disable loading the rank data in the input file')
 parser.add_option('', '--load_tfidf', dest='load_tfidf',
                   action='store_true',
                   default=False,
@@ -72,6 +76,18 @@ parser.add_option('-c', '--count_words', dest='count_words',
                   action='store_true',
                   default=False,
                   help='Count and print the most frequent words after rmed stop words')
+parser.add_option('', '--split_data', dest='split_data',
+                  action='store_true',
+                  default=False,
+                  help='Split the input data to training, validation and test')
+parser.add_option('', '--train_ratio', dest='train_ratio',
+                  action='store',
+                  default=None,
+                  help='Ratio of training data when splitting the input data.')
+parser.add_option('', '--validate_ratio', dest='validate_ratio',
+                  action='store',
+                  default=None,
+                  help='Ratio of validate data when splitting the input data.')
 parser.add_option('-r', '--regen', dest='regen',
                   action='store_true',
                   default=False,
@@ -81,7 +97,10 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     if options.data_file:
-        data_store = load_data_store(options.data_file)
+        data_store = load_data_store(options.data_file, load_rank_training_data=not options.disable_load_rank_data)
+
+    if options.split_data:
+        split_data_to_train_validate_test(options.data_file, float(options.train_ratio), float(options.validate_ratio))
 
     if options.count_words:
         counter = dict()
@@ -129,7 +148,6 @@ if __name__ == '__main__':
         results = topic_model_struct.query(raw_doc=query_doc)
         print results[0:10]
         print data_store.doc_set[results[0][0]]
-
 
     if options.train_rank_model:
         c = len(data_store.rank_data)

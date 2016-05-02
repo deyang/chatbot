@@ -1,4 +1,5 @@
 import unittest
+from mock import patch
 from ir_query_engine.evaluation.common import split_raw_data_k_fold
 
 __author__ = 'Deyang'
@@ -104,6 +105,7 @@ class CommonTestCase(unittest.TestCase):
                          ['who is the founder of a16z'])
         self.assertEqual(tuple2[2].top_answers,
                          ['Marc Andreessen and Ben Horowitz co-founded a16z.'])
+
 
 if __name__ == '__main__':
     unittest.main()

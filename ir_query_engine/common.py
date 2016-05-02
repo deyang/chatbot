@@ -7,6 +7,7 @@ from nltk.tokenize import RegexpTokenizer
 from stop_words import get_stop_words
 from nltk.stem.porter import PorterStemmer
 from gensim import corpora
+import random
 
 __author__ = 'Deyang'
 
@@ -164,14 +165,11 @@ def load_raw_data(file_name):
         engine_logger.error(e)
         return None
 
-    data_store = DataStore(json_obj)
-    return data_store
 
-
-def load_data_store(file_name):
+def load_data_store(file_name, load_rank_training_data=True):
     raw_data = load_raw_data(file_name)
     if raw_data:
-        return DataStore(raw_data)
+        return DataStore(raw_data, load_rank_training_data=load_rank_training_data)
 
 
 def sample_by_index_generator(indices, raw_list):
@@ -217,3 +215,45 @@ def docs_to_corpus(doc_set, rm_stop_words=False):
     # convert tokenized documents into a document-term matrix
     corpus = [dictionary.doc2bow(text) for text in texts]
     return dictionary, corpus
+
+
+def split_data_to_train_validate_test(file_name, train_ratio, validate_ratio):
+    """
+    Split a raw data file to training data, validation data (for classification & calibration)
+    and test data.
+    :param file_name:
+    :return:
+    """
+    file_path = os.path.join(DATA_PATH, file_name)
+    raw_data = load_raw_data(file_path)
+    random.shuffle(raw_data)
+
+    if not raw_data:
+        return False
+
+    assert(validate_ratio < train_ratio)
+    assert((train_ratio + validate_ratio) < 1.0)
+
+    total_length = len(raw_data)
+    train_data_length = int(total_length * train_ratio)
+    validate_data_length = int(total_length * validate_ratio)
+
+    prefix, suffix = file_name.split(".")
+    train_data_file = os.path.join(DATA_PATH, "%s_train.%s" % (prefix, suffix))
+    validate_data_file = os.path.join(DATA_PATH, "%s_validate.%s" % (prefix, suffix))
+    test_data_file = os.path.join(DATA_PATH, "%s_test.%s" % (prefix, suffix))
+
+    with open(train_data_file, 'w') as f:
+        f.write(json.dumps(
+            raw_data[:train_data_length],
+            indent=4)
+        )
+    with open(validate_data_file, 'w') as f:
+        f.write(json.dumps(
+            raw_data[train_data_length:(train_data_length + validate_data_length)],
+            indent=4)
+        )
+    with open(test_data_file, 'w') as f:
+        f.write(json.dumps(raw_data[(train_data_length + validate_data_length):], indent=4))
+
+    return True
