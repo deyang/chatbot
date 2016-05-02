@@ -1,9 +1,9 @@
 import unittest
-import os
 
+import os
 from mock import patch
 from ir_query_engine.common import DataStore
-from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
+from ir_query_engine.match_models.tfidf_model import TfIdfModelStruct
 from gensim.models.tfidfmodel import df2idf
 from gensim.matutils import cossim
 
@@ -51,10 +51,10 @@ class TfIdfModelTestCase(unittest.TestCase):
             os.remove(self.test_q_simmx_file_path)
             os.remove(self.test_a_simmx_file_path)
 
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_md_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_dict_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_a_simmx_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_q_simmx_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_md_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_dict_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_a_simmx_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_q_simmx_path')
     def test_get_model(self, mock_q_simmx_file_path, mock_a_simmx_file_path, mock_dict_file_path, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path
@@ -88,10 +88,10 @@ class TfIdfModelTestCase(unittest.TestCase):
         self.assertNotEqual(new_model_struct.dictionary,
                             regen_model_struct.dictionary)
 
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_md_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_dict_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_a_simmx_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_q_simmx_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_md_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_dict_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_a_simmx_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_q_simmx_path')
     def test_query(self, mock_q_simmx_file_path, mock_a_simmx_file_path, mock_dict_file_path, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path
@@ -116,10 +116,10 @@ class TfIdfModelTestCase(unittest.TestCase):
 
         self.assertEqual(results[0][0], 0)
 
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_md_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_dict_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_a_simmx_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_q_simmx_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_md_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_dict_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_a_simmx_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_q_simmx_path')
     def test_td_idf(self, mock_q_simmx_file_path, mock_a_simmx_file_path, mock_dict_file_path, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path
@@ -168,10 +168,10 @@ class TfIdfModelTestCase(unittest.TestCase):
         self.assertAlmostEqual(cooccur_sum_idf, expected_sum)
         self.assertAlmostEqual(cooccur_avg_idf, expected_sum / 4)
 
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_md_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_dict_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_a_simmx_path')
-    @patch('ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model.get_q_simmx_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_md_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_dict_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_a_simmx_path')
+    @patch('ir_query_engine.match_models.tfidf_model.get_q_simmx_path')
     def test_get_similarities(self, mock_q_simmx_file_path, mock_a_simmx_file_path, mock_dict_file_path, mock_md_file_path):
         mock_md_file_path.return_value = self.test_md_file_path
         mock_dict_file_path.return_value = self.test_dict_file_path
@@ -192,13 +192,6 @@ class TfIdfModelTestCase(unittest.TestCase):
             )
             self.assertAlmostEqual(sim[1], expected_sim)
 
-    def test_process(self):
-        raw_doc = 'You can find the website of Matternet at http'
-        self.assertEqual(TfIdfModelStruct.pre_process_doc_tf_idf(raw_doc),
-                         [u'you', u'can', u'find', u'the', u'websit', u'of', u'matternet', u'at', u'http'])
-        raw_doc = 'What do you like to eat?'
-        self.assertEqual(TfIdfModelStruct.pre_process_doc_tf_idf(raw_doc),
-                         [u'what', u'do', u'you', u'like', u'to', u'eat'])
 
 
 if __name__ == '__main__':

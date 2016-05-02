@@ -1,17 +1,15 @@
 from gensim import corpora, models, similarities
-from nltk.tokenize import RegexpTokenizer
-from nltk.stem.porter import PorterStemmer
 import os
 from ir_query_engine import engine_logger
-import re
+from ir_query_engine.common import pre_process_doc, docs_to_corpus
 
 __author__ = 'Deyang'
 
 DIR_PATH = os.path.dirname(os.path.abspath(__file__))
-MODEL_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'tfidf.md')
-DICT_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'tfidf.dict')
-Q_SIMMX_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'tfidf_q.simmx')
-A_SIMMX_FILE_PATH = os.path.join("ir_query_engine", "saved_models", 'tfidf_a.simmx')
+MODEL_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'tfidf.md')
+DICT_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'tfidf.dict')
+Q_SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'tfidf_q.simmx')
+A_SIMMX_FILE_PATH = os.path.join(DIR_PATH, "..", "saved_models", 'tfidf_a.simmx')
 
 
 def get_md_path():
@@ -30,10 +28,6 @@ def get_a_simmx_path():
     return A_SIMMX_FILE_PATH
 
 
-tokenizer = RegexpTokenizer(r'\w+')
-p_stemmer = PorterStemmer()
-
-
 class TfIdfModelStruct(object):
 
     def __init__(self, model=None, dictionary=None, question_sim_matrix=None, answer_sim_matrix=None):
@@ -42,42 +36,8 @@ class TfIdfModelStruct(object):
         self.question_sim_matrix = question_sim_matrix
         self.answer_sim_matrix = answer_sim_matrix
 
-    @staticmethod
-    def pre_process_doc_tf_idf(raw_doc):
-        """
-        Pre-processing fortf-idf does not
-        1) rm stop words
-        2) rm low-fre words
-
-        :param raw_doc:
-        :return:
-        """
-        # clean and tokenize document string
-        # cleanup the url
-        cleaned_doc = re.sub(r'https?:\/\/.*\s?$', 'http', raw_doc.lower())
-        tokens = tokenizer.tokenize(cleaned_doc)
-        # stem tokens
-        stemmed_tokens = [p_stemmer.stem(t) for t in tokens]
-        return stemmed_tokens
-
-    @classmethod
-    def docs_to_corpus_tf_idf(cls, doc_set):
-        # list for tokenized documents in loop
-        texts = []
-
-        # loop through document list
-        for i in doc_set:
-            # add tokens to list
-            texts.append(cls.pre_process_doc_tf_idf(i))
-
-        # turn our tokenized documents into a id <-> term dictionary
-        dictionary = corpora.Dictionary(texts)
-        # convert tokenized documents into a document-term matrix
-        corpus = [dictionary.doc2bow(text) for text in texts]
-        return dictionary, corpus
-
     def get_tfidf_vec(self, raw_doc):
-        return self.model[self.dictionary.doc2bow(self.pre_process_doc_tf_idf(raw_doc))]
+        return self.model[self.dictionary.doc2bow(pre_process_doc(raw_doc))]
 
     def get_tf_vec(self, raw_doc):
         """
@@ -85,7 +45,7 @@ class TfIdfModelStruct(object):
         :param raw_doc:
         :return:
         """
-        return self.dictionary.doc2bow(self.pre_process_doc_tf_idf(raw_doc))
+        return self.dictionary.doc2bow(pre_process_doc(raw_doc))
 
     def get_idf_vec(self, raw_doc=None, tf_vec=None):
         if raw_doc:
@@ -168,7 +128,7 @@ class TfIdfModelStruct(object):
                 os.path.isfile(a_simmx_file_path) or regen:
             engine_logger.info("Generating TF_IDF models.")
 
-            dictionary, corpus = cls.docs_to_corpus_tf_idf(data_store.doc_set)
+            dictionary, corpus = docs_to_corpus(data_store.doc_set)
 
             # vocabulary and tf-idf are computed on the whole space
             model = models.TfidfModel(corpus)

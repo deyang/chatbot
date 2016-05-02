@@ -1,5 +1,5 @@
-from ir_query_engine.query_engine import QueryEngine
-from ir_query_engine.common import load_data
+from ir_query_engine.query_engine import CompositeQueryEngine
+from ir_query_engine.common import load_data_store
 
 import nltk
 from optparse import OptionParser
@@ -24,7 +24,6 @@ class AnalyzerRewriter(object):
 
     def rewrite(self, sent, context):
         sent = sent.lower()
-        # sent = sent.replace('a16z', 'Andreessen Horowitz')
         if context is None:
             return sent
         tokenized_sent = nltk.word_tokenize(sent)
@@ -96,8 +95,8 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
 
-    data_store = load_data(options.data_file)
-    query_engine = QueryEngine(data_store)
+    data_store = load_data_store(options.data_file)
+    query_engine = CompositeQueryEngine(data_store)
     conversation_engine = ConversationEngine(query_engine)
 
     while True:

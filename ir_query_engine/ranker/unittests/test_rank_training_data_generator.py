@@ -1,16 +1,12 @@
 import unittest
 from mock import patch
-from ir_query_engine.ranker.ranking import Matcher, MatchFeatures, LinearRankModel
-from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
-from ir_query_engine.retrieve_match_models.lda_feature.lda_model import LdaModelStruct
-from ir_query_engine.rank_match_models.topic_word_lookup_feature.topic_word_lookup_model import TopicWordLookupModelStruct
-from ir_query_engine.rank_match_models.word2vec_feature.word2vec_model import Word2VecModel
+from ir_query_engine.ranker.ranking import Matcher, MatchFeatures, RankTrainingDataGenerator
 import os
 
 __author__ = 'Deyang'
 
 
-class RankModelTestCase(unittest.TestCase):
+class RankTrainingDataGeneratorTestCase(unittest.TestCase):
 
     def setUp(self):
         self.rank_data = {
@@ -43,17 +39,13 @@ class RankModelTestCase(unittest.TestCase):
         self.test_train_data_path = os.path.join(dir_path,
                                                  'test_train.dat')
 
-    def tearDown(self):
-        pass
-        # os.remove(self.test_train_data_path)
-
     @patch('ir_query_engine.ranker.ranking.get_train_data_path')
     @patch.object(Matcher, 'match')
     def test_write_training_data(self, mock_match, mock_train_data_path):
         mock_match.side_effect = [
             [
                 MatchFeatures(
-                    question_tf_idf_sim=1.0,
+                    question_tfidf_sim=1.0,
                     # answer_tf_idf_sim=3.0,
                     question_lda_sim=5.0,
                     answer_lda_sim=7.0,
@@ -73,7 +65,7 @@ class RankModelTestCase(unittest.TestCase):
                     question_edit_distance=1,
                 ),
                 MatchFeatures(
-                    question_tf_idf_sim=2.0,
+                    question_tfidf_sim=2.0,
                     # answer_tf_idf_sim=4.0,
                     question_lda_sim=6.0,
                     answer_lda_sim=8.0,
@@ -95,7 +87,7 @@ class RankModelTestCase(unittest.TestCase):
             ],
             [
                 MatchFeatures(
-                    question_tf_idf_sim=1.03,
+                    question_tfidf_sim=1.03,
                     # answer_tf_idf_sim=3.0,
                     question_lda_sim=5.0,
                     answer_lda_sim=7.0,
@@ -115,7 +107,7 @@ class RankModelTestCase(unittest.TestCase):
                     question_edit_distance=1,
                 ),
                 MatchFeatures(
-                    question_tf_idf_sim=2.03,
+                    question_tfidf_sim=2.03,
                     # answer_tf_idf_sim=4.0,
                     question_lda_sim=6.0,
                     answer_lda_sim=8.0,
@@ -138,16 +130,14 @@ class RankModelTestCase(unittest.TestCase):
         ]
         mock_train_data_path.return_value = self.test_train_data_path
 
-        matcher = Matcher(TfIdfModelStruct(),
-                          LdaModelStruct(),
-                          TopicWordLookupModelStruct(None, None),
-                          Word2VecModel())
+        matcher = Matcher(None,
+                          None,
+                          None,
+                          None)
         rank_data = list(self.rank_data.iteritems())
-        rank_model = LinearRankModel(matcher=matcher, rank_data=rank_data)
+        rank_model = RankTrainingDataGenerator(matcher=matcher, rank_data=rank_data)
 
         rank_model.write_training_data()
-
-
 
 
 if __name__ == '__main__':

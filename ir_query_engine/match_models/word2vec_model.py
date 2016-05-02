@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import word2vec
 import os
-from ir_query_engine.retrieve_match_models.tf_idf_feature.tfidf_model import TfIdfModelStruct
+from ir_query_engine.common import pre_process_doc
 from scipy.spatial.distance import cosine
 import numpy
 from ir_query_engine import engine_logger
@@ -15,12 +15,17 @@ filepath = os.path.join(dirpath, filename)
 
 
 class Word2VecModel(object):
-    def __init__(self):
+    def __init__(self, eager_loading=True):
         engine_logger.info("Loading word2vec: %s" % filepath)
+        self.model = None
+        if eager_loading:
+            self.model = word2vec.load(filepath, encoding='ISO-8859-1')
+
+    def load_model(self):
         self.model = word2vec.load(filepath, encoding='ISO-8859-1')
 
     def get_sent_vec(self, raw_doc):
-        tokenized_doc = TfIdfModelStruct.pre_process_doc_tf_idf(raw_doc)
+        tokenized_doc = pre_process_doc(raw_doc)
         vec_sum = None
         for token in tokenized_doc:
             try:
